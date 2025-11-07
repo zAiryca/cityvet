@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', '| Admin - Requests')
 
@@ -45,10 +45,14 @@
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $request->user->name }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                @if($request->pet)
-                                    {{ $request->pet->name }} ({{ $request->pet->species }})
-                                @elseif($request->event)
-                                    {{ $request->event->title }}
+                                @if($request->requestable)
+                                    @if($request->requestable_type === 'App\\Models\\Pet')
+                                        {{ $request->requestable->name }} ({{ $request->requestable->species }})
+                                    @elseif($request->requestable_type === 'App\\Models\\Event')
+                                        {{ $request->requestable->title }}
+                                    @else
+                                        N/A
+                                    @endif
                                 @else
                                     N/A
                                 @endif

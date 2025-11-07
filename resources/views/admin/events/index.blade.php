@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', '| Admin - Events')
 
@@ -39,6 +39,7 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $event->registrations->count() }} / {{ $event->capacity }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <a href="{{ route('admin.events.show', $event) }}" class="text-indigo-600 hover:text-indigo-900 mr-4">View</a>
+                                <a href="{{ route('admin.events.registrations', $event) }}" class="text-green-600 hover:text-green-900 mr-4">Registrations</a>
                                 <a href="{{ route('admin.events.edit', $event) }}" class="text-indigo-600 hover:text-indigo-900 mr-4">Edit</a>
                                 <form action="{{ route('admin.events.destroy', $event) }}" method="POST" class="inline ml-4">
                                     @csrf @method('DELETE')

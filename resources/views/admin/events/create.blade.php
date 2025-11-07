@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', '| Admin - Add Event')
 
@@ -18,17 +18,10 @@
                 <textarea name="description" rows="4" {{ old('description') }} class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('description') border-red-500 @enderror"></textarea>
                 @error('description') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Event Date & Time</label>
-                    <input type="datetime-local" name="event_date" value="{{ old('event_date') }}" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('event_date') border-red-500 @enderror">
-                    @error('event_date') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Capacity</label>
-                    <input type="number" name="capacity" value="{{ old('capacity', 50) }}" min="1" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('capacity') border-red-500 @enderror">
-                    @error('capacity') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Event Date & Time</label>
+                <input type="datetime-local" name="event_date" value="{{ old('event_date') }}" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('event_date') border-red-500 @enderror">
+                @error('event_date') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700">Location</label>

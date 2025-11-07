@@ -1,8 +1,12 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Home') }}
+        </h2>
+    </x-slot>
 
-@section('title', '| Home')
-
-@section('content')
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 <!-- Hero -->
 <div class="relative bg-gradient-to-r from-blue-600 to-green-600 text-white py-20">
     <div class="max-w-7xl mx-auto px-4 text-center">
@@ -98,5 +102,6 @@
         @endif
         <a href="{{ route('posters.index') }}" class="block text-center mt-4 text-purple-600">View All Posters</a>
     </section>
-</div>
-@endsection
+        </div>
+    </div>
+</x-app-layout>

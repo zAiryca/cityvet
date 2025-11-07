@@ -3,106 +3,133 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pet;
-use App\Models\PetRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class PetController extends Controller
 {
-    /**
-     * Show both impounded and adoptable pets
-     */
     public function index()
     {
-        $impoundedPets = Pet::where('status', 'impounded')->get();
-        $adoptablePets = Pet::where('status', 'adoptable')->get();
-
-        return view('pets.index', compact('impoundedPets', 'adoptablePets'));
+        $pets = Pet::paginate(12);
+        return view('pets.index', compact('pets'));
     }
 
-    /**
-     * Handle pet request (claim or adopt)
-     */
+    public function adoptable()
+    {
+        $pets = Pet::where('status', 'adoptable')->paginate(12);
+        return view('pets.adoptable', compact('pets'));
+    }
+
+    public function impounded()
+    {
+        $pets = Pet::where('status', 'impounded')->paginate(12);
+        return view('pets.impounded', compact('pets'));
+    }
+
+    public function show(Pet $pet)
+    {
+        return view('pets.show', compact('pet'));
+    }
+
     public function request(Request $request, Pet $pet)
     {
-        $type = $request->type;  // 'claim' or 'adopt' from form
-
-        // Validation
-        $validated = $request->validate([
-            'reason' => 'required|string|max:500',
-            'contact_info' => 'required|string|max:255',
-        ]);
-
-        // Logic
-        if ($pet->status === 'impounded' && $type !== 'claim') {
-            return back()->with('error', 'Can only claim impounded pets.');
+        if ($request->type === 'adopt') {
+            $request->validate([
+                'type' => 'required|in:adopt,claim',
+                'first_name' => 'required|string|max:255',
+                'last_name' => 'required|string|max:255',
+                'middle_name' => 'nullable|string|max:255',
+                'address' => 'required|string',
+                'contact_number' => 'required|string|max:20',
+                'email' => 'required|email|max:255',
+                'date_of_birth' => 'required|date',
+                'dwelling_type' => 'required|in:owned,rented,apartment',
+                'landlord_permission' => 'nullable|in:yes,no,n/a',
+                'fenced_property' => 'required|in:yes,no',
+                'adults_count' => 'required|integer|min:1',
+                'children_count' => 'required|integer|min:0',
+                'allergies' => 'required|in:yes,no,unsure',
+                'other_pets' => 'required|in:yes,no',
+                'other_pets_list' => 'nullable|string',
+                'pet_living_area' => 'required|in:indoors,outdoors,both',
+                'reason' => 'required|string',
+                'certify_info' => 'required|accepted',
+                'agree_terms' => 'required|accepted',
+                'photos.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240',
+            ]);
+        } elseif ($request->type === 'claim') {
+            $request->validate([
+                'type' => 'required|in:adopt,claim',
+                'first_name' => 'required|string|max:255',
+                'last_name' => 'required|string|max:255',
+                'middle_name' => 'nullable|string|max:255',
+                'address' => 'required|string',
+                'contact_number' => 'required|string|max:20',
+                'email' => 'required|email|max:255',
+                'photos' => 'required|array|min:1',
+                'photos.*' => 'required|file|mimes:jpeg,png,jpg,gif,pdf,doc,docx|max:5120',
+                'certify_info' => 'required|accepted',
+                'agree_terms' => 'required|accepted',
+            ]);
         }
 
-        if ($pet->status === 'adoptable' && $type !== 'adopt') {
-            return back()->with('error', 'Can only adopt adoptable pets.');
+        // Prepare additional data
+        $additionalData = [];
+        if ($request->type === 'adopt') {
+            $additionalData = [
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'middle_name' => $request->middle_name,
+                'address' => $request->address,
+                'contact_number' => $request->contact_number,
+                'email' => $request->email,
+                'date_of_birth' => $request->date_of_birth,
+                'dwelling_type' => $request->dwelling_type,
+                'landlord_permission' => $request->landlord_permission,
+                'fenced_property' => $request->fenced_property,
+                'adults_count' => $request->adults_count,
+                'children_count' => $request->children_count,
+                'allergies' => $request->allergies,
+                'other_pets' => $request->other_pets,
+                'other_pets_list' => $request->other_pets_list,
+                'pet_living_area' => $request->pet_living_area,
+                'certify_info' => $request->certify_info,
+                'agree_terms' => $request->agree_terms,
+            ];
+        } elseif ($request->type === 'claim') {
+            $additionalData = [
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'middle_name' => $request->middle_name,
+                'address' => $request->address,
+                'contact_number' => $request->contact_number,
+                'email' => $request->email,
+                'certify_info' => $request->certify_info,
+                'agree_terms' => $request->agree_terms,
+            ];
         }
 
-        // Create Pet Request
-        PetRequest::create([
-            'pet_id' => $pet->id,
+        // Handle file uploads
+        $photoPaths = [];
+        if ($request->hasFile('photos')) {
+            foreach ($request->file('photos') as $photo) {
+                $path = $photo->store('requests', 'public');
+                $photoPaths[] = $path;
+            }
+        }
+
+        // Create the request
+        $petRequest = $pet->requests()->create([
             'user_id' => Auth::id(),
-            'type' => $type,
+            'type' => $request->type,
+            'reason' => $request->reason ?? '',
+            'contact_info' => $request->contact_number ?? $request->contact_info ?? '',
+            'photos' => json_encode($photoPaths), // Store as JSON array
+            'additional_data' => json_encode($additionalData),
             'status' => 'pending',
-            'reason' => $validated['reason'],
-            'contact_info' => $validated['contact_info'],
         ]);
 
-        return back()->with('success', 'Your request has been submitted and is pending review.');
-    }
-
-    /**
-     * User registers their own pet
-     */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'species' => 'required|string|max:50',
-            'breed' => 'required|string|max:100',
-            'gender' => 'required|in:male,female,unknown',
-            'color_markings' => 'required|string',
-            'description' => 'nullable|string',
-            'photo' => 'nullable|image|max:2048', // 2MB
-        ]);
-
-        if ($request->hasFile('photo')) {
-            $validated['photo'] = $request->file('photo')->store('pets', 'public');
-        }
-
-        $validated['user_id'] = Auth::id();
-        $validated['status'] = 'registered';
-
-        Pet::create($validated);
-
-        return redirect()->route('profile')->with('success', 'Pet registered successfully!');
-    }
-
-    /**
-     * Admin view of all pets
-     */
-    public function adminIndex()
-    {
-        $pets = Pet::with('user')->paginate(10);
-        return view('admin.pets.index', compact('pets'));
-    }
-
-    /**
-     * Mark pet as urgent adoptable (admin)
-     */
-    public function setUrgent(Request $request, Pet $pet)
-    {
-        $request->validate(['urgent_deadline' => 'required|date|after:now']);
-
-        $pet->update([
-            'status' => 'adoptable',
-            'urgent_deadline' => $request->urgent_deadline,
-        ]);
-
-        return back()->with('success', 'Pet marked as urgent for adoption.');
+        return redirect()->back()->with('success', 'Your request has been submitted successfully!');
     }
 }

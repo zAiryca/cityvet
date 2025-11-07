@@ -76,12 +76,5 @@ class EventController extends Controller
         return back()->with('success', 'Event deleted.');
     }
 
-    // Custom: Generate event report (simple list of registered pets)
-    public function report(Event $event)
-    {
-        if (!Auth::user()->isAdmin()) abort(403);
-        $registrations = $event->registrations()->with('pet.user')->get();
-        // You can extend to PDF similar to main report
-        return view('admin.events.report', compact('event', 'registrations'));
-    }
+
 }

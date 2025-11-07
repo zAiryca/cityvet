@@ -23,10 +23,12 @@
                     @foreach($requests as $request)
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                @if($request->pet)
-                                    <a href="#" class="text-blue-600 hover:underline">{{ $request->pet->name }}</a> ({{ $request->pet->species }})
+                                @if($request->requestable_type === 'App\Models\Pet')
+                                    <a href="{{ route('pets.show', $request->requestable) }}" class="text-blue-600 hover:underline">{{ $request->requestable->name }}</a> ({{ $request->requestable->species }})
+                                @elseif($request->requestable_type === 'App\Models\Event')
+                                    <a href="{{ route('events.show', $request->requestable) }}" class="text-blue-600 hover:underline">{{ $request->requestable->title }}</a>
                                 @else
-                                    {{ $request->event->title ?? 'N/A' }}
+                                    N/A
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">{{ ucfirst($request->type) }}</td>

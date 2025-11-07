@@ -25,8 +25,8 @@ class ReportController extends Controller
             'events' => Event::count(),
             'adoptions' => PetRequest::where('type', 'adopt')->where('status', 'approved')->count(),
             'claims' => PetRequest::where('type', 'claim')->where('status', 'approved')->count(),
-            'recent_pets' => Pet::latest()->take(5)->get(),
-            'recent_events' => Event::latest()->take(5)->get(),
+            'recent_pets' => Pet::latest()->take(3)->get(),
+            'recent_events' => Event::latest()->take(3)->get(),
         ];
 
         $pdf = Pdf::loadView('admin.reports.summary', $data);

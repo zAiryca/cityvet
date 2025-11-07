@@ -26,4 +26,10 @@ class Event extends Model
     {
         return $this->morphMany(PetRequest::class, 'requestable');
     }
+
+    // Relationship to event registrations
+    public function registrations()
+    {
+        return $this->hasMany(EventRegistration::class);
+    }
 }

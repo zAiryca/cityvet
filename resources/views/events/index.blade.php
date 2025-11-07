@@ -4,8 +4,8 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto py-6 px-4">
-    <h1 class="text-3xl font-bold mb-6">Upcoming Events</h1>
-    <p class="mb-6">Join us for pet-friendly events. Register your registered pet to participate.</p>
+    <h1 class="text-3xl font-bold mb-6">Announcements</h1>
+    <p class="mb-6">Stay updated with the latest announcements from CityVet.</p>
 
     @if($events->count() > 0)
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

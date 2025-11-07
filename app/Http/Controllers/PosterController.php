@@ -10,26 +10,8 @@ class PosterController extends Controller
 {
     public function index(Request $request)
     {
-        $type = $request->get('type', 'lost');  // Default to lost; from button/tab
-        $query = Poster::where('type', $type)->where('approved', true);
-        $posters = $this->applyFilters($query, $request)->paginate(9);
-        return view('posters.index', compact('posters', 'type'));
-    }
-
-    // Helper for filters (similar to PetController)
-    private function applyFilters($query, Request $request)
-    {
-        if ($request->species) $query->where('species', $request->species);
-        if ($request->breed) $query->where('breed', 'like', '%' . $request->breed . '%');
-        if ($request->gender) $query->where('gender', $request->gender);
-        if ($request->colors) {
-            $query->where(function($q) use ($request) {
-                foreach ($request->colors as $color) {
-                    $q->orWhere('color_markings', 'like', '%' . $color . '%');
-                }
-            });
-        }
-        return $query->latest();
+        // This method is now handled by Livewire component
+        return view('posters.index');
     }
 
     public function create()
@@ -49,7 +31,7 @@ class PosterController extends Controller
             'date_lost_found' => 'required|date',
             'last_seen' => 'nullable|string',  // Required if lost
             'found_at' => 'nullable|string',   // Required if found
-            'photo' => 'required|image|max:2048',
+            'photo' => 'required|image|max:10240',
             'contact_info' => 'required|string|max:255',
             'reward' => 'nullable|numeric|min:0',
         ]);
@@ -63,11 +45,11 @@ class PosterController extends Controller
 
         $validated['photo'] = $request->file('photo')->store('posters', 'public');
         $validated['user_id'] = Auth::id();
-        $validated['approved'] = false;  // Pending admin approval
+        $validated['approved'] = true;  // Direct posting without review
 
         Poster::create($validated);
 
-        return redirect()->route('posters.index')->with('success', 'Poster submitted! Awaiting approval.');
+        return redirect()->route('posters.index')->with('success', 'Poster posted successfully.');
     }
 
     // Show individual poster as digital flyer

@@ -21,6 +21,13 @@
             </div>
             <p class="text-lg mb-6"><strong>Contact:</strong> {{ $poster->contact_info }}</p>
             <a href="{{ route('posters.index') }}" class="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700">Back to Posters</a>
+            @if(Auth::check() && Auth::user()->isAdmin())
+                <form action="{{ route('posters.destroy', $poster) }}" method="POST" class="inline ml-4" onsubmit="return confirm('Are you sure you want to delete this poster?')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="bg-red-600 text-white px-6 py-3 rounded hover:bg-red-700">Delete Poster</button>
+                </form>
+            @endif
         </div>
     </div>
 </div>
