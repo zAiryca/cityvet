@@ -5,7 +5,7 @@
 @section('content')
 <div class="max-w-7xl mx-auto py-6 px-4">
     <h1 class="text-3xl font-bold mb-6">My Requests</h1>
-    <p class="mb-6">Track your claim, adopt, and event registration requests.</p>
+    <p class="mb-6">Track your claim, adopt, and announcement registration requests.</p>
 
     @if($requests->count() > 0)
         <div class="overflow-x-auto bg-white rounded-lg shadow">
@@ -25,8 +25,8 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if($request->requestable_type === 'App\Models\Pet')
                                     <a href="{{ route('pets.show', $request->requestable) }}" class="text-blue-600 hover:underline">{{ $request->requestable->name }}</a> ({{ $request->requestable->species }})
-                                @elseif($request->requestable_type === 'App\Models\Event')
-                                    <a href="{{ route('events.show', $request->requestable) }}" class="text-blue-600 hover:underline">{{ $request->requestable->title }}</a>
+                                @elseif($request->requestable_type === 'App\Models\Announcement')
+                                    <a href="{{ route('announcements.show', $request->requestable) }}" class="text-blue-600 hover:underline">{{ $request->requestable->title }}</a>
                                 @else
                                     N/A
                                 @endif
@@ -59,7 +59,7 @@
             <div class="space-x-4">
                 <a href="{{ route('pets.adoptable') }}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Browse Adoptable</a>
                 <a href="{{ route('pets.impounded') }}" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">View Impounded</a>
-                <a href="{{ route('events.index') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Upcoming Events</a>
+                <a href="{{ route('announcements.index') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Upcoming Announcements</a>
             </div>
         </div>
     @endif

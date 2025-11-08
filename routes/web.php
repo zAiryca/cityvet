@@ -5,13 +5,13 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PetController;
 use App\Http\Controllers\PosterController;
-use App\Http\Controllers\EventController;
+use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PetRequestController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PetController as AdminPetController;
-use App\Http\Controllers\Admin\EventController as AdminEventController;
+use App\Http\Controllers\Admin\AnnouncementController as AdminAnnouncementController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\PetRegistrationController;
@@ -37,8 +37,8 @@ Route::middleware('setlocale')->group(function () {
     Route::get('/impounded', [PetController::class, 'impounded'])->name('pets.impounded');
     Route::get('/adoptable', [PetController::class, 'adoptable'])->name('pets.adoptable');
     Route::get('/lost-found', [PosterController::class, 'index'])->name('posters.index');
-    Route::get('/events', [EventController::class, 'index'])->name('events.index');
-    Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
+    Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
+    Route::get('/announcements/{announcement}', [AnnouncementController::class, 'show'])->name('announcements.show');
     Route::get('/posters/{poster}', [PosterController::class, 'show'])->name('posters.show');
     Route::get('/about', [PageController::class, 'about'])->name('about');
     Route::get('/contact', [PageController::class, 'contact'])->name('contact');
@@ -104,8 +104,8 @@ Route::middleware('setlocale')->group(function () {
         Route::resource('pets', AdminPetController::class);
         Route::post('/pets/{pet}/urgent', [AdminPetController::class, 'setUrgent'])->name('pets.set-urgent');
 
-        // Events CRUD
-        Route::resource('events', AdminEventController::class);
+        // Announcements CRUD
+        Route::resource('announcements', AdminAnnouncementController::class);
 
         // Posters management
         Route::get('/posters', function () {

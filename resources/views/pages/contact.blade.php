@@ -5,13 +5,13 @@
 @section('content')
 <div class="max-w-7xl mx-auto py-6 px-4">
     <h1 class="text-3xl font-bold mb-6">Contact Us</h1>
-    <p class="mb-6 text-gray-700">Have questions about adoptions, events, or lost pets? Reach out to our team.</p>
+    <p class="mb-6 text-gray-700">Have questions about adoptions, announcements, or lost pets? Reach out to our team.</p>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <!-- Contact Info -->
         <div class="bg-white p-6 rounded-lg shadow">
             <h2 class="text-xl font-bold mb-4">Get in Touch</h2>
-            <p class="text-gray-700 mb-2"><strong>Email:</strong> findfurver87@gmail.com</p>
+            <p class="text-gray-700 mb-2"><strong>Email:</strong> findfurever87@gmail.com</p>
             <p class="text-gray-700 mb-2"><strong>Phone:</strong> 0998-546-5754 / 0929-798-1266</p>
             <p class="text-gray-700 mb-2"><strong>Address:</strong> Slaughterhouse Compound, Sabaro, Poblacion, Alaminos City, Pangasinan.</p>
 

@@ -18,8 +18,8 @@
             <p class="text-3xl font-bold">{{ $stats['monthly_adoptions'] ?? Pet::whereMonth('adoptable_date', now())->count() }}</p>
         </div>
         <div class="bg-purple-50 p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold text-purple-800">Total Events</h3>
-            <p class="text-3xl font-bold">{{ $stats['total_events'] ?? Event::count() }}</p>
+            <h3 class="text-lg font-semibold text-purple-800">Total Announcements</h3>
+            <p class="text-3xl font-bold">{{ $stats['total_announcements'] ?? \App\Models\Announcement::count() }}</p>
         </div>
         <div class="bg-yellow-50 p-6 rounded-lg shadow">
             <h3 class="text-lg font-semibold text-yellow-800">Pending Requests</h3>
@@ -37,7 +37,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Month</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Impounded</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Adopted</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Events Held</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Announcements Held</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -46,7 +46,7 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $month }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $data['impounded'] ?? 0 }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $data['adopted'] ?? 0 }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $data['events'] ?? 0 }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $data['announcements'] ?? 0 }}</td>
                         </tr>
                     @endforeach
                 </tbody>

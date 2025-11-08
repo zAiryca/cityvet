@@ -5,7 +5,7 @@
 @section('content')
 <div class="max-w-7xl mx-auto py-6 px-4">
     <h1 class="text-3xl font-bold mb-6">Our Location</h1>
-    <p class="mb-6 text-gray-700">Visit us at CityVet Shelter for adoptions, events, or to drop off found pets.</p>
+    <p class="mb-6 text-gray-700">Visit us at CityVet Shelter for adoptions, announcements, or to drop off found pets.</p>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div class="bg-white p-6 rounded-lg shadow">

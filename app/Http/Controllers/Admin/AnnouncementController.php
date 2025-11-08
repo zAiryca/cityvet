@@ -3,24 +3,24 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Event;
-use App\Models\EventRegistration;
+use App\Models\Announcement;
+use App\Models\AnnouncementRegistration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class EventController extends Controller
+class AnnouncementController extends Controller
 {
     public function index()
     {
         if (!Auth::user()->isAdmin()) abort(403);
-        $events = Event::with('registrations')->orderBy('event_date')->paginate(10);
-        return view('admin.events.index', compact('events'));
+        $announcements = Announcement::with('registrations')->orderBy('event_date')->paginate(10);
+        return view('admin.announcements.index', compact('announcements'));
     }
 
     public function create()
     {
         if (!Auth::user()->isAdmin()) abort(403);
-        return view('admin.events.create');
+        return view('admin.announcements.create');
     }
 
     public function store(Request $request)
@@ -34,25 +34,25 @@ class EventController extends Controller
         ]);
 
         $validated['user_id'] = Auth::id();
-        Event::create($validated);
+        Announcement::create($validated);
 
-        return redirect()->route('admin.events.index')->with('success', 'Event created.');
+        return redirect()->route('admin.announcements.index')->with('success', 'Announcement created.');
     }
 
-    public function show(Event $event)
+    public function show(Announcement $announcement)
     {
         if (!Auth::user()->isAdmin()) abort(403);
-        $event->load('registrations.pet.user');
-        return view('admin.events.show', compact('event'));
+        $announcement->load('registrations.pet.user');
+        return view('admin.announcements.show', compact('announcement'));
     }
 
-    public function edit(Event $event)
+    public function edit(Announcement $announcement)
     {
         if (!Auth::user()->isAdmin()) abort(403);
-        return view('admin.events.edit', compact('event'));
+        return view('admin.announcements.edit', compact('announcement'));
     }
 
-    public function update(Request $request, Event $event)
+    public function update(Request $request, Announcement $announcement)
     {
         if (!Auth::user()->isAdmin()) abort(403);
         $validated = $request->validate([
@@ -62,18 +62,18 @@ class EventController extends Controller
             'location' => 'required|string|max:255',
         ]);
 
-        $event->update($validated);
+        $announcement->update($validated);
 
-        return redirect()->route('admin.events.index')->with('success', 'Event updated.');
+        return redirect()->route('admin.announcements.index')->with('success', 'Announcement updated.');
     }
 
-    public function destroy(Event $event)
+    public function destroy(Announcement $announcement)
     {
         if (!Auth::user()->isAdmin()) abort(403);
         // Delete registrations first
-        $event->registrations()->delete();
-        $event->delete();
-        return back()->with('success', 'Event deleted.');
+        $announcement->registrations()->delete();
+        $announcement->delete();
+        return back()->with('success', 'Announcement deleted.');
     }
 
 

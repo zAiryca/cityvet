@@ -24,7 +24,7 @@
                     <x-nav-link :href="route('posters.index')" :active="request()->routeIs('posters.index')">
                         Lost & Found
                     </x-nav-link>
-                    <x-nav-link :href="route('events.index')" :active="request()->routeIs('events.index')">
+                    <x-nav-link :href="route('announcements.index')" :active="request()->routeIs('announcements.index')">
                         Announcements
                     </x-nav-link>
                     <x-nav-link :href="route('about')" :active="request()->routeIs('about')">
@@ -123,7 +123,7 @@
             <x-responsive-nav-link :href="route('posters.index')" :active="request()->routeIs('posters.index')">
                 Lost & Found
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('events.index')" :active="request()->routeIs('events.index')">
+            <x-responsive-nav-link :href="route('announcements.index')" :active="request()->routeIs('announcements.index')">
                 Announcements
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('about')" :active="request()->routeIs('about')">

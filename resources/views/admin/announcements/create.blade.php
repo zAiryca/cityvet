@@ -1,11 +1,11 @@
 @extends('layouts.admin')
 
-@section('title', '| Admin - Add Event')
+@section('title', '| Admin - Add Announcement')
 
 @section('content')
 <div class="max-w-7xl mx-auto py-6 px-4">
-    <h1 class="text-3xl font-bold mb-6">Add New Event</h1>
-    <form action="{{ route('admin.events.store') }}" method="POST" class="bg-white p-6 rounded-lg shadow max-w-2xl">
+    <h1 class="text-3xl font-bold mb-6">Add New Announcement</h1>
+    <form action="{{ route('admin.announcements.store') }}" method="POST" class="bg-white p-6 rounded-lg shadow max-w-2xl">
         @csrf
         <div class="space-y-4">
             <div>
@@ -19,7 +19,7 @@
                 @error('description') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700">Event Date & Time</label>
+                <label class="block text-sm font-medium text-gray-700">Announcement Date & Time</label>
                 <input type="datetime-local" name="event_date" value="{{ old('event_date') }}" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('event_date') border-red-500 @enderror">
                 @error('event_date') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
             </div>
@@ -29,8 +29,8 @@
                 @error('location') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
             </div>
             <div class="flex justify-end space-x-4">
-                <a href="{{ route('admin.events.index') }}" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700">Cancel</a>
-                <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700">Add Event</button>
+                <a href="{{ route('admin.announcements.index') }}" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700">Cancel</a>
+                <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700">Add Announcement</button>
             </div>
         </div>
     </form>

@@ -19,7 +19,7 @@
             <p class="text-gray-700 hidden mt-2">Yes, login and create a poster. It will be reviewed for approval within 24 hours.</p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow">
-            <h2 class="text-xl font-bold mb-2 cursor-pointer" onclick="toggleFaq(this)">What events can I attend?</h2>
+            <h2 class="text-xl font-bold mb-2 cursor-pointer" onclick="toggleFaq(this)">What announcements can I attend?</h2>
             <p class="text-gray-700 hidden mt-2">Family-friendly adoption fairs, vet workshops, and more. Register your pet to join.</p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow">

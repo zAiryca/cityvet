@@ -12,7 +12,7 @@
                     {{ request('role') === 'admin' ? 'Employee Registration' : 'Pet Owner Registration' }}
                 </h2>
                 <p class="mt-2 text-center text-sm text-gray-600">
-                    {{ request('role') === 'admin' ? 'Create an account to manage the CityVet system.' : 'Create an account to register pets, post lost/found, and join events.' }}
+                    {{ request('role') === 'admin' ? 'Create an account to manage the CityVet system.' : 'Create an account to register pets and post lost/found.' }}
                 </p>
             </div>
 
