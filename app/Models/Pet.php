@@ -2,18 +2,23 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Pet extends Model
 {
+    use HasFactory;
     protected $fillable = [
-        'user_id', 'name', 'species', 'breed', 'gender', 'color_markings',
-        'description', 'photo', 'status', 'impounded_date', 'remaining_days', 'urgent_deadline',
+        'user_id', 'name', 'species', 'breed', 'birth_date', 'gender', 'color_markings',
+        'description', 'photo', 'status', 'impounded_date', 'caught_location', 'decision_date', 'remaining_days', 'urgent_deadline',
+        'registration_status', 'admin_notes',
     ];
 
     // Cast dates
     protected $casts = [
+        'birth_date' => 'date',
         'impounded_date' => 'date',
+        'decision_date' => 'date',
         'urgent_deadline' => 'date',
     ];
 

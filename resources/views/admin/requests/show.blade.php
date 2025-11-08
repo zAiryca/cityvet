@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', '| Admin - Request Details')
 
@@ -10,11 +10,12 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <p><strong>User:</strong> {{ $request->user->name }} ({{ $request->user->email }})</p>
                 <p><strong>Type:</strong> {{ ucfirst($request->type) }}</p>
-                @if($request->pet)
-                    <p><strong>Pet:</strong> {{ $request->pet->name }} ({{ $request->pet->species }})</p>
-                @endif
-                @if($request->event)
-                    <p><strong>Event:</strong> {{ $request->event->title }} on {{ $request->event->event_date->format('M d, Y') }}</p>
+                @if($request->requestable)
+                    @if($request->requestable_type === 'App\\Models\\Pet')
+                        <p><strong>Pet:</strong> {{ $request->requestable->name }} ({{ $request->requestable->species }})</p>
+                    @elseif($request->requestable_type === 'App\\Models\\Event')
+                        <p><strong>Event:</strong> {{ $request->requestable->title }} on {{ $request->requestable->event_date->format('M d, Y') }}</p>
+                    @endif
                 @endif
                 <p><strong>Status:</strong>
                     <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $request->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : ($request->status === 'approved' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800') }}">
@@ -25,6 +26,25 @@
             </div>
             <p class="mb-6"><strong>Reason:</strong> {{ $request->reason }}</p>
             <p class="mb-6"><strong>Contact Info:</strong> {{ $request->contact_info }}</p>
+
+            <!-- Display Photos -->
+            @if($request->photos)
+                @php
+                    $photos = json_decode($request->photos, true);
+                @endphp
+                @if(is_array($photos) && count($photos) > 0)
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold mb-4">Uploaded Photos</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            @foreach($photos as $photo)
+                                <div class="relative">
+                                    <img src="{{ asset('storage/' . $photo) }}" alt="Request Photo" class="w-full h-48 object-cover rounded-lg shadow-md">
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+            @endif
 
             <!-- Update Status Form -->
             <form action="{{ route('admin.requests.update', $request) }}" method="POST" class="mb-6">

@@ -16,8 +16,16 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
+        $user = $request->user();
+        $pets = $user->pets; // Get user's registered pets
+        $adoptedPets = $user->adoptedPets; // Get adopted pets
+        $claimedPets = $user->claimedPets; // Get claimed pets
+
+        return view('user.profile', [
+            'user' => $user,
+            'pets' => $pets,
+            'adoptedPets' => $adoptedPets,
+            'claimedPets' => $claimedPets,
         ]);
     }
 

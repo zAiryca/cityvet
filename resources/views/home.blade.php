@@ -1,13 +1,17 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Home') }}
+        </h2>
+    </x-slot>
 
-@section('title', '| Home')
-
-@section('content')
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 <!-- Hero -->
 <div class="relative bg-gradient-to-r from-blue-600 to-green-600 text-white py-20">
     <div class="max-w-7xl mx-auto px-4 text-center">
         <h1 class="text-4xl font-bold mb-4">Welcome to CityVet</h1>
-        <p class="text-xl mb-8">Helping pets find homes and owners reunite. Explore impounded pets, adoptions, lost & found, and events.</p>
+        <p class="text-xl mb-8">Helping pets find homes and owners reunite. Explore impounded pets, adoptions, lost & found, and announcements.</p>
         <div class="space-x-4">
             <a href="{{ route('pets.impounded') }}" class="bg-white text-blue-600 px-6 py-3 rounded-md font-semibold hover:bg-gray-100">Impounded Pets</a>
             <a href="{{ route('pets.adoptable') }}" class="border-2 border-white text-white px-6 py-3 rounded-md font-semibold hover:bg-white hover:text-blue-600">Adoptable Pets</a>
@@ -60,23 +64,23 @@
         @endif
     </section>
 
-    <!-- Events Preview -->
+    <!-- Announcements Preview -->
     <section class="mb-12">
-        <h3 class="text-2xl font-semibold mb-4">Upcoming Events</h3>
-        @if(isset($events) && $events->count() > 0)
+        <h3 class="text-2xl font-semibold mb-4">Upcoming Announcements</h3>
+        @if(isset($announcements) && $announcements->count() > 0)
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                @foreach($events as $event)
+                @foreach($announcements as $announcement)
                     <div class="bg-white rounded-lg shadow-md p-4">
-                        <h4 class="font-bold">{{ $event->title }}</h4>
-                        <p class="text-gray-600">{{ $event->event_date->format('M d') }}</p>
-                        <a href="{{ route('events.show', $event) }}" class="text-blue-600">Details</a>
+                        <h4 class="font-bold">{{ $announcement->title }}</h4>
+                        <p class="text-gray-600">{{ $announcement->event_date->format('M d') }}</p>
+                        <a href="{{ route('announcements.show', $announcement) }}" class="text-blue-600">Details</a>
                     </div>
                 @endforeach
             </div>
         @else
-            <p class="text-gray-500">No upcoming events.</p>
+            <p class="text-gray-500">No upcoming announcements.</p>
         @endif
-        <a href="{{ route('events.index') }}" class="block text-center mt-4 text-blue-600">View All Events</a>
+        <a href="{{ route('announcements.index') }}" class="block text-center mt-4 text-blue-600">View All Announcements</a>
     </section>
 
     <!-- Posters Preview -->
@@ -98,5 +102,6 @@
         @endif
         <a href="{{ route('posters.index') }}" class="block text-center mt-4 text-purple-600">View All Posters</a>
     </section>
-</div>
-@endsection
+        </div>
+    </div>
+</x-app-layout>

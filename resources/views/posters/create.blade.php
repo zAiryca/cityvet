@@ -5,7 +5,7 @@
 @section('content')
 <div class="max-w-7xl mx-auto py-6 px-4">
     <h1 class="text-3xl font-bold mb-6">Create Lost or Found Poster</h1>
-    <p class="mb-6">Your poster will be reviewed by an admin before going live.</p>
+    <p class="mb-6">Post your lost or found pet directly.</p>
 
     <form action="{{ route('posters.store') }}" method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded-lg shadow max-w-2xl">
         @csrf
@@ -94,7 +94,7 @@
 
             <div class="flex justify-end space-x-4">
                 <a href="{{ route('posters.index') }}" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700">Cancel</a>
-                <button type="submit" class="bg-purple-600 text-white px-6 py-2 rounded-md hover:bg-purple-700">Submit for Review</button>
+                <button type="submit" class="bg-purple-600 text-white px-6 py-2 rounded-md hover:bg-purple-700">Post Now</button>
             </div>
         </div>
     </form>

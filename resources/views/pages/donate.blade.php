@@ -5,14 +5,14 @@
 @section('content')
 <div class="max-w-7xl mx-auto py-6 px-4">
     <h1 class="text-3xl font-bold mb-6">Support CityVet</h1>
-    <p class="mb-6 text-gray-700">Your donations help us care for impounded pets, host events, and reunite families. Every dollar makes a difference!</p>
+    <p class="mb-6 text-gray-700">Your donations help us care for impounded pets, host announcements, and reunite families. Every dollar makes a difference!</p>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div class="bg-white p-6 rounded-lg shadow">
             <h2 class="text-xl font-bold mb-4">Why Donate?</h2>
             <ul class="text-gray-700 space-y-2">
                 <li>• Food and medical care for 500+ pets yearly</li>
-                <li>• Free adoption events and workshops</li>
+                <li>• Free adoption workshops</li>
                 <li>• Lost & found poster printing and distribution</li>
                 <li>• Tax-deductible contributions</li>
             </ul>

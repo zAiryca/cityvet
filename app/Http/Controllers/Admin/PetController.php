@@ -29,15 +29,25 @@ class PetController extends Controller
             'name' => 'required|string|max:100',
             'species' => 'required|string|max:50',
             'breed' => 'required|string|max:100',
+            'birth_date' => 'nullable|date|before:today',
             'gender' => 'required|in:male,female,unknown',
-            'color_markings' => 'required|string',
+            'color_markings' => 'nullable|array',
+            'color_markings.*' => 'string',
             'description' => 'nullable|string',
-            'photo' => 'nullable|image|max:2048',
-            'status' => 'required|in:registered,impounded,adoptable,adopted,claimed',
-            'impounded_date' => 'nullable|date|required_if:status,impounded,adoptable',
+            'photo' => 'nullable|image|max:10240',
+            'status' => 'required|in:impounded,adoptable',
+            'impounded_date' => 'nullable|date|required_if:status,impounded',
+            'caught_location' => 'nullable|string|max:255',
+            'decision_date' => 'nullable|date|required_if:status,adoptable',
             'remaining_days' => 'nullable|integer|min:0',
             'user_id' => 'nullable|exists:users,id',  // Optional owner
         ]);
+
+        if ($request->has('color_markings') && is_array($request->color_markings)) {
+            $validated['color_markings'] = implode(',', $request->color_markings);
+        } else {
+            $validated['color_markings'] = '';
+        }
 
         if ($request->hasFile('photo')) {
             $validated['photo'] = $request->file('photo')->store('pets', 'public');
@@ -68,16 +78,28 @@ class PetController extends Controller
             'name' => 'required|string|max:100',
             'species' => 'required|string|max:50',
             'breed' => 'required|string|max:100',
+            'birth_date' => 'nullable|date|before:today',
             'gender' => 'required|in:male,female,unknown',
-            'color_markings' => 'required|string',
+            'color_markings' => 'nullable|array',
+            'color_markings.*' => 'string',
             'description' => 'nullable|string',
-            'photo' => 'nullable|image|max:2048',
-            'status' => 'required|in:registered,impounded,adoptable,adopted,claimed',
-            'impounded_date' => 'nullable|date|required_if:status,impounded,adoptable',
+            'photo' => 'nullable|image|max:10240',
+            'status' => 'required|in:impounded,adoptable,adopted,claimed',
+            'impounded_date' => 'nullable|date|required_if:status,impounded',
+            'caught_location' => 'nullable|string|max:255',
+            'decision_date' => 'nullable|date|required_if:status,adoptable',
             'remaining_days' => 'nullable|integer|min:0',
             'user_id' => 'nullable|exists:users,id',
             'urgent_deadline' => 'nullable|date|after:now',
+            'registration_status' => 'nullable|in:pre-registered,approved,denied',
+            'admin_notes' => 'nullable|string|max:1000',
         ]);
+
+        if ($request->has('color_markings') && is_array($request->color_markings)) {
+            $validated['color_markings'] = implode(',', $request->color_markings);
+        } else {
+            $validated['color_markings'] = '';
+        }
 
         if ($request->hasFile('photo')) {
             // Delete old photo if exists (optional: add Storage::delete)

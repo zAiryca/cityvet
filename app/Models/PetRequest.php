@@ -10,7 +10,7 @@ class PetRequest extends Model
 
     protected $fillable = [
         'user_id', 'type', 'status', 'reason', 'contact_info',
-        'requestable_id', 'requestable_type', 'admin_notes'
+        'requestable_id', 'requestable_type', 'admin_notes', 'photos', 'additional_data'
     ];
 
     // 🧩 Polymorphic relationship (can belong to Pet or Event)

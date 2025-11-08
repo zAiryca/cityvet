@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', '| Admin - Posters')
 
@@ -25,6 +25,7 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pet Name</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User </th>
@@ -36,6 +37,9 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     @foreach($posters as $poster)
                         <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">#{{ $poster->id }}</div>
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap font-medium">{{ $poster->pet_name }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ ucfirst($poster->type) }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $poster->user->name }}</td>
