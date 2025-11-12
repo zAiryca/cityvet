@@ -127,7 +127,7 @@
                     @endforeach
                 </div>
             @else
-                <p class="text-gray-500 mb-6">No registered pets yet. Register one below to use for events or adoptions!</p>
+                <p class="text-gray-500 mb-6">No registered pets yet. Register one below to use for announcements or adoptions!</p>
             @endif
         </div>
 

@@ -19,7 +19,7 @@
                 @error('description') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700">Event Date & Time</label>
+                <label class="block text-sm font-medium text-gray-700">Announcement Date & Time</label>
                 <input type="datetime-local" name="event_date" value="{{ old('event_date', $announcement->event_date ? $announcement->event_date->format('Y-m-d\TH:i') : '') }}" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('event_date') border-red-500 @enderror">
                 @error('event_date') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
             </div>

@@ -112,10 +112,15 @@
                 </div>
 
                 <div>
-                    <label for="terms" class="flex items-center">
-                        <input id="terms" name="terms" type="checkbox" required class="h-4 w-4 {{ request('role') === 'admin' ? 'text-blue-600 focus:ring-blue-500' : 'text-green-600 focus:ring-green-500' }} border-gray-300 rounded">
-                        <span class="ml-2 text-sm text-gray-700">I agree to the Terms and Conditions</span>
-                    </label>
+                    <div class="bg-blue-50 border border-blue-200 rounded-md p-4">
+                        <label for="terms" class="flex items-start">
+                            <input id="terms" name="terms" type="checkbox" required class="h-4 w-4 mt-0.5 {{ request('role') === 'admin' ? 'text-blue-600 focus:ring-blue-500' : 'text-green-600 focus:ring-green-500' }} border-gray-300 rounded">
+                            <span class="ml-2 text-sm text-gray-700">
+                                <strong class="text-gray-900">I agree to the Terms and Conditions</strong><br>
+                                By registering, you agree to our terms of service and privacy policy. Please read them carefully before proceeding.
+                            </span>
+                        </label>
+                    </div>
                     @error('terms')
                         <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
                     @enderror

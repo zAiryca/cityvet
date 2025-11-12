@@ -34,8 +34,8 @@ class RegisteredUserController extends Controller
             'first_name' => ['required', 'string', 'max:255'],
             'middle_name' => ['nullable', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'contact_number' => ['required', 'string', 'max:50'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
+            'contact_number' => ['required', 'string', 'regex:/^09\d{9}$/', 'max:50'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'in:user,admin'],
             'terms' => ['required', 'accepted'],
@@ -43,19 +43,30 @@ class RegisteredUserController extends Controller
 
         // Check for duplicate first+middle+last name combination (case-insensitive)
         $firstLower = Str::lower($request->first_name);
-        $middleLower = Str::lower($request->middle_name ?? '');
+        $middleLower = $request->middle_name ? Str::lower($request->middle_name) : null;
         $lastLower = Str::lower($request->last_name);
 
-        $exists = User::whereRaw('LOWER(first_name) = ? AND LOWER(COALESCE(middle_name, \'\')) = ? AND LOWER(last_name) = ?', [$firstLower, $middleLower, $lastLower])->exists();
+        // Build the query to check for duplicates
+        $query = User::whereRaw('LOWER(first_name) = ?', [$firstLower])
+                     ->whereRaw('LOWER(last_name) = ?', [$lastLower]);
 
-        if ($exists) {
-            return back()->withErrors(['first_name' => 'A user with this name combination already exists. Please use a different name or add a middle name to differentiate.'])->withInput();
+        // Check middle name: if both are null or both match (case-insensitive)
+        if ($middleLower === null) {
+            $query->whereNull('middle_name');
+        } else {
+            $query->whereRaw('LOWER(middle_name) = ?', [$middleLower]);
+        }
+
+        if ($query->exists()) {
+            return back()
+                ->withErrors(['first_name' => 'A user with this name combination already exists. Please use a different name or add a middle name to differentiate.'])
+                ->withInput();
         }
 
         $user = User::create([
-            'first_name' => $request->first_name,
-            'middle_name' => $request->middle_name,
-            'last_name' => $request->last_name,
+            'first_name' => Str::title($request->first_name),
+            'middle_name' => $request->middle_name ? Str::title($request->middle_name) : null,
+            'last_name' => Str::title($request->last_name),
             'contact_number' => $request->contact_number,
             'email' => $request->email,
             'password' => Hash::make($request->password),
@@ -64,8 +75,11 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
+        // Login the user after registration
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // Since User implements MustVerifyEmail, always redirect to verification.notice
+        // The conditional is unnecessary because new users haven't verified their email yet
+        return redirect(route('verification.notice', absolute: false));
     }
 }

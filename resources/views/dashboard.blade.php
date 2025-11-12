@@ -35,7 +35,7 @@
                     </div>
                 </div>
 
-                <!-- Announcements/Events Section -->
+                <!-- Announcements Section -->
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
                         <h3 class="text-2xl font-bold mb-4">{{ __('Latest Announcements') }}</h3>

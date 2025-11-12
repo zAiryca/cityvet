@@ -4,26 +4,26 @@
         <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
             <!-- Search -->
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
-                <input type="text" wire:model.live="search" placeholder="Name or description..."
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('messages.Search') }}</label>
+                <input type="text" wire:model.live="search" placeholder="{{ __('messages.Name') }} {{ __('messages.or') }} {{ __('messages.Description') }}..."
                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
 
             <!-- Species -->
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Species</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('messages.Species') }}</label>
                 <select wire:model.live="species" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">Species</option>
-                    <option value="Canine">Canine</option>
-                    <option value="Feline">Feline</option>
+                    <option value="">{{ __('messages.Species') }}</option>
+                    <option value="Canine">{{ __('messages.Canine') }}</option>
+                    <option value="Feline">{{ __('messages.Feline') }}</option>
                 </select>
             </div>
 
             <!-- Breed -->
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Breed</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('messages.Breed') }}</label>
                 <select wire:model.live="breed" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">Breed</option>
+                    <option value="">{{ __('messages.Breed') }}</option>
                     @if($species && isset($breeds[$species]))
                         @foreach($breeds[$species] as $breedOption)
                             <option value="{{ $breedOption }}">{{ $breedOption }}</option>
@@ -34,18 +34,18 @@
 
             <!-- Gender -->
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('messages.Gender') }}</label>
                 <select wire:model.live="gender" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">Gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="unknown">Unknown</option>
+                    <option value="">{{ __('messages.Gender') }}</option>
+                    <option value="male">{{ __('messages.Male') }}</option>
+                    <option value="female">{{ __('messages.Female') }}</option>
+                    <option value="unknown">{{ __('messages.Unknown') }}</option>
                 </select>
             </div>
 
             <!-- Color -->
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Color</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('messages.Color') }}</label>
                 <div class="grid grid-cols-5 gap-2">
                     @foreach($colors as $colorOption)
                         <button type="button"
@@ -62,7 +62,7 @@
             <div class="flex items-end">
                 <button wire:click="$set('species', ''); $set('breed', ''); $set('gender', ''); $set('color', ''); $set('search', '');"
                         class="w-full bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition duration-200">
-                    Clear Filters
+                    {{ __('messages.Clear Filters') }}
                 </button>
             </div>
         </div>
@@ -101,7 +101,7 @@
             </div>
         @empty
             <div class="col-span-full text-center py-12">
-                <p class="text-gray-500 text-lg">No pets found matching your criteria.</p>
+                <p class="text-gray-500 text-lg">{{ __('messages.No pets found matching your criteria.') }}</p>
             </div>
         @endforelse
     </div>

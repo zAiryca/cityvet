@@ -12,7 +12,7 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pet/Event</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pet/Announcement</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
@@ -55,7 +55,7 @@
         {{ $requests->links() }}
     @else
         <div class="bg-white p-6 rounded-lg shadow text-center">
-            <p class="text-gray-500 mb-4">No requests yet. Start by browsing pets or events!</p>
+            <p class="text-gray-500 mb-4">No requests yet. Start by browsing pets or announcements!</p>
             <div class="space-x-4">
                 <a href="{{ route('pets.adoptable') }}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Browse Adoptable</a>
                 <a href="{{ route('pets.impounded') }}" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">View Impounded</a>

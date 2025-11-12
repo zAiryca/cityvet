@@ -31,9 +31,7 @@ Route::middleware('setlocale')->group(function () {
     })->name('lang.switch');
 
     // Public routes (no auth needed)
-    Route::get('/', function () {
-        return redirect()->route('login');
-    })->name('home');
+    Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/impounded', [PetController::class, 'impounded'])->name('pets.impounded');
     Route::get('/adoptable', [PetController::class, 'adoptable'])->name('pets.adoptable');
     Route::get('/lost-found', [PosterController::class, 'index'])->name('posters.index');
@@ -56,7 +54,7 @@ Route::middleware('setlocale')->group(function () {
     require __DIR__.'/auth.php';
 
     // Authenticated user routes (normal users)
-    Route::middleware('auth')->group(function () {
+    Route::middleware(['auth', 'verified'])->group(function () {
         // Profile routes
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -96,7 +94,7 @@ Route::middleware('setlocale')->group(function () {
     });
 
     // Admin routes (auth + admin middleware)
-    Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
         // Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -138,31 +136,3 @@ Route::get('/check-admin', function () {
 Route::get('/check-user', function () {
     return "<h2>✅ Welcome, User!</h2>";
 })->middleware('auth');
-
-// // Temporary route to log in as admin user
-// Route::get('/temp-admin-login', function () {
-//     $admin = \App\Models\User::where('role', 'admin')->first();
-
-//     if (!$admin) {
-//         // If no admin exists, create one
-//         $admin = \App\Models\User::factory()->create([
-//             'first_name' => 'Admin',
-//             'last_name' => 'User',
-//             'email' => 'admin@cityvet.com',
-//             'password' => bcrypt('password'), // You might want to use Hash::make()
-//             'role' => 'admin',
-//             // Add other necessary fields from your user factory or model defaults
-//             'middle_name' => 'Super',
-//             'contact_number' => '1234567890',
-//             'street' => '123 Admin Street',
-//             'barangay' => 'Adminville',
-//             'city_municipality' => 'Admin City',
-//             'province' => 'Adminland',
-//         ]);
-//     }
-
-//     Auth::login($admin);
-
-//     return redirect()->route('admin.dashboard');
-// });
-

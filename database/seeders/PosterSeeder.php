@@ -42,5 +42,22 @@ class PosterSeeder extends Seeder
             'reward' => null,
             'approved' => true,
         ]);
+
+        Poster::create([
+            'user_id' => 3, // Jane Smith
+            'type' => 'lost',
+            'pet_name' => 'Max',
+            'species' => 'Dog',
+            'breed' => 'Beagle',
+            'gender' => 'male',
+            'color_markings' => 'Brown and white fur',
+            'date_lost_found' => '2025-10-05',
+            'last_seen' => 'Near the park',
+            'found_at' => null,
+            'photo' => 'posters/max.jpg',
+            'contact_info' => 'jane@example.com / 09123456789',
+            'reward' => 300.00,
+            'approved' => true,
+        ]);
     }
 }

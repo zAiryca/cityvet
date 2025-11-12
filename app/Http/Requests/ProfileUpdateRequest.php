@@ -16,9 +16,9 @@ class ProfileUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => ['required', 'string', 'max:255'],
-            'middle_name' => ['nullable', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:255', 'regex:/^[A-Z]/'],
+            'middle_name' => ['nullable', 'string', 'max:255', 'regex:/^[A-Z]/'],
+            'last_name' => ['required', 'string', 'max:255', 'regex:/^[A-Z]/'],
             'contact_number' => ['required', 'string', 'max:20'],
             'emergency_contact' => ['nullable', 'string', 'max:20'],
             'street' => ['required', 'string', 'max:255'],

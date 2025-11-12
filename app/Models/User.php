@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable;
 
@@ -15,6 +17,20 @@ class User extends Authenticatable
     ];
 
     protected $hidden = ['password', 'remember_token'];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+
+    /**
+     * Get the user's email in lowercase.
+     */
+    protected function email(): Attribute
+    {
+        return Attribute::make(
+            set: fn ($value) => strtolower($value),
+        );
+    }
 
     // Relationships
     public function pets()
@@ -41,13 +57,6 @@ class User extends Authenticatable
     {
         return $this->hasMany(Pet::class)->where('status', 'claimed');
     }
-
-    public function createdEvents()
-    {
-        return $this->hasMany(Event::class);
-    }
-
-
 
     // Check if admin
     public function isAdmin()
