@@ -13,14 +13,14 @@ class UserController extends Controller
     public function index()
     {
         if (!auth()->user()->isAdmin()) abort(403);
-        $users = User::withCount(['adoptedPets', 'claimedPets', 'requests', 'eventRegistrations'])->paginate(10);
+        $users = User::withCount(['adoptedPets', 'claimedPets', 'requests'])->paginate(10);
         return view('admin.users.index', compact('users'));
     }
 
     public function show(User $user)
     {
         if (!auth()->user()->isAdmin()) abort(403);
-        $user->load(['adoptedPets', 'claimedPets', 'posters', 'requests.requestable', 'eventRegistrations.event']);
+        $user->load(['adoptedPets', 'claimedPets', 'posters', 'requests.requestable']);
         return view('admin.users.show', compact('user'));
     }
 

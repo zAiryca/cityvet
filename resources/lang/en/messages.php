@@ -25,7 +25,7 @@ return [
     'My Registered Pets' => 'My Registered Pets',
     'Register a New Pet' => 'Register a New Pet',
     'My Requests' => 'My Requests',
-    'Track your claim, adopt, and event registration requests.' => 'Track your claim, adopt, and event registration requests.',
+    'Track your claim, adopt, and event registration requests.' => 'Track your claim and adopt requests.',
     'No requests yet. Start by browsing pets or events!' => 'No requests yet. Start by browsing pets or events!',
     'Browse Adoptable' => 'Browse Adoptable',
     'View Impounded' => 'View Impounded',

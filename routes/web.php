@@ -78,6 +78,17 @@ Route::middleware('setlocale')->group(function () {
         Route::get('/lost-found/create', [PosterController::class, 'create'])->name('posters.create');
         Route::post('/lost-found', [PosterController::class, 'store'])->name('posters.store');
 
+        // User posters management
+        Route::get('/my-posters', function () {
+            $posters = Auth::user()->posters()->paginate(10);
+            return view('user.posters', compact('posters'));
+        })->name('user.posters');
+
+        Route::get('/posters/{poster}/edit', [PosterController::class, 'edit'])->name('posters.edit');
+        Route::patch('/posters/{poster}', [PosterController::class, 'update'])->name('posters.update');
+        Route::patch('/posters/{poster}/reunite', [PosterController::class, 'reunite'])->name('posters.reunite');
+        Route::delete('/posters/{poster}', [PosterController::class, 'destroy'])->name('posters.destroy');
+
 
 
         // Pet requests: Submit claim/adopt
@@ -91,6 +102,8 @@ Route::middleware('setlocale')->group(function () {
 
         // Pet registration routes
         Route::resource('pet-registrations', PetRegistrationController::class);
+        Route::post('/pet-registrations/{pet}/approve', [PetRegistrationController::class, 'approve'])->name('pet-registrations.approve');
+        Route::post('/pet-registrations/{pet}/deny', [PetRegistrationController::class, 'deny'])->name('pet-registrations.deny');
     });
 
     // Admin routes (auth + admin middleware)
@@ -101,20 +114,27 @@ Route::middleware('setlocale')->group(function () {
         // Pets CRUD
         Route::resource('pets', AdminPetController::class);
         Route::post('/pets/{pet}/urgent', [AdminPetController::class, 'setUrgent'])->name('pets.set-urgent');
+        Route::post('/pets/{pet}/mark-adopted', [AdminPetController::class, 'markAsAdopted'])->name('pets.mark-adopted');
+        Route::post('/pets/{pet}/mark-claimed', [AdminPetController::class, 'markAsClaimed'])->name('pets.mark-claimed');
 
         // Announcements CRUD
         Route::resource('announcements', AdminAnnouncementController::class);
 
         // Posters management
         Route::get('/posters', function () {
-            $posters = \App\Models\Poster::with('user')->paginate(10);
+            $query = \App\Models\Poster::with('user');
+
+            // Apply filters
+            if (request('status')) {
+                $query->where('status', request('status'));
+            }
+            if (request('type')) {
+                $query->where('type', request('type'));
+            }
+
+            $posters = $query->paginate(10);
             return view('admin.posters.index', compact('posters'));
         })->name('posters.index');
-
-        Route::patch('/posters/{poster}/approve', function ($poster) {
-            $poster->update(['approved' => true]);
-            return back()->with('success', 'Poster approved.');
-        })->name('posters.approve');
 
         Route::delete('/posters/{poster}', [PosterController::class, 'destroy'])->name('posters.destroy');
 

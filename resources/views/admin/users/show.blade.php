@@ -142,36 +142,7 @@
                         @endif
                     </div>
 
-                    <!-- Event Registrations -->
-                    <div class="mb-8">
-                        <h3 class="text-xl font-bold mb-4">Event Registrations ({{ $user->eventRegistrations->count() }})</h3>
-                        @if($user->eventRegistrations->count() > 0)
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Event</th>
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Pet</th>
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Registered</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach($user->eventRegistrations as $registration)
-                                    <tr>
-                                        <td class="px-4 py-2 text-sm">{{ $registration->event->title }}</td>
-                                        <td class="px-4 py-2 text-sm">{{ $registration->pet->name }}</td>
-                                        <td class="px-4 py-2 text-sm">{{ ucfirst($registration->status) }}</td>
-                                        <td class="px-4 py-2 text-sm">{{ $registration->created_at->format('M j, Y') }}</td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                        @else
-                        <p class="text-gray-500">No event registrations.</p>
-                        @endif
-                    </div>
+
 
                     <div class="flex justify-start">
                         <a href="{{ route('admin.users.index') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-2">

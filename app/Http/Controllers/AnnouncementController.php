@@ -10,7 +10,18 @@ class AnnouncementController extends Controller
 {
     public function index(Request $request)
     {
-        $announcements = Announcement::orderBy('event_date')->paginate(9);
+        $query = Announcement::query();
+
+        // Apply filters
+        if ($request->search) {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->category) {
+            $query->where('category', $request->category);
+        }
+
+        $announcements = $query->orderBy('created_at', 'desc')->paginate(9);
         return view('events.index', compact('announcements'));
     }
 

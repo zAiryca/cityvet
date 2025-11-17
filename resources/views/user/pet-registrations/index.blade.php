@@ -1,74 +1,102 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('My Pet Pre-Registrations') }}
-        </h2>
-    </x-slot>
+@extends('layouts.app')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                <div class="p-6 lg:p-8 bg-white border-b border-gray-200">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-lg font-semibold">Your Pet Pre-Registrations</h3>
-                        <a href="{{ route('pet-registrations.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            Pre-Register New Pet
-                        </a>
+@section('title', '| My Pets')
+
+@section('content')
+<div class="max-w-7xl mx-auto py-6 px-4">
+    <h1 class="text-3xl font-bold mb-6">My Pets</h1>
+    <p class="mb-6">Manage your pet registrations and pre-registrations.</p>
+
+    <div class="mb-6">
+        <a href="{{ route('pet-registrations.create') }}" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">New Pet</a>
+    </div>
+
+    <!-- Pre-Registered Pets Section -->
+    @php
+        $preRegistered = $pets->where('registration_status', 'pre-registered');
+        $registered = $pets->where('registration_status', 'approved');
+    @endphp
+
+    @if($preRegistered->count() > 0)
+        <div class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Pre-Registered Pets</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($preRegistered as $pet)
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        @if($pet->photo)
+                            <img src="{{ asset('storage/' . $pet->photo) }}" alt="{{ $pet->name ?: 'Pet' }}" class="w-full h-48 object-cover">
+                        @else
+                            <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
+                                <span class="text-gray-500">No Photo</span>
+                            </div>
+                        @endif
+
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ $pet->name }}</h3>
+                            <p class="text-sm text-gray-600 mb-2">{{ $pet->species }} - {{ $pet->breed }}</p>
+                            <p class="text-sm text-gray-500 mb-3">{{ $pet->birthday ? $pet->birthday->format('M d, Y') : 'No birthday' }}</p>
+
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-xs text-gray-500">{{ $pet->gender }}</span>
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Pre-Registered</span>
+                            </div>
+
+                            <div class="flex space-x-2">
+                                <a href="{{ route('pet-registrations.show', $pet) }}" class="flex-1 bg-purple-600 text-white py-2 rounded text-center hover:bg-purple-700 transition duration-200 text-sm">
+                                    View
+                                </a>
+                                <a href="{{ route('pet-registrations.edit', $pet) }}" class="flex-1 bg-blue-600 text-white py-2 rounded text-center hover:bg-blue-700 transition duration-200 text-sm">
+                                    Edit
+                                </a>
+                            </div>
+                        </div>
                     </div>
-
-                    @if($pets->count() > 0)
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full bg-white">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Species</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Breed</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach($pets as $pet)
-                                        <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $pet->name }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $pet->species }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $pet->breed }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                    @if($pet->registration_status === 'pre-registered') bg-yellow-100 text-yellow-800
-                                                    @elseif($pet->registration_status === 'approved') bg-green-100 text-green-800
-                                                    @else bg-red-100 text-red-800 @endif">
-                                                    {{ ucfirst(str_replace('-', ' ', $pet->registration_status)) }}
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <a href="{{ route('pet-registrations.show', $pet) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">View</a>
-                                                @if($pet->registration_status === 'pre-registered')
-                                                    <a href="{{ route('pet-registrations.edit', $pet) }}" class="text-blue-600 hover:text-blue-900 mr-3">Edit</a>
-                                                    <form method="POST" action="{{ route('pet-registrations.destroy', $pet) }}" class="inline">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Are you sure you want to delete this pre-registration?')">Delete</button>
-                                                    </form>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                        {{ $pets->links() }}
-                    @else
-                        <div class="text-center py-8">
-                            <p class="text-gray-500 mb-4">You haven't pre-registered any pets yet.</p>
-                            <a href="{{ route('pet-registrations.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                Pre-Register Your First Pet
-                            </a>
-                        </div>
-                    @endif
-                </div>
+                @endforeach
             </div>
         </div>
-    </div>
-</x-app-layout>
+    @endif
+
+    @if($registered->count() > 0)
+        <div class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Registered Pets</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($registered as $pet)
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        @if($pet->photo)
+                            <img src="{{ asset('storage/' . $pet->photo) }}" alt="{{ $pet->name ?: 'Pet' }}" class="w-full h-48 object-cover">
+                        @else
+                            <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
+                                <span class="text-gray-500">No Photo</span>
+                            </div>
+                        @endif
+
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ $pet->name }}</h3>
+                            <p class="text-sm text-gray-600 mb-2">{{ $pet->species }} - {{ $pet->breed }}</p>
+                            <p class="text-sm text-gray-500 mb-3">{{ $pet->birthday ? $pet->birthday->format('M d, Y') : 'No birthday' }}</p>
+
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-xs text-gray-500">{{ $pet->gender }}</span>
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Registered</span>
+                            </div>
+
+                            <div class="flex space-x-2">
+                                <a href="{{ route('pet-registrations.show', $pet) }}" class="flex-1 bg-purple-600 text-white py-2 rounded text-center hover:bg-purple-700 transition duration-200 text-sm">
+                                    View
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
+    @if($preRegistered->count() == 0 && $registered->count() == 0)
+        <div class="bg-white p-6 rounded-lg shadow text-center">
+            <p class="text-gray-500 mb-4">You haven't registered any pets yet.</p>
+            <a href="{{ route('pet-registrations.create') }}" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">Register Your First Pet</a>
+        </div>
+    @endif
+</div>
+@endsection

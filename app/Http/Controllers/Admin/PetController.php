@@ -9,11 +9,21 @@ use Illuminate\Support\Facades\Auth;
 
 class PetController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         if (!Auth::user()->isAdmin()) abort(403);
-        $pets = Pet::with('user')->paginate(10);
-        return view('admin.pets.index', compact('pets'));
+
+        $status = $request->get('status');
+        $petsQuery = Pet::query()->with('user');
+        $petsQuery->when($status, function ($query, $status) {
+            return $query->where('status', $status);
+        });
+        $pets = $petsQuery->paginate(10);
+
+        return view('admin.pets.index', [
+            'pets' => $pets,
+            'currentStatus' => $status,
+        ]);
     }
 
     public function create()
@@ -26,10 +36,10 @@ class PetController extends Controller
     {
         if (!Auth::user()->isAdmin()) abort(403);
         $validated = $request->validate([
-            'name' => 'required|string|max:100',
             'species' => 'required|string|max:50',
             'breed' => 'required|string|max:100',
-            'birth_date' => 'nullable|date|before:today',
+            'estimated_age_years' => 'nullable|integer|min:0|max:20',
+            'estimated_age_months' => 'nullable|integer|min:0|max:11',
             'gender' => 'required|in:male,female,unknown',
             'color_markings' => 'nullable|array',
             'color_markings.*' => 'string',
@@ -75,10 +85,10 @@ class PetController extends Controller
     {
         if (!Auth::user()->isAdmin()) abort(403);
         $validated = $request->validate([
-            'name' => 'required|string|max:100',
             'species' => 'required|string|max:50',
             'breed' => 'required|string|max:100',
-            'birth_date' => 'nullable|date|before:today',
+            'estimated_age_years' => 'nullable|integer|min:0|max:20',
+            'estimated_age_months' => 'nullable|integer|min:0|max:11',
             'gender' => 'required|in:male,female,unknown',
             'color_markings' => 'nullable|array',
             'color_markings.*' => 'string',
@@ -91,8 +101,6 @@ class PetController extends Controller
             'remaining_days' => 'nullable|integer|min:0',
             'user_id' => 'nullable|exists:users,id',
             'urgent_deadline' => 'nullable|date|after:now',
-            'registration_status' => 'nullable|in:pre-registered,approved,denied',
-            'admin_notes' => 'nullable|string|max:1000',
         ]);
 
         if ($request->has('color_markings') && is_array($request->color_markings)) {
@@ -134,5 +142,21 @@ class PetController extends Controller
             'urgent_deadline' => $request->urgent_deadline,
         ]);
         return back()->with('success', 'Pet marked as urgent with deadline.');
+    }
+
+    // Mark pet as adopted
+    public function markAsAdopted(Pet $pet)
+    {
+        if (!Auth::user()->isAdmin()) abort(403);
+        $pet->update(['status' => 'adopted']);
+        return back()->with('success', 'Pet marked as adopted.');
+    }
+
+    // Mark pet as claimed
+    public function markAsClaimed(Pet $pet)
+    {
+        if (!Auth::user()->isAdmin()) abort(403);
+        $pet->update(['status' => 'claimed']);
+        return back()->with('success', 'Pet marked as claimed.');
     }
 }

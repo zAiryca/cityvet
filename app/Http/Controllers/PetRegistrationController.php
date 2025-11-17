@@ -13,7 +13,7 @@ class PetRegistrationController extends Controller
      */
     public function index()
     {
-        $pets = Auth::user()->pets()->where('registration_status', 'pre-registered')->get();
+        $pets = Auth::user()->pets()->get();
         return view('user.pet-registrations.index', compact('pets'));
     }
 
@@ -32,11 +32,13 @@ class PetRegistrationController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'species' => 'required|in:Feline,Canine',
+            'species' => 'required|in:Canine,Feline',
             'breed' => 'required|string|max:255',
-            'birth_date' => 'required|date|before:today',
-            'gender' => 'required|in:Male,Female',
-            'color_markings' => 'required|string|max:255',
+            'estimated_age_years' => 'nullable|integer|min:0|max:20',
+            'estimated_age_months' => 'nullable|integer|min:0|max:11',
+            'gender' => 'required|in:male,female,unknown',
+            'color_markings' => 'nullable|array',
+            'color_markings.*' => 'string',
             'description' => 'nullable|string',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -46,17 +48,23 @@ class PetRegistrationController extends Controller
             $photoPath = $request->file('photo')->store('pets', 'public');
         }
 
+        $colorMarkings = '';
+        if ($request->has('color_markings') && is_array($request->color_markings)) {
+            $colorMarkings = implode(',', $request->color_markings);
+        }
+
         Pet::create([
             'user_id' => Auth::id(),
             'name' => $request->name,
             'species' => $request->species,
             'breed' => $request->breed,
-            'birth_date' => $request->birth_date,
+            'estimated_age_years' => $request->estimated_age_years,
+            'estimated_age_months' => $request->estimated_age_months,
             'gender' => $request->gender,
-            'color_markings' => $request->color_markings,
+            'color_markings' => $colorMarkings,
             'description' => $request->description,
             'photo' => $photoPath,
-            'status' => 'registered', // Will be set to registered once approved
+            'status' => 'pre-registered',
             'registration_status' => 'pre-registered',
         ]);
 
@@ -90,11 +98,13 @@ class PetRegistrationController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'species' => 'required|in:Feline,Canine',
+            'species' => 'required|in:Canine,Feline',
             'breed' => 'required|string|max:255',
-            'birth_date' => 'required|date|before:today',
-            'gender' => 'required|in:Male,Female',
-            'color_markings' => 'required|string|max:255',
+            'estimated_age_years' => 'nullable|integer|min:0|max:20',
+            'estimated_age_months' => 'nullable|integer|min:0|max:11',
+            'gender' => 'required|in:male,female,unknown',
+            'color_markings' => 'nullable|array',
+            'color_markings.*' => 'string',
             'description' => 'nullable|string',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -104,13 +114,19 @@ class PetRegistrationController extends Controller
             $photoPath = $request->file('photo')->store('pets', 'public');
         }
 
+        $colorMarkings = '';
+        if ($request->has('color_markings') && is_array($request->color_markings)) {
+            $colorMarkings = implode(',', $request->color_markings);
+        }
+
         $pet->update([
             'name' => $request->name,
             'species' => $request->species,
             'breed' => $request->breed,
-            'birth_date' => $request->birth_date,
+            'estimated_age_years' => $request->estimated_age_years,
+            'estimated_age_months' => $request->estimated_age_months,
             'gender' => $request->gender,
-            'color_markings' => $request->color_markings,
+            'color_markings' => $colorMarkings,
             'description' => $request->description,
             'photo' => $photoPath,
         ]);
@@ -127,5 +143,32 @@ class PetRegistrationController extends Controller
         $pet->delete();
 
         return redirect()->route('pet-registrations.index')->with('success', 'Pet pre-registration deleted successfully!');
+    }
+
+    /**
+     * Approve a pet registration (Admin only)
+     */
+    public function approve(string $id)
+    {
+        if (!Auth::user()->isAdmin()) abort(403);
+        $pet = Pet::findOrFail($id);
+        $pet->update([
+            'registration_status' => 'approved',
+            'status' => 'registered'
+        ]);
+
+        return back()->with('success', 'Pet registration approved successfully!');
+    }
+
+    /**
+     * Deny a pet registration (Admin only)
+     */
+    public function deny(string $id)
+    {
+        if (!Auth::user()->isAdmin()) abort(403);
+        $pet = Pet::findOrFail($id);
+        $pet->update(['registration_status' => 'denied']);
+
+        return back()->with('success', 'Pet registration denied.');
     }
 }

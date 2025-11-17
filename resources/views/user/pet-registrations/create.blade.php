@@ -1,92 +1,201 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Pre-Register Pet') }}
-        </h2>
-    </x-slot>
+@extends('layouts.app')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                <div class="p-6 lg:p-8 bg-white border-b border-gray-200">
-                    <form method="POST" action="{{ route('pet-registrations.store') }}" enctype="multipart/form-data">
-                        @csrf
+@section('title', '| New Pet')
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Name -->
-                            <div>
-                                <label for="name" class="block text-sm font-medium text-gray-700">Pet Name</label>
-                                <input type="text" name="name" id="name" value="{{ old('name') }}" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('name') border-red-500 @enderror">
-                                @error('name') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                            </div>
+@section('content')
+<div class="max-w-7xl mx-auto py-6 px-4">
+    <h1 class="text-3xl font-bold mb-6">New Pet</h1>
+    <p class="mb-6">Pre-register your pet for official registration.</p>
 
-                            <!-- Species -->
-                            <div>
-                                <label for="species" class="block text-sm font-medium text-gray-700">Species</label>
-                                <select name="species" id="species" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('species') border-red-500 @enderror">
-                                    <option value="">Select Species</option>
-                                    <option value="Feline" {{ old('species') == 'Feline' ? 'selected' : '' }}>Feline</option>
-                                    <option value="Canine" {{ old('species') == 'Canine' ? 'selected' : '' }}>Canine</option>
-                                </select>
-                                @error('species') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                            </div>
+    <form action="{{ route('pet-registrations.store') }}" method="POST" enctype="multipart/form-data" class="max-w-4xl bg-white rounded-lg shadow p-6">
+        @csrf
 
-                            <!-- Breed -->
-                            <div>
-                                <label for="breed" class="block text-sm font-medium text-gray-700">Breed</label>
-                                <input type="text" name="breed" id="breed" value="{{ old('breed') }}" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('breed') border-red-500 @enderror">
-                                @error('breed') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                            </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Pet Name -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Pet Name</label>
+                <input type="text" name="name" value="{{ old('name') }}" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('name') border-red-500 @enderror">
+                @error('name') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+            </div>
 
-                            <!-- Birth Date -->
-                            <div>
-                                <label for="birth_date" class="block text-sm font-medium text-gray-700">Birth Date</label>
-                                <input type="date" name="birth_date" id="birth_date" value="{{ old('birth_date') }}" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('birth_date') border-red-500 @enderror">
-                                @error('birth_date') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                            </div>
+            <!-- Species -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Species</label>
+                <select name="species" id="species" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('species') border-red-500 @enderror">
+                    <option value="">Select Species</option>
+                    <option value="Canine" {{ old('species') === 'Canine' ? 'selected' : '' }}>Canine</option>
+                    <option value="Feline" {{ old('species') === 'Feline' ? 'selected' : '' }}>Feline</option>
+                </select>
+                @error('species') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+            </div>
 
-                            <!-- Gender -->
-                            <div>
-                                <label for="gender" class="block text-sm font-medium text-gray-700">Gender</label>
-                                <select name="gender" id="gender" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('gender') border-red-500 @enderror">
-                                    <option value="">Select Gender</option>
-                                    <option value="Male" {{ old('gender') == 'Male' ? 'selected' : '' }}>Male</option>
-                                    <option value="Female" {{ old('gender') == 'Female' ? 'selected' : '' }}>Female</option>
-                                </select>
-                                @error('gender') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                            </div>
+            <!-- Breed -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Breed</label>
+                <select name="breed" id="breed" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('breed') border-red-500 @enderror">
+                    <option value="">Select Breed</option>
+                    @if(old('species') === 'Canine' || (isset($pet) && $pet->species === 'Canine'))
+                        <option value="Aspin" {{ old('breed') === 'Aspin' ? 'selected' : '' }}>Aspin</option>
+                        <option value="Poodle" {{ old('breed') === 'Poodle' ? 'selected' : '' }}>Poodle</option>
+                        <option value="Shih Tzu" {{ old('breed') === 'Shih Tzu' ? 'selected' : '' }}>Shih Tzu</option>
+                        <option value="Maltese" {{ old('breed') === 'Maltese' ? 'selected' : '' }}>Maltese</option>
+                        <option value="Pug" {{ old('breed') === 'Pug' ? 'selected' : '' }}>Pug</option>
+                        <option value="Beagle" {{ old('breed') === 'Beagle' ? 'selected' : '' }}>Beagle</option>
+                        <option value="Cocker Spaniel" {{ old('breed') === 'Cocker Spaniel' ? 'selected' : '' }}>Cocker Spaniel</option>
+                        <option value="Labrador Retriever" {{ old('breed') === 'Labrador Retriever' ? 'selected' : '' }}>Labrador Retriever</option>
+                        <option value="German Shepherd" {{ old('breed') === 'German Shepherd' ? 'selected' : '' }}>German Shepherd</option>
+                        <option value="Golden Retriever" {{ old('breed') === 'Golden Retriever' ? 'selected' : '' }}>Golden Retriever</option>
+                    @elseif(old('species') === 'Feline' || (isset($pet) && $pet->species === 'Feline'))
+                        <option value="Philippine Domestic Cat" {{ old('breed') === 'Philippine Domestic Cat' ? 'selected' : '' }}>Philippine Domestic Cat</option>
+                        <option value="Siamese" {{ old('breed') === 'Siamese' ? 'selected' : '' }}>Siamese</option>
+                        <option value="Persian" {{ old('breed') === 'Persian' ? 'selected' : '' }}>Persian</option>
+                        <option value="Maine Coon" {{ old('breed') === 'Maine Coon' ? 'selected' : '' }}>Maine Coon</option>
+                        <option value="British Shorthair" {{ old('breed') === 'British Shorthair' ? 'selected' : '' }}>British Shorthair</option>
+                        <option value="Ragdoll" {{ old('breed') === 'Ragdoll' ? 'selected' : '' }}>Ragdoll</option>
+                        <option value="Bengal" {{ old('breed') === 'Bengal' ? 'selected' : '' }}>Bengal</option>
+                        <option value="Scottish Fold" {{ old('breed') === 'Scottish Fold' ? 'selected' : '' }}>Scottish Fold</option>
+                        <option value="Abyssinian" {{ old('breed') === 'Abyssinian' ? 'selected' : '' }}>Abyssinian</option>
+                        <option value="Russian Blue" {{ old('breed') === 'Russian Blue' ? 'selected' : '' }}>Russian Blue</option>
+                    @endif
+                </select>
+                @error('breed') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+            </div>
 
-                            <!-- Color Markings -->
-                            <div>
-                                <label for="color_markings" class="block text-sm font-medium text-gray-700">Color Markings</label>
-                                <input type="text" name="color_markings" id="color_markings" value="{{ old('color_markings') }}" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('color_markings') border-red-500 @enderror">
-                                @error('color_markings') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                            </div>
-                        </div>
-
-                        <!-- Description -->
-                        <div class="mt-6">
-                            <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                            <textarea name="description" id="description" rows="4" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('description') border-red-500 @enderror">{{ old('description') }}</textarea>
-                            @error('description') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                        </div>
-
-                        <!-- Photo -->
-                        <div class="mt-6">
-                            <label for="photo" class="block text-sm font-medium text-gray-700">Photo</label>
-                            <input type="file" name="photo" id="photo" accept="image/*" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('photo') border-red-500 @enderror">
-                            @error('photo') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                        </div>
-
-                        <div class="flex items-center justify-end mt-6">
-                            <a href="{{ route('pet-registrations.index') }}" class="mr-4 text-gray-600 hover:text-gray-900">Cancel</a>
-                            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                Submit Pre-Registration
-                            </button>
-                        </div>
-                    </form>
+            <!-- Estimated Age -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Estimated Age</label>
+                <div class="grid grid-cols-2 gap-2 mt-1">
+                    <div>
+                        <label class="block text-xs text-gray-600">Years</label>
+                        <select name="estimated_age_years" class="block w-full border border-gray-300 rounded-md p-2 @error('estimated_age_years') border-red-500 @enderror">
+                            <option value="">Select Years</option>
+                            @for($i = 0; $i <= 20; $i++)
+                                <option value="{{ $i }}" {{ old('estimated_age_years') == $i ? 'selected' : '' }}>{{ $i }}</option>
+                            @endfor
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-600">Months</label>
+                        <select name="estimated_age_months" class="block w-full border border-gray-300 rounded-md p-2 @error('estimated_age_months') border-red-500 @enderror">
+                            <option value="">Select Months</option>
+                            @for($i = 0; $i <= 11; $i++)
+                                <option value="{{ $i }}" {{ old('estimated_age_months') == $i ? 'selected' : '' }}>{{ $i }}</option>
+                            @endfor
+                        </select>
+                    </div>
                 </div>
+                @error('estimated_age_years') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                @error('estimated_age_months') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+            </div>
+
+            <!-- Gender -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Gender</label>
+                <select name="gender" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('gender') border-red-500 @enderror">
+                    <option value="">Select Gender</option>
+                    <option value="male" {{ old('gender') === 'male' ? 'selected' : '' }}>Male</option>
+                    <option value="female" {{ old('gender') === 'female' ? 'selected' : '' }}>Female</option>
+                    <option value="unknown" {{ old('gender') === 'unknown' ? 'selected' : '' }}>Unknown</option>
+                </select>
+                @error('gender') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+            </div>
+
+            <!-- Color -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Color</label>
+                <div class="grid grid-cols-2 gap-2">
+                    <label class="flex items-center">
+                        <input type="checkbox" name="color_markings[]" value="Black" {{ in_array('Black', old('color_markings', [])) ? 'checked' : '' }} class="mr-2">
+                        Black
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" name="color_markings[]" value="White" {{ in_array('White', old('color_markings', [])) ? 'checked' : '' }} class="mr-2">
+                        White
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" name="color_markings[]" value="Brown" {{ in_array('Brown', old('color_markings', [])) ? 'checked' : '' }} class="mr-2">
+                        Brown
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" name="color_markings[]" value="Gray" {{ in_array('Gray', old('color_markings', [])) ? 'checked' : '' }} class="mr-2">
+                        Gray
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" name="color_markings[]" value="Orange" {{ in_array('Orange', old('color_markings', [])) ? 'checked' : '' }} class="mr-2">
+                        Orange
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" name="color_markings[]" value="Cream" {{ in_array('Cream', old('color_markings', [])) ? 'checked' : '' }} class="mr-2">
+                        Cream
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" name="color_markings[]" value="Red" {{ in_array('Red', old('color_markings', [])) ? 'checked' : '' }} class="mr-2">
+                        Red
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" name="color_markings[]" value="Tabby" {{ in_array('Tabby', old('color_markings', [])) ? 'checked' : '' }} class="mr-2">
+                        Tabby
+                    </label>
+                </div>
+                @error('color_markings') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
             </div>
         </div>
-    </div>
-</x-app-layout>
+
+        <!-- Description -->
+        <div class="mt-6">
+            <label class="block text-sm font-medium text-gray-700">Description</label>
+            <textarea name="description" rows="4" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('description') border-red-500 @enderror">{{ old('description') }}</textarea>
+            @error('description') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+        </div>
+
+        <!-- Photo -->
+        <div class="mt-6">
+            <label class="block text-sm font-medium text-gray-700">Photo</label>
+            <input type="file" name="photo" accept="image/*" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('photo') border-red-500 @enderror">
+            <p class="text-sm text-gray-500 mt-1">No file chosen</p>
+            @error('photo') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+        </div>
+
+        <div class="flex justify-end mt-6">
+            <a href="{{ route('pet-registrations.index') }}" class="mr-4 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</a>
+            <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">Save</button>
+        </div>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const speciesSelect = document.getElementById('species');
+            const breedSelect = document.getElementById('breed');
+
+            speciesSelect.addEventListener('change', function() {
+                const selectedSpecies = this.value;
+                breedSelect.innerHTML = '<option value="">Select Breed</option>';
+
+                if (selectedSpecies === 'Canine') {
+                    const canineBreeds = [
+                        'Aspin', 'Poodle', 'Shih Tzu', 'Maltese', 'Pug', 'Beagle',
+                        'Cocker Spaniel', 'Labrador Retriever', 'German Shepherd', 'Golden Retriever'
+                    ];
+                    canineBreeds.forEach(breed => {
+                        const option = document.createElement('option');
+                        option.value = breed;
+                        option.textContent = breed;
+                        breedSelect.appendChild(option);
+                    });
+                } else if (selectedSpecies === 'Feline') {
+                    const felineBreeds = [
+                        'Philippine Domestic Cat', 'Siamese', 'Persian', 'Maine Coon',
+                        'British Shorthair', 'Ragdoll', 'Bengal', 'Scottish Fold', 'Abyssinian', 'Russian Blue'
+                    ];
+                    felineBreeds.forEach(breed => {
+                        const option = document.createElement('option');
+                        option.value = breed;
+                        option.textContent = breed;
+                        breedSelect.appendChild(option);
+                    });
+                }
+            });
+        });
+    </script>
+</div>
+@endsection

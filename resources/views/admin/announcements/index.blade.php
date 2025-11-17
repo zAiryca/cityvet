@@ -3,44 +3,66 @@
 @section('title', '| Admin - Announcements')
 
 @section('content')
-<div class="max-w-7xl mx-auto py-6 px-4">
-    <h1 class="text-3xl font-bold mb-6">Manage Announcements</h1>
+<div class="px-4 py-6 mx-auto max-w-7xl">
+    <h1 class="mb-6 text-3xl font-bold">Manage Announcements</h1>
 
     <!-- Filters -->
-    <form method="GET" action="{{ route('admin.announcements.index') }}" class="bg-white p-4 rounded-lg shadow mb-6">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <input type="text" name="search" placeholder="Search by title" value="{{ request('search') }}" class="border p-2 rounded">
-            <input type="date" name="event_date" value="{{ request('event_date') }}" class="border p-2 rounded">
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Filter</button>
-            <a href="{{ route('admin.announcements.index') }}" class="ml-2 text-gray-500">Clear</a>
+    <form method="GET" action="{{ route('admin.announcements.index') }}" class="p-4 mb-6 bg-white rounded-lg shadow">
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
+            <input type="text" name="search" placeholder="Search by title" value="{{ request('search') }}" class="p-2 border rounded">
+            <input type="date" name="event_date" value="{{ request('event_date') }}" class="p-2 border rounded">
+            <select name="category" class="p-2 border rounded">
+                <option value="">All Categories</option>
+                <option value="Event" {{ request('category') == 'Event' ? 'selected' : '' }}>Event</option>
+                <option value="Trivia" {{ request('category') == 'Trivia' ? 'selected' : '' }}>Trivia</option>
+                <option value="Fun Fact" {{ request('category') == 'Fun Fact' ? 'selected' : '' }}>Fun Fact</option>
+                <option value="Holiday Notice" {{ request('category') == 'Holiday Notice' ? 'selected' : '' }}>Holiday Notice</option>
+            </select>
+            <div class="flex gap-2">
+                <button type="submit" class="px-4 py-2 text-white bg-blue-600 rounded">Filter</button>
+                <a href="{{ route('admin.announcements.index') }}" class="px-4 py-2 text-gray-500 border rounded">Clear</a>
+            </div>
         </div>
     </form>
 
-    <a href="{{ route('admin.announcements.create') }}" class="bg-green-600 text-white px-4 py-2 rounded mb-6 inline-block">Add New Announcement</a>
+    <a href="{{ route('admin.announcements.create') }}" class="inline-block px-4 py-2 mb-6 text-white bg-green-600 rounded">Add New Announcement</a>
 
     @if($announcements->count() > 0)
         <div class="overflow-x-auto bg-white rounded-lg shadow">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Registrations</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                        <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Title</th>
+                        <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Date</th>
+                        <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Location</th>
+                        <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Category</th>
+                        <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @foreach($announcements as $announcement)
                         <tr>
-                            <td class="px-6 py-4 whitespace-nowrap font-medium">{{ $announcement->title }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $announcement->event_date->format('M d, Y h:i A') }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ Str::limit($announcement->location, 30) }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $announcement->registrations->count() }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <a href="{{ route('admin.announcements.show', $announcement) }}" class="text-indigo-600 hover:text-indigo-900 mr-4">View</a>
-                                <a href="{{ route('admin.announcements.registrations', $announcement) }}" class="text-green-600 hover:text-green-900 mr-4">Registrations</a>
-                                <a href="{{ route('admin.announcements.edit', $announcement) }}" class="text-indigo-600 hover:text-indigo-900 mr-4">Edit</a>
+                            <td class="px-6 py-4 font-medium whitespace-nowrap">{{ $announcement->title }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">{{ $announcement->date_when ?: 'N/A' }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">{{ Str::limit($announcement->location, 30) ?: 'N/A' }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                                @if($announcement->category)
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                        @if($announcement->category == 'Event') bg-teal-100 text-teal-800
+                                        @elseif($announcement->category == 'Trivia') bg-purple-100 text-purple-800
+                                        @elseif($announcement->category == 'Fun Fact') bg-amber-100 text-amber-800
+                                        @elseif($announcement->category == 'Holiday Notice') bg-rose-100 text-rose-800
+                                        @else bg-gray-100 text-gray-800
+                                        @endif">
+                                        {{ $announcement->category }}
+                                    </span>
+                                @else
+                                    N/A
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 text-sm font-medium whitespace-nowrap">
+                                <a href="{{ route('admin.announcements.show', $announcement) }}" class="mr-4 text-indigo-600 hover:text-indigo-900">View</a>
+                                <a href="{{ route('admin.announcements.edit', $announcement) }}" class="mr-4 text-indigo-600 hover:text-indigo-900">Edit</a>
                                 <form action="{{ route('admin.announcements.destroy', $announcement) }}" method="POST" class="inline ml-4">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Delete this announcement?')">Delete</button>
@@ -53,7 +75,7 @@
         </div>
         {{ $announcements->appends(request()->query())->links() }}
     @else
-        <p class="text-gray-500 text-center py-8">No announcements found. <a href="{{ route('admin.announcements.create') }}" class="text-blue-600">Add the first one</a>.</p>
+        <p class="py-8 text-center text-gray-500">No announcements found. <a href="{{ route('admin.announcements.create') }}" class="text-blue-600">Add the first one</a>.</p>
     @endif
 </div>
 @endsection

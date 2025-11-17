@@ -25,7 +25,7 @@ return [
     'My Registered Pets' => 'Aking Mga Nakarehistrong Alagang Hayop',
     'Register a New Pet' => 'Magrehistro ng Bagong Alagang Hayop',
     'My Requests' => 'Aking Mga Kahilingan',
-    'Track your claim, adopt, and event registration requests.' => 'Subaybayan ang iyong mga kahilingan sa pagkuha, pag-ampun, at pagrehistro sa mga kaganapan.',
+    'Track your claim, adopt, and event registration requests.' => 'Subaybayan ang iyong mga kahilingan sa pagkuha at pag-ampun.',
     'No requests yet. Start by browsing pets or events!' => 'Wala pang kahilingan. Magsimula sa pamamagitan ng pag-browse ng mga alagang hayop o mga kaganapan!',
     'Browse Adoptable' => 'Browse ng Maaring Ampunin',
     'View Impounded' => 'Tingnan ang Impounded',

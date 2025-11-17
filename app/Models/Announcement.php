@@ -9,23 +9,19 @@ class Announcement extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'type', 'description', 'event_date', 'location'];
+    protected $fillable = ['title', 'category', 'description', 'date_when', 'location'];
 
     protected $casts = [
-        'event_date' => 'datetime',
+        // 'date_when' => 'datetime', // Keep as string for flexibility
     ];
 
     // Scope for upcoming events
     public function scopeUpcoming($query)
     {
-        return $query->where('event_date', '>=', now())->orderBy('event_date', 'asc');
+        return $query->where('date_when', '>=', now())->orderBy('date_when', 'asc');
     }
 
-    // 👇 Polymorphic relation
-    public function requests()
-    {
-        return $this->morphMany(PetRequest::class, 'requestable');
-    }
+    // No registration relationship needed - announcements are for viewing only
 
 
 }

@@ -39,11 +39,31 @@
                                 @error('breed') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
-                            <!-- Birth Date -->
+                            <!-- Estimated Age -->
                             <div>
-                                <label for="birth_date" class="block text-sm font-medium text-gray-700">Birth Date</label>
-                                <input type="date" name="birth_date" id="birth_date" value="{{ old('birth_date', $pet->birth_date ? $pet->birth_date->format('Y-m-d') : '') }}" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('birth_date') border-red-500 @enderror">
-                                @error('birth_date') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                                <label class="block text-sm font-medium text-gray-700">Estimated Age</label>
+                                <div class="grid grid-cols-2 gap-2 mt-1">
+                                    <div>
+                                        <label class="block text-xs text-gray-600">Years</label>
+                                        <select name="estimated_age_years" class="block w-full border border-gray-300 rounded-md p-2 @error('estimated_age_years') border-red-500 @enderror">
+                                            <option value="">Select Years</option>
+                                            @for($i = 0; $i <= 20; $i++)
+                                                <option value="{{ $i }}" {{ old('estimated_age_years', $pet->estimated_age_years) == $i ? 'selected' : '' }}>{{ $i }}</option>
+                                            @endfor
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-gray-600">Months</label>
+                                        <select name="estimated_age_months" class="block w-full border border-gray-300 rounded-md p-2 @error('estimated_age_months') border-red-500 @enderror">
+                                            <option value="">Select Months</option>
+                                            @for($i = 0; $i <= 11; $i++)
+                                                <option value="{{ $i }}" {{ old('estimated_age_months', $pet->estimated_age_months) == $i ? 'selected' : '' }}>{{ $i }}</option>
+                                            @endfor
+                                        </select>
+                                    </div>
+                                </div>
+                                @error('estimated_age_years') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                                @error('estimated_age_months') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
                             <!-- Gender -->
@@ -59,8 +79,19 @@
 
                             <!-- Color Markings -->
                             <div>
-                                <label for="color_markings" class="block text-sm font-medium text-gray-700">Color Markings</label>
-                                <input type="text" name="color_markings" id="color_markings" value="{{ old('color_markings', $pet->color_markings) }}" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('color_markings') border-red-500 @enderror">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Color Markings</label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    @php
+                                        $colors = ['Black', 'White', 'Brown', 'Gray', 'Orange', 'Cream', 'Red', 'Tabby'];
+                                        $selectedColors = old('color_markings', explode(',', $pet->color_markings ?? ''));
+                                    @endphp
+                                    @foreach($colors as $color)
+                                        <label class="flex items-center">
+                                            <input type="checkbox" name="color_markings[]" value="{{ $color }}" {{ in_array($color, $selectedColors) ? 'checked' : '' }} class="mr-2">
+                                            {{ $color }}
+                                        </label>
+                                    @endforeach
+                                </div>
                                 @error('color_markings') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
                         </div>
