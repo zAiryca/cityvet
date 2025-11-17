@@ -42,11 +42,22 @@ class PetRequestController extends Controller
         return view('admin.requests.index', compact('requests'));
     }
 
+    public function show(PetRequest $request)
+    {
+        if (!Auth::user()->isAdmin()) abort(403);
+        return view('admin.requests.show', compact('request'));
+    }
+
     public function update(Request $request, PetRequest $petRequest)
     {
         if (!Auth::user()->isAdmin()) abort(403);
-        $status = $request->status;  // 'approved' or 'denied'
-        $petRequest->update(['status' => $status]);
+        $status = $request->status;  // 'approved', 'denied', or 'pending'
+        $adminNotes = $request->admin_notes ?? null;
+
+        $petRequest->update([
+            'status' => $status,
+            'admin_notes' => $adminNotes
+        ]);
 
         if ($status === 'approved') {
             $pet = $petRequest->requestable; // Use polymorphic relationship
@@ -57,8 +68,12 @@ class PetRequestController extends Controller
             }
         }
 
-        // Send notification to the user
-        $petRequest->user->notify(new \App\Notifications\RequestStatusNotification($petRequest, $status));
+        // Send notification to the user only if status changed to approved or denied
+        if ($status === 'approved' || $status === 'denied') {
+            if ($petRequest->user) {
+                $petRequest->user->notify(new \App\Notifications\RequestStatusNotification($petRequest, $status));
+            }
+        }
 
         return back()->with('success', 'Request ' . $status . '.');
     }

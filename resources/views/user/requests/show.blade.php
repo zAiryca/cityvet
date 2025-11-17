@@ -1,6 +1,6 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
-@section('title', '| Admin - Request Details')
+@section('title', '| Request Details')
 
 @section('content')
 <div class="max-w-7xl mx-auto py-6 px-4">
@@ -8,11 +8,10 @@
     <div class="bg-white rounded-lg shadow max-w-4xl">
         <div class="p-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <p><strong>User:</strong> {{ $request->user->name }} ({{ $request->user->email }})</p>
                 <p><strong>Type:</strong> {{ ucfirst($request->type) }}</p>
                 @if($request->requestable)
                     @if($request->requestable_type === 'App\\Models\\Pet')
-                        <p><strong>Pet:</strong> {{ $request->requestable->display_code }} ({{ $request->requestable->species }})</p>
+                        <p><strong>Pet:</strong> <a href="{{ route('pets.show', $request->requestable) }}" class="text-blue-600 hover:underline">{{ $request->requestable->display_code }}</a> ({{ $request->requestable->species }})</p>
                     @elseif($request->requestable_type === 'App\\Models\\Event')
                         <p><strong>Event:</strong> {{ $request->requestable->title }} on {{ $request->requestable->event_date->format('M d, Y') }}</p>
                     @endif
@@ -64,19 +63,6 @@
                             <p><strong>Address:</strong> {{ $additionalData['address'] ?? '' }}</p>
                             <p><strong>Contact:</strong> {{ $additionalData['contact_number'] ?? '' }}</p>
                             <p><strong>Email:</strong> {{ $additionalData['email'] ?? '' }}</p>
-                            <p><strong>Birthday:</strong> {{ isset($additionalData['birthday']) ? date('M d, Y', strtotime($additionalData['birthday'])) : 'Not provided' }}</p>
-                        </div>
-                    </div>
-                @elseif($request->type === 'impound')
-                    <div class="mb-6">
-                        <h3 class="text-lg font-semibold mb-4">Impound Request Information</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <p><strong>Name:</strong> {{ $additionalData['first_name'] ?? '' }} {{ $additionalData['middle_name'] ?? '' }} {{ $additionalData['last_name'] ?? '' }}</p>
-                            <p><strong>Address:</strong> {{ $additionalData['address'] ?? '' }}</p>
-                            <p><strong>Contact:</strong> {{ $additionalData['contact_number'] ?? '' }}</p>
-                            <p><strong>Email:</strong> {{ $additionalData['email'] ?? '' }}</p>
-                            <p><strong>Location Found:</strong> {{ $additionalData['location_found'] ?? '' }}</p>
-                            <p><strong>Description:</strong> {{ $additionalData['description'] ?? '' }}</p>
                         </div>
                     </div>
                 @endif
@@ -104,61 +90,8 @@
                 @endif
             @endif
 
-            <!-- Update Status Tabs -->
-            <div class="mb-6">
-                <div class="border-b border-gray-200">
-                    <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                        <button type="button" onclick="setStatus('approved')" class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm {{ $request->status === 'approved' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
-                            Approve
-                        </button>
-                        <button type="button" onclick="setStatus('denied')" class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm {{ $request->status === 'denied' ? 'border-red-500 text-red-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
-                            Deny
-                        </button>
-                        <button type="button" onclick="setStatus('pending')" class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm {{ $request->status === 'pending' ? 'border-yellow-500 text-yellow-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
-                            Pending
-                        </button>
-                    </nav>
-                </div>
-
-                <form action="{{ route('admin.requests.update', $request) }}" method="POST" class="mt-4">
-                    @csrf @method('PATCH')
-                    <input type="hidden" name="status" id="statusInput" value="{{ $request->status }}">
-                    <div class="grid grid-cols-1 gap-4">
-                        <textarea name="admin_notes" rows="3" placeholder="Admin notes (optional for denied requests)" class="border p-2 rounded @error('admin_notes') border-red-500 @enderror">{{ old('admin_notes', $request->admin_notes) }}</textarea>
-                    </div>
-                    @error('status') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                    @error('admin_notes') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4">Update Status</button>
-                </form>
-            </div>
-
-            <script>
-                function setStatus(status) {
-                    document.getElementById('statusInput').value = status;
-
-                    // Update tab styling
-                    const tabs = document.querySelectorAll('nav button');
-                    tabs.forEach(tab => {
-                        tab.classList.remove('border-indigo-500', 'text-indigo-600', 'border-red-500', 'text-red-600', 'border-yellow-500', 'text-yellow-600');
-                        tab.classList.add('border-transparent', 'text-gray-500');
-                    });
-
-                    const activeTab = document.querySelector(`button[onclick="setStatus('${status}')"]`);
-                    if (status === 'approved') {
-                        activeTab.classList.remove('border-transparent', 'text-gray-500');
-                        activeTab.classList.add('border-indigo-500', 'text-indigo-600');
-                    } else if (status === 'denied') {
-                        activeTab.classList.remove('border-transparent', 'text-gray-500');
-                        activeTab.classList.add('border-red-500', 'text-red-600');
-                    } else if (status === 'pending') {
-                        activeTab.classList.remove('border-transparent', 'text-gray-500');
-                        activeTab.classList.add('border-yellow-500', 'text-yellow-600');
-                    }
-                }
-            </script>
-
             <div class="flex space-x-4">
-                <a href="{{ route('admin.requests.index') }}" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Back to List</a>
+                <a href="{{ route('user.requests') }}" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Back to My Requests</a>
             </div>
         </div>
     </div>

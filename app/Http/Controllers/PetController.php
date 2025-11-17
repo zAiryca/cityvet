@@ -105,6 +105,7 @@ class PetController extends Controller
                 'address' => $request->address,
                 'contact_number' => $request->contact_number,
                 'email' => $request->email,
+                'birthday' => Auth::user()->birthday ? Auth::user()->birthday->format('Y-m-d') : null,
                 'certify_info' => $request->certify_info,
                 'agree_terms' => $request->agree_terms,
             ];

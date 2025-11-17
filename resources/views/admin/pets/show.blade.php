@@ -52,11 +52,30 @@
     @if($pet->requests->count() > 0)
         <div class="mt-8 bg-white rounded-lg shadow">
             <h2 class="p-6 text-xl font-bold">Adoption/Claim Requests ({{ $pet->requests->count() }})</h2>
+
+            <!-- Status Tabs -->
+            <div class="border-b border-gray-200 px-6">
+                <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                    <button type="button" onclick="filterRequests('')" class="tab-button whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm {{ !request('status') ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+                        All ({{ $pet->requests->count() }})
+                    </button>
+                    <button type="button" onclick="filterRequests('pending')" class="tab-button whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm {{ request('status') === 'pending' ? 'border-yellow-500 text-yellow-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+                        Pending ({{ $pet->requests->where('status', 'pending')->count() }})
+                    </button>
+                    <button type="button" onclick="filterRequests('approved')" class="tab-button whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm {{ request('status') === 'approved' ? 'border-green-500 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+                        Approved ({{ $pet->requests->where('status', 'approved')->count() }})
+                    </button>
+                    <button type="button" onclick="filterRequests('denied')" class="tab-button whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm {{ request('status') === 'denied' ? 'border-red-500 text-red-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+                        Denied ({{ $pet->requests->where('status', 'denied')->count() }})
+                    </button>
+                </nav>
+            </div>
+
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reason</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
@@ -64,16 +83,22 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         @foreach($pet->requests as $request)
-                            <tr>
+                            <tr class="request-row {{ $request->status }}" style="{{ request('status') && request('status') !== $request->status ? 'display: none;' : '' }}">
                                 <td class="px-6 py-4">{{ $request->user->name }}</td>
-                                <td class="px-6 py-4 text-sm">{{ Str::limit($request->reason, 50) }}</td>
+                                <td class="px-6 py-4 text-sm">
+                                    @if($request->type === 'adopt')
+                                        {{ Str::limit($request->reason, 50) }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
                                 <td class="px-6 py-4">
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $request->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : ($request->status === 'approved' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800') }}">
                                         {{ ucfirst($request->status) }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <a href="{{ route('admin.requests.show', $request) }}" class="text-indigo-600 hover:text-indigo-900 mr-4">View</a>
+                                    <a href="{{ route('admin.requests.show', $request) }}" class="text-indigo-600 hover:text-indigo-900">View</a>
                                 </td>
                             </tr>
                         @endforeach
@@ -81,6 +106,43 @@
                 </table>
             </div>
         </div>
+
+        <script>
+            function filterRequests(status) {
+                const rows = document.querySelectorAll('.request-row');
+                const tabs = document.querySelectorAll('.tab-button');
+
+                // Update tab styling
+                tabs.forEach(tab => {
+                    tab.classList.remove('border-indigo-500', 'text-indigo-600', 'border-yellow-500', 'text-yellow-600', 'border-green-500', 'text-green-600', 'border-red-500', 'text-red-600');
+                    tab.classList.add('border-transparent', 'text-gray-500');
+                });
+
+                const activeTab = document.querySelector(`button[onclick="filterRequests('${status}')"]`);
+                if (status === '') {
+                    activeTab.classList.remove('border-transparent', 'text-gray-500');
+                    activeTab.classList.add('border-indigo-500', 'text-indigo-600');
+                } else if (status === 'pending') {
+                    activeTab.classList.remove('border-transparent', 'text-gray-500');
+                    activeTab.classList.add('border-yellow-500', 'text-yellow-600');
+                } else if (status === 'approved') {
+                    activeTab.classList.remove('border-transparent', 'text-gray-500');
+                    activeTab.classList.add('border-green-500', 'text-green-600');
+                } else if (status === 'denied') {
+                    activeTab.classList.remove('border-transparent', 'text-gray-500');
+                    activeTab.classList.add('border-red-500', 'text-red-600');
+                }
+
+                // Filter rows
+                rows.forEach(row => {
+                    if (status === '' || row.classList.contains(status)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+        </script>
     @endif
 </div>
 @endsection

@@ -96,9 +96,25 @@ Route::middleware('setlocale')->group(function () {
 
         // My requests view
         Route::get('/my-requests', function () {
-            $requests = Auth::user()->requests()->with('requestable')->paginate(10);
+            $query = Auth::user()->requests()->with('requestable');
+
+            // Apply filters
+            if (request('status')) {
+                $query->where('status', request('status'));
+            }
+            if (request('type')) {
+                $query->where('type', request('type'));
+            }
+
+            $requests = $query->paginate(12)->appends(request()->query());
             return view('user.requests', compact('requests'));
         })->name('user.requests');
+
+        // Show individual request details
+        Route::get('/my-requests/{request}', function (\App\Models\PetRequest $request) {
+            if ($request->user_id !== Auth::id()) abort(403);
+            return view('user.requests.show', compact('request'));
+        })->name('user.requests.show');
 
         // Pet registration routes
         Route::resource('pet-registrations', PetRegistrationController::class);
