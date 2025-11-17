@@ -98,7 +98,7 @@
                         </div>
 
         <div class="flex justify-end mt-6">
-            <a href="{{ route('pet-registrations.show', $petRegistration) }}" class="mr-4 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</a>
+            <a href="{{ route('pet-registrations.index') }}" class="mr-4 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</a>
             <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">Update</button>
         </div>
     </form>

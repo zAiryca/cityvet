@@ -5,13 +5,14 @@
 @section('content')
 <div class="max-w-7xl mx-auto py-6 px-4">
     <h1 class="text-3xl font-bold mb-6">My Pets</h1>
-    <p class="mb-6">Manage your pet registrations.</p>
+    <p class="mb-6">Manage your pet registrations and pre-registrations.</p>
 
     <div class="mb-6">
-        <a href="{{ route('pet-registrations.create') }}" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">Add New Pet</a>
+        <a href="{{ route('pet-registrations.create') }}" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">Pre-Register New Pet</a>
+        <a href="{{ route('pet-registrations.index') }}" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 ml-4">Refresh</a>
     </div>
 
-    <!-- Pending Registrations Section -->
+    <!-- Pre-Registered Pets Section -->
     @php
         $pending = $petRegistrations->where('status', 'pending');
         $registered = $petRegistrations->where('status', 'registered');
@@ -19,7 +20,7 @@
 
     @if($pending->count() > 0)
         <div class="mb-8">
-            <h2 class="text-2xl font-semibold mb-4">Pending Registrations</h2>
+            <h2 class="text-2xl font-semibold mb-4">Pre-Registered Pets</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($pending as $petRegistration)
                     <div class="bg-white rounded-lg shadow-md overflow-hidden">
@@ -38,7 +39,7 @@
 
                             <div class="flex justify-between items-center mb-3">
                                 <span class="text-xs text-gray-500">{{ ucfirst($petRegistration->gender) }}</span>
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Pre-Registered</span>
                             </div>
 
                             <div class="flex space-x-2">
@@ -93,7 +94,7 @@
     @if($pending->count() == 0 && $registered->count() == 0)
         <div class="bg-white p-6 rounded-lg shadow text-center">
             <p class="text-gray-500 mb-4">You haven't registered any pets yet.</p>
-            <a href="{{ route('pet-registrations.create') }}" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">Register Your First Pet</a>
+            <a href="{{ route('pet-registrations.create') }}" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">Pre-Register Your First Pet</a>
         </div>
     @endif
 </div>
