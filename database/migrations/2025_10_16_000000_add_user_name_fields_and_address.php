@@ -47,14 +47,47 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $driver = Schema::getConnection()->getDriverName();
             if ($driver === 'mysql') {
-                DB::statement('DROP INDEX users_first_last_unique ON users');
-                DB::statement('ALTER TABLE users DROP COLUMN first_name_lower');
-                DB::statement('ALTER TABLE users DROP COLUMN last_name_lower');
+                // Check if index exists before dropping
+                $indexes = Schema::getConnection()->select("SHOW INDEX FROM users WHERE Key_name = 'users_first_last_unique'");
+                if (!empty($indexes)) {
+                    DB::statement('DROP INDEX users_first_last_unique ON users');
+                }
+                // Check if columns exist before dropping
+                if (Schema::hasColumn('users', 'first_name_lower')) {
+                    DB::statement('ALTER TABLE users DROP COLUMN first_name_lower');
+                }
+                if (Schema::hasColumn('users', 'last_name_lower')) {
+                    DB::statement('ALTER TABLE users DROP COLUMN last_name_lower');
+                }
             } else {
                 $table->dropUnique('users_first_last_unique');
             }
 
-            $table->dropColumn(['first_name', 'middle_name', 'last_name', 'contact_number', 'street', 'barangay', 'city_municipality', 'province']);
+            // Check each column before dropping it to make the migration idempotent
+            if (Schema::hasColumn('users', 'province')) {
+                $table->dropColumn('province');
+            }
+            if (Schema::hasColumn('users', 'city_municipality')) {
+                $table->dropColumn('city_municipality');
+            }
+            if (Schema::hasColumn('users', 'barangay')) {
+                $table->dropColumn('barangay');
+            }
+            if (Schema::hasColumn('users', 'street')) {
+                $table->dropColumn('street');
+            }
+            if (Schema::hasColumn('users', 'contact_number')) {
+                $table->dropColumn('contact_number');
+            }
+            if (Schema::hasColumn('users', 'last_name')) {
+                $table->dropColumn('last_name');
+            }
+            if (Schema::hasColumn('users', 'middle_name')) {
+                $table->dropColumn('middle_name');
+            }
+            if (Schema::hasColumn('users', 'first_name')) {
+                $table->dropColumn('first_name');
+            }
         });
     }
 };

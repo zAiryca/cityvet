@@ -8,16 +8,16 @@
     @php
         // Define the possible statuses for the navigation tabs
         $statuses = [
-            'Pre-Registered' => 'pre-registered',
-            'Registered' => 'approved',
+            'Pending' => 'pending',
+            'Registered' => 'registered',
         ];
 
         // Define a readable title using universally supported if/elseif logic
         $pageTitle = 'Pet Registrations';
         if (isset($currentRegistrationStatus)) {
-            if ($currentRegistrationStatus === 'pre-registered') {
-                $pageTitle = 'Pre-Registered Pets';
-            } elseif ($currentRegistrationStatus === 'approved') {
+            if ($currentRegistrationStatus === 'pending') {
+                $pageTitle = 'Pending Pet Registrations';
+            } elseif ($currentRegistrationStatus === 'registered') {
                 $pageTitle = 'Registered Pets';
             }
         }
@@ -167,32 +167,32 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $pet->breed }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm">
                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                    @if($pet->registration_status === 'pre-registered') bg-yellow-100 text-yellow-800
-                                    @elseif($pet->registration_status === 'approved') bg-green-100 text-green-800
-                                    @elseif($pet->registration_status === 'denied') bg-red-100 text-red-800
+                                    @if($pet->status === 'pending') bg-yellow-100 text-yellow-800
+                                    @elseif($pet->status === 'registered') bg-green-100 text-green-800
+                                    @elseif($pet->status === 'denied') bg-red-100 text-red-800
                                     @else bg-gray-100 text-gray-800 @endif">
-                                    @if($pet->registration_status === 'pre-registered') Pre-Registered
-                                    @elseif($pet->registration_status === 'approved') Registered
-                                    @elseif($pet->registration_status === 'denied') Denied
-                                    @else {{ ucfirst($pet->registration_status) }} @endif
+                                    @if($pet->status === 'pending') Pending
+                                    @elseif($pet->status === 'registered') Registered
+                                    @elseif($pet->status === 'denied') Denied
+                                    @else {{ ucfirst($pet->status) }} @endif
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {{ $pet->user->name ?? 'N/A' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <a href="{{ route('admin.pets.show', $pet) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">View</a>
-                                @if($pet->registration_status === 'pre-registered')
-                                    <form method="POST" action="{{ route('pet-registrations.approve', $pet) }}" onsubmit="return confirm('Are you sure you want to approve this pet registration?')" style="display: inline;">
+                                <a href="{{ route('admin.pet-registrations.show', $pet) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">View</a>
+                                @if($pet->status === 'pending')
+                                    <form method="POST" action="{{ route('pet-registrations.approve', $pet) }}" onsubmit="return confirm('Are you sure you want to register this pet?')" style="display: inline;">
                                         @csrf
-                                        <button type="submit" class="text-green-600 hover:text-green-900 mr-3">Approve</button>
+                                        <button type="submit" class="text-green-600 hover:text-green-900 mr-3">Register</button>
                                     </form>
                                     <form method="POST" action="{{ route('pet-registrations.deny', $pet) }}" onsubmit="return confirm('Are you sure you want to deny this pet registration?')" style="display: inline;">
                                         @csrf
                                         <button type="submit" class="text-red-600 hover:text-red-900 mr-3">Deny</button>
                                     </form>
                                 @endif
-                                <form method="POST" action="{{ route('admin.pets.destroy', $pet) }}" onsubmit="return confirm('Are you sure you want to delete this pet? This action cannot be undone.')" style="display: inline;">
+                                <form method="POST" action="{{ route('admin.pet-registrations.destroy', $pet) }}" onsubmit="return confirm('Are you sure you want to delete this pet registration? This action cannot be undone.')" style="display: inline;">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>
@@ -201,7 +201,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-6 py-4 text-center text-gray-500">No pets found for the status: **{{ $pageTitle }}**.</td>
+                            <td colspan="7" class="px-6 py-4 text-center text-gray-500">No pet registrations found for the status: **{{ $pageTitle }}**.</td>
                         </tr>
                     @endforelse
                 </tbody>

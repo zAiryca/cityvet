@@ -52,7 +52,7 @@
                                     <p class="text-gray-600 mt-2">{{ Str::limit($announcement->description, 150) }}</p>
                                     <div class="mt-3 flex justify-between items-center">
                                         <span class="text-sm text-gray-500">
-                                            {{ __('Date: ') . $announcement->event_date->format('M j, Y') }}
+                                            {{ __('Date: ') . $announcement->date_when }}
                                         </span>
                                         <a href="{{ route('announcements.show', $announcement) }}" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">
                                             {{ __('View Details') }}

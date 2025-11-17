@@ -117,6 +117,26 @@ Route::middleware('setlocale')->group(function () {
         Route::post('/pets/{pet}/mark-adopted', [AdminPetController::class, 'markAsAdopted'])->name('pets.mark-adopted');
         Route::post('/pets/{pet}/mark-claimed', [AdminPetController::class, 'markAsClaimed'])->name('pets.mark-claimed');
 
+        // Pet Registrations CRUD
+        Route::resource('pet-registrations', \App\Http\Controllers\Admin\PetRegistrationController::class);
+        Route::post('/pet-registrations/{pet}/approve', [\App\Http\Controllers\Admin\PetRegistrationController::class, 'approve'])->name('pet-registrations.approve');
+        Route::post('/pet-registrations/{pet}/deny', [\App\Http\Controllers\Admin\PetRegistrationController::class, 'deny'])->name('pet-registrations.deny');
+
+        // Announcements CRUD
+        Route::resource('announcements', AdminAnnouncementController::class);
+    });
+
+    // Admin routes (auth + admin middleware)
+    Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+        // Dashboard
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+        // Pets CRUD
+        Route::resource('pets', AdminPetController::class);
+        Route::post('/pets/{pet}/urgent', [AdminPetController::class, 'setUrgent'])->name('pets.set-urgent');
+        Route::post('/pets/{pet}/mark-adopted', [AdminPetController::class, 'markAsAdopted'])->name('pets.mark-adopted');
+        Route::post('/pets/{pet}/mark-claimed', [AdminPetController::class, 'markAsClaimed'])->name('pets.mark-claimed');
+
         // Announcements CRUD
         Route::resource('announcements', AdminAnnouncementController::class);
 

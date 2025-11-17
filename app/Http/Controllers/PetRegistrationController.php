@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pet;
+use App\Models\PetRegistration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,8 +14,8 @@ class PetRegistrationController extends Controller
      */
     public function index()
     {
-        $pets = Auth::user()->pets()->get();
-        return view('user.pet-registrations.index', compact('pets'));
+        $petRegistrations = Auth::user()->petRegistrations()->get();
+        return view('user.pet-registrations.index', compact('petRegistrations'));
     }
 
     /**
@@ -31,11 +32,10 @@ class PetRegistrationController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'pet_name' => 'required|string|max:255',
             'species' => 'required|in:Canine,Feline',
             'breed' => 'required|string|max:255',
-            'estimated_age_years' => 'nullable|integer|min:0|max:20',
-            'estimated_age_months' => 'nullable|integer|min:0|max:11',
+            'birthday' => 'nullable|date',
             'gender' => 'required|in:male,female,unknown',
             'color_markings' => 'nullable|array',
             'color_markings.*' => 'string',
@@ -45,30 +45,23 @@ class PetRegistrationController extends Controller
 
         $photoPath = null;
         if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('pets', 'public');
+            $photoPath = $request->file('photo')->store('pet-registrations', 'public');
         }
 
-        $colorMarkings = '';
-        if ($request->has('color_markings') && is_array($request->color_markings)) {
-            $colorMarkings = implode(',', $request->color_markings);
-        }
-
-        Pet::create([
+        PetRegistration::create([
             'user_id' => Auth::id(),
-            'name' => $request->name,
+            'pet_name' => $request->pet_name,
             'species' => $request->species,
             'breed' => $request->breed,
-            'estimated_age_years' => $request->estimated_age_years,
-            'estimated_age_months' => $request->estimated_age_months,
+            'birthday' => $request->birthday,
             'gender' => $request->gender,
-            'color_markings' => $colorMarkings,
+            'color_markings' => $request->color_markings,
             'description' => $request->description,
             'photo' => $photoPath,
-            'status' => 'pre-registered',
-            'registration_status' => 'pre-registered',
+            'status' => 'pending',
         ]);
 
-        return redirect()->route('pet-registrations.index')->with('success', 'Pet pre-registration submitted successfully!');
+        return redirect()->route('pet-registrations.index')->with('success', 'Pet registration submitted successfully!');
     }
 
     /**
@@ -76,8 +69,8 @@ class PetRegistrationController extends Controller
      */
     public function show(string $id)
     {
-        $pet = Pet::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
-        return view('user.pet-registrations.show', compact('pet'));
+        $petRegistration = PetRegistration::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+        return view('user.pet-registrations.show', compact('petRegistration'));
     }
 
     /**
@@ -85,8 +78,8 @@ class PetRegistrationController extends Controller
      */
     public function edit(string $id)
     {
-        $pet = Pet::where('id', $id)->where('user_id', Auth::id())->where('registration_status', 'pre-registered')->firstOrFail();
-        return view('user.pet-registrations.edit', compact('pet'));
+        $petRegistration = PetRegistration::where('id', $id)->where('user_id', Auth::id())->where('status', 'pending')->firstOrFail();
+        return view('user.pet-registrations.edit', compact('petRegistration'));
     }
 
     /**
@@ -94,14 +87,13 @@ class PetRegistrationController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $pet = Pet::where('id', $id)->where('user_id', Auth::id())->where('registration_status', 'pre-registered')->firstOrFail();
+        $petRegistration = PetRegistration::where('id', $id)->where('user_id', Auth::id())->where('status', 'pending')->firstOrFail();
 
         $request->validate([
-            'name' => 'required|string|max:255',
+            'pet_name' => 'required|string|max:255',
             'species' => 'required|in:Canine,Feline',
             'breed' => 'required|string|max:255',
-            'estimated_age_years' => 'nullable|integer|min:0|max:20',
-            'estimated_age_months' => 'nullable|integer|min:0|max:11',
+            'birthday' => 'nullable|date',
             'gender' => 'required|in:male,female,unknown',
             'color_markings' => 'nullable|array',
             'color_markings.*' => 'string',
@@ -109,29 +101,23 @@ class PetRegistrationController extends Controller
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $photoPath = $pet->photo;
+        $photoPath = $petRegistration->photo;
         if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('pets', 'public');
+            $photoPath = $request->file('photo')->store('pet-registrations', 'public');
         }
 
-        $colorMarkings = '';
-        if ($request->has('color_markings') && is_array($request->color_markings)) {
-            $colorMarkings = implode(',', $request->color_markings);
-        }
-
-        $pet->update([
-            'name' => $request->name,
+        $petRegistration->update([
+            'pet_name' => $request->pet_name,
             'species' => $request->species,
             'breed' => $request->breed,
-            'estimated_age_years' => $request->estimated_age_years,
-            'estimated_age_months' => $request->estimated_age_months,
+            'birthday' => $request->birthday,
             'gender' => $request->gender,
-            'color_markings' => $colorMarkings,
+            'color_markings' => $request->color_markings,
             'description' => $request->description,
             'photo' => $photoPath,
         ]);
 
-        return redirect()->route('pet-registrations.index')->with('success', 'Pet pre-registration updated successfully!');
+        return redirect()->route('pet-registrations.index')->with('success', 'Pet registration updated successfully!');
     }
 
     /**
@@ -139,10 +125,10 @@ class PetRegistrationController extends Controller
      */
     public function destroy(string $id)
     {
-        $pet = Pet::where('id', $id)->where('user_id', Auth::id())->where('registration_status', 'pre-registered')->firstOrFail();
-        $pet->delete();
+        $petRegistration = PetRegistration::where('id', $id)->where('user_id', Auth::id())->where('status', 'pending')->firstOrFail();
+        $petRegistration->delete();
 
-        return redirect()->route('pet-registrations.index')->with('success', 'Pet pre-registration deleted successfully!');
+        return redirect()->route('pet-registrations.index')->with('success', 'Pet registration deleted successfully!');
     }
 
     /**
@@ -151,10 +137,23 @@ class PetRegistrationController extends Controller
     public function approve(string $id)
     {
         if (!Auth::user()->isAdmin()) abort(403);
-        $pet = Pet::findOrFail($id);
-        $pet->update([
+        $petRegistration = PetRegistration::findOrFail($id);
+        $petRegistration->update(['status' => 'registered']);
+
+        // Create corresponding record in pets table
+        Pet::create([
+            'user_id' => $petRegistration->user_id,
+            'name' => $petRegistration->pet_name,
+            'species' => $petRegistration->species,
+            'breed' => $petRegistration->breed,
+            'estimated_age_years' => $petRegistration->birthday ? now()->diffInYears($petRegistration->birthday) : null,
+            'estimated_age_months' => $petRegistration->birthday ? now()->diffInMonths($petRegistration->birthday) % 12 : null,
+            'gender' => $petRegistration->gender,
+            'color_markings' => is_array($petRegistration->color_markings) ? implode(',', $petRegistration->color_markings) : $petRegistration->color_markings,
+            'description' => $petRegistration->description,
+            'photo' => $petRegistration->photo,
+            'status' => 'registered',
             'registration_status' => 'approved',
-            'status' => 'registered'
         ]);
 
         return back()->with('success', 'Pet registration approved successfully!');
@@ -166,8 +165,8 @@ class PetRegistrationController extends Controller
     public function deny(string $id)
     {
         if (!Auth::user()->isAdmin()) abort(403);
-        $pet = Pet::findOrFail($id);
-        $pet->update(['registration_status' => 'denied']);
+        $petRegistration = PetRegistration::findOrFail($id);
+        $petRegistration->update(['status' => 'denied']);
 
         return back()->with('success', 'Pet registration denied.');
     }

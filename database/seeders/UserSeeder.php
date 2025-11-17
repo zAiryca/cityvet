@@ -27,15 +27,15 @@ class UserSeeder extends Seeder
 
         // User
         User::create([
-            'first_name' => 'Dummy',
+            'first_name' => 'Erricca',
             'middle_name' => null,
-            'last_name' => 'User',
+            'last_name' => 'Morales',
             'contact_number' => null,
             'street' => null,
             'barangay' => null,
             'city_municipality' => null,
             'province' => null,
-            'email' => 'dummyacc@gmail.com',
+            'email' => 'morales.erricca17@gmail.com',
             'password' => Hash::make('Capstone2'),
             'role' => 'user',
         ]);

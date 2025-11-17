@@ -14,8 +14,8 @@
             <!-- Pet Name -->
             <div>
                 <label class="block text-sm font-medium text-gray-700">Pet Name</label>
-                <input type="text" name="name" value="{{ old('name') }}" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('name') border-red-500 @enderror">
-                @error('name') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                <input type="text" name="pet_name" value="{{ old('pet_name') }}" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('pet_name') border-red-500 @enderror">
+                @error('pet_name') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
             </div>
 
             <!-- Species -->
@@ -61,31 +61,11 @@
                 @error('breed') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
             </div>
 
-            <!-- Estimated Age -->
+            <!-- Birthday -->
             <div>
-                <label class="block text-sm font-medium text-gray-700">Estimated Age</label>
-                <div class="grid grid-cols-2 gap-2 mt-1">
-                    <div>
-                        <label class="block text-xs text-gray-600">Years</label>
-                        <select name="estimated_age_years" class="block w-full border border-gray-300 rounded-md p-2 @error('estimated_age_years') border-red-500 @enderror">
-                            <option value="">Select Years</option>
-                            @for($i = 0; $i <= 20; $i++)
-                                <option value="{{ $i }}" {{ old('estimated_age_years') == $i ? 'selected' : '' }}>{{ $i }}</option>
-                            @endfor
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-gray-600">Months</label>
-                        <select name="estimated_age_months" class="block w-full border border-gray-300 rounded-md p-2 @error('estimated_age_months') border-red-500 @enderror">
-                            <option value="">Select Months</option>
-                            @for($i = 0; $i <= 11; $i++)
-                                <option value="{{ $i }}" {{ old('estimated_age_months') == $i ? 'selected' : '' }}>{{ $i }}</option>
-                            @endfor
-                        </select>
-                    </div>
-                </div>
-                @error('estimated_age_years') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                @error('estimated_age_months') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                <label class="block text-sm font-medium text-gray-700">Birthday</label>
+                <input type="date" name="birthday" value="{{ old('birthday') }}" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('birthday') border-red-500 @enderror">
+                @error('birthday') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
             </div>
 
             <!-- Gender -->

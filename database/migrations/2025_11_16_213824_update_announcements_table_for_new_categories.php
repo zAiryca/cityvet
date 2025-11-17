@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('announcements', function (Blueprint $table) {
             $table->renameColumn('event_date', 'date_when');
+            $table->enum('category', ['Event', 'Trivia', 'Holiday Notice', 'Fun Fact'])->nullable();
         });
     }
 

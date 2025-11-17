@@ -1,24 +1,22 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Edit Pet Pre-Registration') }}
-        </h2>
-    </x-slot>
+@extends('layouts.app')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                <div class="p-6 lg:p-8 bg-white border-b border-gray-200">
-                    <form method="POST" action="{{ route('pet-registrations.update', $pet) }}" enctype="multipart/form-data">
-                        @csrf
-                        @method('PUT')
+@section('title', '| Edit Pet Registration')
+
+@section('content')
+<div class="max-w-7xl mx-auto py-6 px-4">
+    <h1 class="text-3xl font-bold mb-6">Edit Pet Registration</h1>
+    <p class="mb-6">Update your pet registration details.</p>
+
+    <form action="{{ route('pet-registrations.update', $petRegistration) }}" method="POST" enctype="multipart/form-data" class="max-w-4xl bg-white rounded-lg shadow p-6">
+        @csrf
+        @method('PUT')
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- Name -->
                             <div>
-                                <label for="name" class="block text-sm font-medium text-gray-700">Pet Name</label>
-                                <input type="text" name="name" id="name" value="{{ old('name', $pet->name) }}" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('name') border-red-500 @enderror">
-                                @error('name') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                                <label for="pet_name" class="block text-sm font-medium text-gray-700">Pet Name</label>
+                                <input type="text" name="pet_name" id="pet_name" value="{{ old('pet_name', $petRegistration->pet_name) }}" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('pet_name') border-red-500 @enderror">
+                                @error('pet_name') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
                             <!-- Species -->
@@ -26,8 +24,8 @@
                                 <label for="species" class="block text-sm font-medium text-gray-700">Species</label>
                                 <select name="species" id="species" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('species') border-red-500 @enderror">
                                     <option value="">Select Species</option>
-                                    <option value="Feline" {{ old('species', $pet->species) == 'Feline' ? 'selected' : '' }}>Feline</option>
-                                    <option value="Canine" {{ old('species', $pet->species) == 'Canine' ? 'selected' : '' }}>Canine</option>
+                                    <option value="Feline" {{ old('species', $petRegistration->species) == 'Feline' ? 'selected' : '' }}>Feline</option>
+                                    <option value="Canine" {{ old('species', $petRegistration->species) == 'Canine' ? 'selected' : '' }}>Canine</option>
                                 </select>
                                 @error('species') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
@@ -35,35 +33,15 @@
                             <!-- Breed -->
                             <div>
                                 <label for="breed" class="block text-sm font-medium text-gray-700">Breed</label>
-                                <input type="text" name="breed" id="breed" value="{{ old('breed', $pet->breed) }}" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('breed') border-red-500 @enderror">
+                                <input type="text" name="breed" id="breed" value="{{ old('breed', $petRegistration->breed) }}" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('breed') border-red-500 @enderror">
                                 @error('breed') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
-                            <!-- Estimated Age -->
+                            <!-- Birthday -->
                             <div>
-                                <label class="block text-sm font-medium text-gray-700">Estimated Age</label>
-                                <div class="grid grid-cols-2 gap-2 mt-1">
-                                    <div>
-                                        <label class="block text-xs text-gray-600">Years</label>
-                                        <select name="estimated_age_years" class="block w-full border border-gray-300 rounded-md p-2 @error('estimated_age_years') border-red-500 @enderror">
-                                            <option value="">Select Years</option>
-                                            @for($i = 0; $i <= 20; $i++)
-                                                <option value="{{ $i }}" {{ old('estimated_age_years', $pet->estimated_age_years) == $i ? 'selected' : '' }}>{{ $i }}</option>
-                                            @endfor
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs text-gray-600">Months</label>
-                                        <select name="estimated_age_months" class="block w-full border border-gray-300 rounded-md p-2 @error('estimated_age_months') border-red-500 @enderror">
-                                            <option value="">Select Months</option>
-                                            @for($i = 0; $i <= 11; $i++)
-                                                <option value="{{ $i }}" {{ old('estimated_age_months', $pet->estimated_age_months) == $i ? 'selected' : '' }}>{{ $i }}</option>
-                                            @endfor
-                                        </select>
-                                    </div>
-                                </div>
-                                @error('estimated_age_years') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                                @error('estimated_age_months') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                                <label class="block text-sm font-medium text-gray-700">Birthday</label>
+                                <input type="date" name="birthday" value="{{ old('birthday', $petRegistration->birthday ? $petRegistration->birthday->format('Y-m-d') : '') }}" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('birthday') border-red-500 @enderror">
+                                @error('birthday') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
                             <!-- Gender -->
@@ -71,8 +49,9 @@
                                 <label for="gender" class="block text-sm font-medium text-gray-700">Gender</label>
                                 <select name="gender" id="gender" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('gender') border-red-500 @enderror">
                                     <option value="">Select Gender</option>
-                                    <option value="Male" {{ old('gender', $pet->gender) == 'Male' ? 'selected' : '' }}>Male</option>
-                                    <option value="Female" {{ old('gender', $pet->gender) == 'Female' ? 'selected' : '' }}>Female</option>
+                                    <option value="male" {{ old('gender', $petRegistration->gender) == 'male' ? 'selected' : '' }}>Male</option>
+                                    <option value="female" {{ old('gender', $petRegistration->gender) == 'female' ? 'selected' : '' }}>Female</option>
+                                    <option value="unknown" {{ old('gender', $petRegistration->gender) == 'unknown' ? 'selected' : '' }}>Unknown</option>
                                 </select>
                                 @error('gender') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
@@ -83,7 +62,7 @@
                                 <div class="grid grid-cols-2 gap-2">
                                     @php
                                         $colors = ['Black', 'White', 'Brown', 'Gray', 'Orange', 'Cream', 'Red', 'Tabby'];
-                                        $selectedColors = old('color_markings', explode(',', $pet->color_markings ?? ''));
+                                        $selectedColors = old('color_markings', is_array($petRegistration->color_markings) ? $petRegistration->color_markings : []);
                                     @endphp
                                     @foreach($colors as $color)
                                         <label class="flex items-center">
@@ -99,15 +78,15 @@
                         <!-- Description -->
                         <div class="mt-6">
                             <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                            <textarea name="description" id="description" rows="4" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('description') border-red-500 @enderror">{{ old('description', $pet->description) }}</textarea>
+                            <textarea name="description" id="description" rows="4" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('description') border-red-500 @enderror">{{ old('description', $petRegistration->description) }}</textarea>
                             @error('description') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         <!-- Current Photo -->
-                        @if($pet->photo)
+                        @if($petRegistration->photo)
                             <div class="mt-6">
                                 <label class="block text-sm font-medium text-gray-700">Current Photo</label>
-                                <img src="{{ asset('storage/' . $pet->photo) }}" alt="{{ $pet->name }}" class="max-w-xs rounded-lg shadow-md mt-2">
+                                <img src="{{ asset('storage/' . $petRegistration->photo) }}" alt="{{ $petRegistration->pet_name }}" class="max-w-xs rounded-lg shadow-md mt-2">
                             </div>
                         @endif
 
@@ -118,15 +97,10 @@
                             @error('photo') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                         </div>
 
-                        <div class="flex items-center justify-end mt-6">
-                            <a href="{{ route('pet-registrations.show', $pet) }}" class="mr-4 text-gray-600 hover:text-gray-900">Cancel</a>
-                            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                Update Pre-Registration
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+        <div class="flex justify-end mt-6">
+            <a href="{{ route('pet-registrations.show', $petRegistration) }}" class="mr-4 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</a>
+            <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">Update</button>
         </div>
-    </div>
-</x-app-layout>
+    </form>
+</div>
+@endsection

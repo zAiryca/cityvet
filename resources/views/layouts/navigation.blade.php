@@ -84,7 +84,7 @@
                             Create Poster
                         </x-dropdown-link>
                         <x-dropdown-link :href="route('pet-registrations.index')">
-                            Pet Registrations
+                            My Pets
                         </x-dropdown-link>
 
                             <!-- Authentication -->

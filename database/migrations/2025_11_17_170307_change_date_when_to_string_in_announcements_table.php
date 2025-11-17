@@ -12,17 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('announcements', function (Blueprint $table) {
-            $table->renameColumn('date_when', 'event_date');
+            // Change the column type from DATETIME/TIMESTAMP to string
+            $table->string('date_when')->change();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('announcements', function (Blueprint $table) {
-            $table->renameColumn('event_date', 'date_when');
+            // Change it back to a DATETIME if needed for rollbacks
+            $table->dateTime('date_when')->change();
         });
     }
 };
