@@ -39,40 +39,8 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Breed</label>
-                    <select name="breed" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('breed') border-red-500 @enderror" id="breed-select">
+                    <select name="breed" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('breed') border-red-500 @enderror" id="breed">
                         <option value="">Select Breed</option>
-                        @if($poster->species === 'Canine')
-                            <optgroup id="canine-breeds" label="Canine Breeds">
-                                <option value="Aspin (Asong Pinoy)" {{ $poster->breed === 'Aspin (Asong Pinoy)' ? 'selected' : '' }}>Aspin (Asong Pinoy)</option>
-                                <option value="Shih Tzu" {{ $poster->breed === 'Shih Tzu' ? 'selected' : '' }}>Shih Tzu</option>
-                                <option value="Poodle" {{ $poster->breed === 'Poodle' ? 'selected' : '' }}>Poodle</option>
-                                <option value="Pomeranian" {{ $poster->breed === 'Pomeranian' ? 'selected' : '' }}>Pomeranian</option>
-                                <option value="Golden Retriever" {{ $poster->breed === 'Golden Retriever' ? 'selected' : '' }}>Golden Retriever</option>
-                                <option value="Labrador" {{ $poster->breed === 'Labrador' ? 'selected' : '' }}>Labrador</option>
-                                <option value="Beagle" {{ $poster->breed === 'Beagle' ? 'selected' : '' }}>Beagle</option>
-                                <option value="Pug" {{ $poster->breed === 'Pug' ? 'selected' : '' }}>Pug</option>
-                                <option value="Siberian Husky" {{ $poster->breed === 'Siberian Husky' ? 'selected' : '' }}>Siberian Husky</option>
-                                <option value="Chihuahua" {{ $poster->breed === 'Chihuahua' ? 'selected' : '' }}>Chihuahua</option>
-                                <option value="Dachshund" {{ $poster->breed === 'Dachshund' ? 'selected' : '' }}>Dachshund</option>
-                                <option value="German Shepherd" {{ $poster->breed === 'German Shepherd' ? 'selected' : '' }}>German Shepherd</option>
-                                <option value="Chow Chow" {{ $poster->breed === 'Chow Chow' ? 'selected' : '' }}>Chow Chow</option>
-                                <option value="Maltese" {{ $poster->breed === 'Maltese' ? 'selected' : '' }}>Maltese</option>
-                                <option value="Doberman Pinscher" {{ $poster->breed === 'Doberman Pinscher' ? 'selected' : '' }}>Doberman Pinscher</option>
-                            </optgroup>
-                        @elseif($poster->species === 'Feline')
-                            <optgroup id="feline-breeds" label="Feline Breeds">
-                                <option value="Moggy / Mixed-Breed" {{ $poster->breed === 'Moggy / Mixed-Breed' ? 'selected' : '' }}>Moggy / Mixed-Breed</option>
-                                <option value="Puspin (Pusang Pinoy)" {{ $poster->breed === 'Puspin (Pusang Pinoy)' ? 'selected' : '' }}>Puspin (Pusang Pinoy)</option>
-                                <option value="Siamese" {{ $poster->breed === 'Siamese' ? 'selected' : '' }}>Siamese</option>
-                                <option value="Persian" {{ $poster->breed === 'Persian' ? 'selected' : '' }}>Persian</option>
-                                <option value="British Shorthair" {{ $poster->breed === 'British Shorthair' ? 'selected' : '' }}>British Shorthair</option>
-                                <option value="Maine Coon" {{ $poster->breed === 'Maine Coon' ? 'selected' : '' }}>Maine Coon</option>
-                                <option value="Ragdoll" {{ $poster->breed === 'Ragdoll' ? 'selected' : '' }}>Ragdoll</option>
-                                <option value="Scottish Fold" {{ $poster->breed === 'Scottish Fold' ? 'selected' : '' }}>Scottish Fold</option>
-                                <option value="Exotic Shorthair" {{ $poster->breed === 'Exotic Shorthair' ? 'selected' : '' }}>Exotic Shorthair</option>
-                                <option value="Bengal" {{ $poster->breed === 'Bengal' ? 'selected' : '' }}>Bengal</option>
-                            </optgroup>
-                        @endif
                     </select>
                     @error('breed') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
                 </div>
@@ -104,8 +72,8 @@
                         Found At
                     @endif
                 </label>
-                <textarea name="last_seen" id="last_seen_field" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('last_seen') border-red-500 @enderror" rows="3" {{ $poster->type === 'lost' ? '' : 'style="display: none;"' }}>{{ old('last_seen', $poster->last_seen) }}</textarea>
-                <textarea name="found_at" id="found_at_field" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('found_at') border-red-500 @enderror" rows="3" {{ $poster->type === 'found' ? '' : 'style="display: none;"' }}>{{ old('found_at', $poster->found_at) }}</textarea>
+                <textarea name="last_seen" id="last_seen_field" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('last_seen') border-red-500 @enderror" rows="3" {{ $poster->type === 'lost' ? '' : 'style="display: none;"' }}>{{ old('last_seen', $poster->last_seen) }}</textarea>
+                <textarea name="found_at" id="found_at_field" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('found_at') border-red-500 @enderror" rows="3" {{ $poster->type === 'found' ? '' : 'style="display: none;"' }}>{{ old('found_at', $poster->found_at) }}</textarea>
                 @error('last_seen') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
                 @error('found_at') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
             </div>
@@ -265,31 +233,46 @@ document.addEventListener('DOMContentLoaded', function() {
 
 document.addEventListener('DOMContentLoaded', function() {
     const speciesSelect = document.getElementById('species-select');
-    const breedSelect = document.getElementById('breed-select');
-    const felineBreeds = document.getElementById('feline-breeds');
-    const canineBreeds = document.getElementById('canine-breeds');
+    const breedSelect = document.getElementById('breed');
 
-    function toggleBreedOptions() {
-        const species = speciesSelect.value;
-        if (species === 'Feline') {
-            if (felineBreeds) felineBreeds.style.display = 'block';
-            if (canineBreeds) canineBreeds.style.display = 'none';
-            breedSelect.disabled = false;
-        } else if (species === 'Canine') {
-            if (felineBreeds) felineBreeds.style.display = 'none';
-            if (canineBreeds) canineBreeds.style.display = 'block';
-            breedSelect.disabled = false;
-        } else {
-            if (felineBreeds) felineBreeds.style.display = 'none';
-            if (canineBreeds) canineBreeds.style.display = 'none';
-            breedSelect.disabled = true;
+    speciesSelect.addEventListener('change', function() {
+        const selectedSpecies = this.value;
+        breedSelect.innerHTML = '<option value="">Select Breed</option>';
+
+        if (selectedSpecies === 'Canine') {
+            const canineBreeds = [
+                'Aspin (Asong Pinoy)', 'Shih Tzu', 'Poodle', 'Pomeranian', 'Golden Retriever',
+                'Labrador', 'Beagle', 'Pug', 'Siberian Husky', 'Chihuahua', 'Dachshund',
+                'German Shepherd', 'Chow Chow', 'Maltese', 'Doberman Pinscher'
+            ];
+            canineBreeds.forEach(breed => {
+                const option = document.createElement('option');
+                option.value = breed;
+                option.textContent = breed;
+                if (breed === '{{ $poster->breed }}') {
+                    option.selected = true;
+                }
+                breedSelect.appendChild(option);
+            });
+        } else if (selectedSpecies === 'Feline') {
+            const felineBreeds = [
+                'Moggy / Mixed-Breed', 'Puspin (Pusang Pinoy)', 'Siamese', 'Persian',
+                'British Shorthair', 'Maine Coon', 'Ragdoll', 'Scottish Fold', 'Exotic Shorthair', 'Bengal'
+            ];
+            felineBreeds.forEach(breed => {
+                const option = document.createElement('option');
+                option.value = breed;
+                option.textContent = breed;
+                if (breed === '{{ $poster->breed }}') {
+                    option.selected = true;
+                }
+                breedSelect.appendChild(option);
+            });
         }
-    }
+    });
 
-    speciesSelect.addEventListener('change', toggleBreedOptions);
-
-    // Initialize on page load
-    toggleBreedOptions();
+    // Trigger change event on page load to populate breeds
+    speciesSelect.dispatchEvent(new Event('change'));
 });
 </script>
 @endsection

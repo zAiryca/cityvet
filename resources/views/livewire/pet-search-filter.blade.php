@@ -71,15 +71,15 @@
         @forelse($pets as $pet)
             <div class="overflow-hidden transition duration-300 bg-white rounded-lg shadow-md hover:shadow-lg">
                 @if($pet->photo)
-                    <img src="{{ asset('storage/' . $pet->photo) }}" alt="{{ $pet->name }}" class="object-cover w-full h-48">
+                    <img src="{{ asset('storage/' . $pet->photo) }}" alt="{{ $pet->display_code }}" class="object-cover w-full h-48">
                 @else
                     <div class="flex items-center justify-center w-full h-48 bg-gray-200">
-                        <span class="text-gray-500">No Photo</span>
+                        <span class="text-gray-500">{{ $pet->display_code }}</span>
                     </div>
                 @endif
 
                 <div class="p-4">
-                    <h3 class="mb-1 text-lg font-semibold text-gray-900">{{ $pet->name }}</h3>
+                    <h3 class="mb-1 text-lg font-semibold text-gray-900">{{ $pet->display_code }}</h3>
                     <p class="mb-2 text-sm text-gray-600">{{ $pet->species }} • {{ $pet->breed }}</p>
                     <p class="mb-3 text-sm text-gray-500">{{ Str::limit($pet->description, 80) }}</p>
 

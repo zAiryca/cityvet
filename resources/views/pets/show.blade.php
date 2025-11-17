@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', '| ' . $pet->name)
+@section('title', '| ' . $pet->display_code)
 
 @section('content')
 <div class="max-w-7xl mx-auto py-6 px-4">
@@ -8,7 +8,7 @@
         <!-- Pet Images Gallery -->
         <div class="relative">
             @if($pet->photo)
-                <img src="{{ asset('storage/' . $pet->photo) }}" alt="{{ $pet->name }}" class="w-full h-96 object-cover">
+                <img src="{{ $pet->photo ? asset('storage/' . $pet->photo) : 'https://via.placeholder.com/600x400?text=' . $pet->display_code }}" alt="{{ $pet->display_code }}" class="w-full h-96 object-cover">
             @else
                 <div class="w-full h-96 bg-gray-200 flex items-center justify-center">
                     <span class="text-gray-500 text-xl">No Photo Available</span>
@@ -19,7 +19,7 @@
         <div class="p-8">
             <div class="flex justify-between items-start mb-6">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $pet->name }}</h1>
+                    <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $pet->display_code }}</h1>
                     <p class="text-lg text-gray-600">{{ ucfirst($pet->species) }} • {{ ucfirst($pet->breed) }}</p>
                 </div>
                 <div class="text-right">
@@ -71,11 +71,11 @@
                 @auth
                     @if($pet->status === 'adoptable')
                         <button onclick="openAdoptModal()" class="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold text-lg transition duration-200">
-                            Adopt {{ $pet->name }}
+                            Adopt {{ $pet->display_code }}
                         </button>
                     @elseif($pet->status === 'impounded')
                         <button onclick="openClaimModal()" class="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-lg font-semibold text-lg transition duration-200">
-                            Claim {{ $pet->name }}
+                            Claim {{ $pet->display_code }}
                         </button>
                     @endif
                 @else

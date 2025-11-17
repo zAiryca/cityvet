@@ -6,25 +6,7 @@
 <div class="max-w-7xl mx-auto py-6 px-4">
     <h1 class="text-3xl font-bold mb-6">My Profile</h1>
 
-    <!-- Dashboard Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div class="bg-green-50 p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold text-green-800">Adopted Pets</h3>
-            <p class="text-3xl font-bold">{{ $user->adoptedPets()->count() }}</p>
-            <a href="#adopted-pets" class="text-green-600 hover:underline">View Adopted</a>
-        </div>
-        <div class="bg-blue-50 p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold text-blue-800">Claimed Pets</h3>
-            <p class="text-3xl font-bold">{{ $user->claimedPets()->count() }}</p>
-            <a href="#claimed-pets" class="text-blue-600 hover:underline">View Claimed</a>
-        </div>
 
-        <div class="bg-yellow-50 p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold text-yellow-800">Pending Requests</h3>
-            <p class="text-3xl font-bold">{{ $user->requests()->where('status', 'pending')->count() }}</p>
-            <a href="{{ route('user.requests') }}" class="text-yellow-600 hover:underline">View Requests</a>
-        </div>
-    </div>
 
     <!-- Quick Actions -->
     <div class="bg-white p-6 rounded-lg shadow mb-8">

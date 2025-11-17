@@ -151,8 +151,10 @@
                     <tr>
                         <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
                         <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pet ID</th>
+                        <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">(Photo) Name</th>
                         <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Species</th>
                         <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Breed</th>
+                        <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                         <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                         <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Owner</th>
                         <th class="px-6 py-3 bg-gray-50">Actions</th>
@@ -163,8 +165,21 @@
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $index + 1 }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $pet->display_pet_id }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    @if($pet->photo)
+                                        <img src="{{ asset('storage/' . $pet->photo) }}" alt="{{ $pet->pet_name }}" class="w-10 h-10 mr-3 rounded-full object-cover">
+                                    @else
+                                        <div class="w-10 h-10 mr-3 bg-gray-200 rounded-full flex items-center justify-center">
+                                            <span class="text-xs text-gray-500">No Photo</span>
+                                        </div>
+                                    @endif
+                                    <span class="text-sm font-medium text-gray-900">{{ $pet->pet_name }}</span>
+                                </div>
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $pet->species }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $pet->breed }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $pet->created_at->format('M d, Y') }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm">
                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                     @if($pet->status === 'pending') bg-yellow-100 text-yellow-800
@@ -201,7 +216,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-6 py-4 text-center text-gray-500">No pet registrations found for the status: **{{ $pageTitle }}**.</td>
+                            <td colspan="9" class="px-6 py-4 text-center text-gray-500">No pet registrations found for the status: **{{ $pageTitle }}**.</td>
                         </tr>
                     @endforelse
                 </tbody>

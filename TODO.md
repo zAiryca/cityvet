@@ -1,2 +1,4 @@
--   [x] Update resources/views/user/pet-registrations/show.blade.php to use @extends('layouts.app') instead of <x-app-layout>, add @section('title'), and move header into @section('content')
--   [ ] Test the show page by navigating to it and verifying it displays pet details, status, and photo correctly
+- [x] Update resources/views/user/pet-registrations/show.blade.php to use @extends('layouts.app') instead of <x-app-layout>, add @section('title'), and move header into @section('content')
+- [x] Update resources/views/livewire/pet-search-filter.blade.php to use display_code in h3, alt, and no photo placeholder
+- [x] Update resources/views/pets/show.blade.php to use display_code in title, h1, button texts, alt, and placeholder
+- [x] Update app/Livewire/PetSearchFilter.php to include display_code in search query
