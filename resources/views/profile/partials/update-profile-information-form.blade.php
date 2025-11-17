@@ -57,14 +57,7 @@
 
             <div>
                 <x-input-label for="city_municipality" :value="__('City/Municipality')" />
-                <select id="city_municipality" name="city_municipality" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                    <option value="">Select City/Municipality</option>
-                    <option value="Alaminos City" @if(old('city_municipality', $user->city_municipality) == 'Alaminos City') selected @endif>Alaminos City</option>
-                    <option value="Bani" @if(old('city_municipality', $user->city_municipality) == 'Bani') selected @endif>Bani</option>
-                    <option value="Mabini" @if(old('city_municipality', $user->city_municipality) == 'Mabini') selected @endif>Mabini</option>
-                    <option value="Sual" @if(old('city_municipality', $user->city_municipality) == 'Sual') selected @endif>Sual</option>
-                </select>
-                <x-input-error class="mt-2" :messages="$errors->get('city_municipality')" />
+                <x-text-input id="city_municipality" name="city_municipality" type="text" class="mt-1 block w-full" :value="'Alaminos City'" readonly />
             </div>
 
             <div>

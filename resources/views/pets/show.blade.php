@@ -107,32 +107,35 @@
                 <!-- Section 1: Adopter's Information -->
                 <div class="mb-8">
                     <h5 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Section 1: Adopter's Information</h5>
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                        <p class="text-sm text-blue-800 mb-2"><strong>Note:</strong> The information below is auto-filled from your profile. If you need to update your information, please go to your <a href="{{ route('profile.edit') }}" class="underline text-blue-600 hover:text-blue-800">profile settings</a> first.</p>
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                            <input type="text" name="last_name" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <input type="text" name="last_name" value="{{ auth()->user()->last_name }}" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                            <input type="text" name="first_name" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <input type="text" name="first_name" value="{{ auth()->user()->first_name }}" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Middle Name</label>
-                            <input type="text" name="middle_name" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <input type="text" name="middle_name" value="{{ auth()->user()->middle_name }}" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
                         </div>
                     </div>
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Complete Address (House No., Street, Barangay, City)</label>
-                        <input type="text" name="address" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <input type="text" name="address" value="{{ auth()->user()->street . ', ' . auth()->user()->barangay . ', ' . auth()->user()->city_municipality }}" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Contact Number</label>
-                            <input type="tel" name="contact_number" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <input type="tel" name="contact_number" value="{{ auth()->user()->contact_number }}" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                            <input type="email" name="email" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <input type="email" name="email" value="{{ auth()->user()->email }}" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
                         </div>
                     </div>
                     <div class="mb-4">
@@ -322,32 +325,35 @@
                 <!-- Section 1: Owner's Information -->
                 <div class="mb-8">
                     <h5 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Section 1: Owner's Information</h5>
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                        <p class="text-sm text-blue-800 mb-2"><strong>Note:</strong> The information below is auto-filled from your profile. If you need to update your information, please go to your <a href="{{ route('profile.edit') }}" class="underline text-blue-600 hover:text-blue-800">profile settings</a> first.</p>
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                            <input type="text" name="last_name" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500">
+                            <input type="text" name="last_name" value="{{ auth()->user()->last_name }}" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50" readonly>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                            <input type="text" name="first_name" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500">
+                            <input type="text" name="first_name" value="{{ auth()->user()->first_name }}" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50" readonly>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Middle Name</label>
-                            <input type="text" name="middle_name" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500">
+                            <input type="text" name="middle_name" value="{{ auth()->user()->middle_name }}" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50" readonly>
                         </div>
                     </div>
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Complete Address (House No., Street, Barangay, City)</label>
-                        <input type="text" name="address" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500">
+                        <input type="text" name="address" value="{{ auth()->user()->street . ', ' . auth()->user()->barangay . ', ' . auth()->user()->city_municipality }}" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50" readonly>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Contact Number</label>
-                            <input type="tel" name="contact_number" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500">
+                            <input type="tel" name="contact_number" value="{{ auth()->user()->contact_number }}" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50" readonly>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                            <input type="email" name="email" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500">
+                            <input type="email" name="email" value="{{ auth()->user()->email }}" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50" readonly>
                         </div>
                     </div>
                 </div>

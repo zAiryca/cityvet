@@ -20,7 +20,7 @@ class ProfileUpdateRequest extends FormRequest
             'middle_name' => ['nullable', 'string', 'max:255', 'regex:/^[A-Z]/'],
             'last_name' => ['required', 'string', 'max:255', 'regex:/^[A-Z]/'],
             'contact_number' => ['required', 'string', 'max:20'],
-            'emergency_contact' => ['nullable', 'string', 'max:20'],
+            'emergency_contact' => ['nullable', 'string', 'max:20', 'regex:/^[0-9+\-\s()]+$/'],
             'street' => ['required', 'string', 'max:255'],
             'barangay' => ['required', 'string', 'max:255'],
             'city_municipality' => ['required', 'string', 'max:255'],
