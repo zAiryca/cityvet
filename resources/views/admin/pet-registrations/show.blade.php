@@ -7,15 +7,15 @@
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold">Pet Registration Details</h1>
         <div class="flex space-x-2">
-            @if($pet->status === 'pending')
-                <form method="POST" action="{{ route('admin.pet-registrations.approve', $pet) }}" class="inline">
+            @if($pet_registration->status === 'pending')
+                <form method="POST" action="{{ route('admin.pet-registrations.approve', $pet_registration) }}" class="inline">
                     @csrf
                     @method('PATCH')
                     <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                         Approve & Register
                     </button>
                 </form>
-                <form method="POST" action="{{ route('admin.pet-registrations.deny', $pet) }}" class="inline">
+                <form method="POST" action="{{ route('admin.pet-registrations.deny', $pet_registration) }}" class="inline">
                     @csrf
                     @method('PATCH')
                     <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onclick="return confirm('Are you sure you want to deny this registration?')">
@@ -23,7 +23,7 @@
                     </button>
                 </form>
             @endif
-            <form method="POST" action="{{ route('admin.pet-registrations.destroy', $pet) }}" class="inline">
+            <form method="POST" action="{{ route('admin.pet-registrations.destroy', $pet_registration) }}" class="inline">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" onclick="return confirm('Are you sure you want to delete this registration?')">
@@ -44,25 +44,25 @@
                     <h4 class="text-md font-semibold mb-4">Pet Information</h4>
                     <div class="space-y-3">
                         <div>
-                            <strong>Name:</strong> {{ $pet->pet_name }}
+                            <strong>Name:</strong> {{ $pet_registration->pet_name }}
                         </div>
                         <div>
-                            <strong>Species:</strong> {{ $pet->species }}
+                            <strong>Species:</strong> {{ $pet_registration->species }}
                         </div>
                         <div>
-                            <strong>Breed:</strong> {{ $pet->breed }}
+                            <strong>Breed:</strong> {{ $pet_registration->breed }}
                         </div>
                         <div>
-                            <strong>Birth Date:</strong> {{ $pet->birthday ? $pet->birthday->format('M d, Y') : 'N/A' }}
+                            <strong>Birth Date:</strong> {{ $pet_registration->birthday ? $pet_registration->birthday->format('M d, Y') : 'N/A' }}
                         </div>
                         <div>
-                            <strong>Gender:</strong> {{ ucfirst($pet->gender) }}
+                            <strong>Gender:</strong> {{ ucfirst($pet_registration->gender) }}
                         </div>
                         <div>
-                            <strong>Color Markings:</strong> {{ is_array($pet->color_markings) ? implode(', ', $pet->color_markings) : $pet->color_markings }}
+                            <strong>Color Markings:</strong> {{ is_array($pet_registration->color_markings) ? implode(', ', $pet_registration->color_markings) : $pet_registration->color_markings }}
                         </div>
                         <div>
-                            <strong>Description:</strong> {{ $pet->description ?: 'N/A' }}
+                            <strong>Description:</strong> {{ $pet_registration->description ?: 'N/A' }}
                         </div>
                     </div>
                 </div>
@@ -74,32 +74,32 @@
                         <div>
                             <strong>Status:</strong>
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                @if($pet->status === 'pending') bg-yellow-100 text-yellow-800
-                                @elseif($pet->status === 'registered') bg-green-100 text-green-800
+                                @if($pet_registration->status === 'pending') bg-yellow-100 text-yellow-800
+                                @elseif($pet_registration->status === 'registered') bg-green-100 text-green-800
                                 @else bg-red-100 text-red-800 @endif">
-                                {{ ucfirst($pet->status) }}
+                                {{ ucfirst($pet_registration->status) }}
                             </span>
                         </div>
                         <div>
-                            <strong>Owner:</strong> {{ $pet->user->name }}
+                            <strong>Owner:</strong> {{ $pet_registration->user->name }}
                         </div>
                         <div>
-                            <strong>Owner Email:</strong> {{ $pet->user->email }}
+                            <strong>Owner Email:</strong> {{ $pet_registration->user->email }}
                         </div>
                         <div>
-                            <strong>Submitted:</strong> {{ $pet->created_at->format('M d, Y H:i') }}
+                            <strong>Submitted:</strong> {{ $pet_registration->created_at->format('M d, Y H:i') }}
                         </div>
                         <div>
-                            <strong>Last Updated:</strong> {{ $pet->updated_at->format('M d, Y H:i') }}
+                            <strong>Last Updated:</strong> {{ $pet_registration->updated_at->format('M d, Y H:i') }}
                         </div>
                     </div>
                 </div>
             </div>
 
-            @if($pet->photo)
+            @if($pet_registration->photo)
                 <div class="mt-6">
                     <h4 class="text-md font-semibold mb-4">Photo</h4>
-                    <img src="{{ asset('storage/' . $pet->photo) }}" alt="{{ $pet->pet_name }}" class="max-w-xs rounded-lg shadow-md">
+                    <img src="{{ asset('storage/' . $pet_registration->photo) }}" alt="{{ $pet_registration->pet_name }}" class="max-w-xs rounded-lg shadow-md">
                 </div>
             @endif
         </div>

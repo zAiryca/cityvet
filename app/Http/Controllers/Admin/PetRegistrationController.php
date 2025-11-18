@@ -49,19 +49,19 @@ class PetRegistrationController extends Controller
         return view('admin.pet-registrations.index', compact('pets', 'currentRegistrationStatus'));
     }
 
-    public function show(PetRegistration $pet)
+    public function show(PetRegistration $pet_registration)
     {
-        return view('admin.pet-registrations.show', compact('pet'));
+        return view('admin.pet-registrations.show', compact('pet_registration'));
     }
 
-    public function approve(PetRegistration $pet)
+    public function approve(PetRegistration $pet_registration)
     {
-        if ($pet->status !== 'pending') {
+        if ($pet_registration->status !== 'pending') {
             return redirect()->back()->with('error', 'Pet registration is not pending.');
         }
 
         // Calculate age from birthday
-        $birthday = Carbon::parse($pet->birthday);
+        $birthday = Carbon::parse($pet_registration->birthday);
         $now = Carbon::now();
         $ageInMonths = $birthday->diffInMonths($now);
         $estimatedAgeYears = floor($ageInMonths / 12);
@@ -69,44 +69,44 @@ class PetRegistrationController extends Controller
 
         // Create the pet record
         Pet::create([
-            'user_id' => $pet->user_id,
-            'name' => $pet->pet_name,
-            'species' => $pet->species,
-            'breed' => $pet->breed,
+            'user_id' => $pet_registration->user_id,
+            'name' => $pet_registration->pet_name,
+            'species' => $pet_registration->species,
+            'breed' => $pet_registration->breed,
             'estimated_age_years' => $estimatedAgeYears,
             'estimated_age_months' => $estimatedAgeMonths,
-            'gender' => $pet->gender,
-            'color_markings' => is_array($pet->color_markings) ? implode(', ', $pet->color_markings) : $pet->color_markings,
-            'description' => $pet->description,
-            'photo' => $pet->photo,
+            'gender' => $pet_registration->gender,
+            'color_markings' => is_array($pet_registration->color_markings) ? implode(', ', $pet_registration->color_markings) : $pet_registration->color_markings,
+            'description' => $pet_registration->description,
+            'photo' => $pet_registration->photo,
             'status' => 'registered',
         ]);
 
         // Update registration status
-        $pet->update(['status' => 'registered']);
+        $pet_registration->update(['status' => 'registered']);
 
         return redirect()->route('admin.pet-registrations.index')->with('success', 'Pet registration approved and pet record created.');
     }
 
-    public function deny(PetRegistration $pet)
+    public function deny(PetRegistration $pet_registration)
     {
-        if ($pet->status !== 'pending') {
+        if ($pet_registration->status !== 'pending') {
             return redirect()->back()->with('error', 'Pet registration is not pending.');
         }
 
-        $pet->update(['status' => 'denied']);
+        $pet_registration->update(['status' => 'denied']);
 
         return redirect()->route('admin.pet-registrations.index')->with('success', 'Pet registration denied.');
     }
 
-    public function destroy(PetRegistration $pet)
+    public function destroy(PetRegistration $pet_registration)
     {
         // Delete photo if exists
-        if ($pet->photo && Storage::disk('public')->exists($pet->photo)) {
-            Storage::disk('public')->delete($pet->photo);
+        if ($pet_registration->photo && Storage::disk('public')->exists($pet_registration->photo)) {
+            Storage::disk('public')->delete($pet_registration->photo);
         }
 
-        $pet->delete();
+        $pet_registration->delete();
 
         return redirect()->route('admin.pet-registrations.index')->with('success', 'Pet registration deleted.');
     }

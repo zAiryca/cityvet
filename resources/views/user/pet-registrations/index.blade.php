@@ -49,6 +49,13 @@
                                 <a href="{{ route('pet-registrations.edit', $petRegistration) }}" class="flex-1 bg-blue-600 text-white py-2 rounded text-center hover:bg-blue-700 transition duration-200 text-sm">
                                     Edit
                                 </a>
+                                <form method="POST" action="{{ route('pet-registrations.destroy', $petRegistration) }}" class="flex-1" onsubmit="return confirm('Are you sure you want to delete this pet registration?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="w-full bg-red-600 text-white py-2 rounded text-center hover:bg-red-700 transition duration-200 text-sm">
+                                        Delete
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -83,6 +90,13 @@
                                 <a href="{{ route('pet-registrations.show', $petRegistration) }}" class="flex-1 bg-purple-600 text-white py-2 rounded text-center hover:bg-purple-700 transition duration-200 text-sm">
                                     View
                                 </a>
+                                <form method="POST" action="{{ route('pet-registrations.destroy', $petRegistration) }}" class="flex-1" onsubmit="return confirm('Are you sure you want to delete this pet registration?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="w-full bg-red-600 text-white py-2 rounded text-center hover:bg-red-700 transition duration-200 text-sm">
+                                        Delete
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>

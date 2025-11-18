@@ -30,6 +30,47 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
+                        <h4 class="text-md font-semibold mb-4">Owner Information</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <strong>Name:</strong> {{ $petRegistration->user->name }}
+                            </div>
+                            <div>
+                                <strong>Email:</strong> {{ $petRegistration->user->email }}
+                            </div>
+                            <div>
+                                <strong>Phone:</strong> {{ $petRegistration->user->phone ?? 'Not provided' }}
+                            </div>
+                            <div>
+                                <strong>Address:</strong> {{ $petRegistration->user->address ?? 'Not provided' }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-md font-semibold mb-4">Registration Status</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <strong>Status:</strong>
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                    @if($petRegistration->status === 'pending') bg-yellow-100 text-yellow-800
+                                    @elseif($petRegistration->status === 'registered') bg-green-100 text-green-800
+                                    @else bg-red-100 text-red-800 @endif">
+                                    {{ ucfirst($petRegistration->status) }}
+                                </span>
+                            </div>
+                            <div>
+                                <strong>Submitted:</strong> {{ $petRegistration->created_at->format('M d, Y H:i') }}
+                            </div>
+                            <div>
+                                <strong>Last Updated:</strong> {{ $petRegistration->updated_at->format('M d, Y H:i') }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div>
                         <h4 class="text-md font-semibold mb-4">Pet Information</h4>
                         <div class="space-y-3">
                             <div>
@@ -52,27 +93,6 @@
                             </div>
                             <div>
                                 <strong>Description:</strong> {{ $petRegistration->description ?: 'N/A' }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h4 class="text-md font-semibold mb-4">Registration Status</h4>
-                        <div class="space-y-3">
-                            <div>
-                                <strong>Status:</strong>
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                    @if($petRegistration->status === 'pending') bg-yellow-100 text-yellow-800
-                                    @elseif($petRegistration->status === 'registered') bg-green-100 text-green-800
-                                    @else bg-red-100 text-red-800 @endif">
-                                    {{ ucfirst($petRegistration->status) }}
-                                </span>
-                            </div>
-                            <div>
-                                <strong>Submitted:</strong> {{ $petRegistration->created_at->format('M d, Y H:i') }}
-                            </div>
-                            <div>
-                                <strong>Last Updated:</strong> {{ $petRegistration->updated_at->format('M d, Y H:i') }}
                             </div>
                         </div>
                     </div>

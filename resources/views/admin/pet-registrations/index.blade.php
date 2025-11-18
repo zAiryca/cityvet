@@ -198,12 +198,14 @@
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <a href="{{ route('admin.pet-registrations.show', $pet) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">View</a>
                                 @if($pet->status === 'pending')
-                                    <form method="POST" action="{{ route('pet-registrations.approve', $pet) }}" onsubmit="return confirm('Are you sure you want to register this pet?')" style="display: inline;">
+                                    <form method="POST" action="{{ route('admin.pet-registrations.approve', $pet) }}" onsubmit="return confirm('Are you sure you want to register this pet?')" style="display: inline;">
                                         @csrf
+                                        @method('PATCH')
                                         <button type="submit" class="text-green-600 hover:text-green-900 mr-3">Register</button>
                                     </form>
-                                    <form method="POST" action="{{ route('pet-registrations.deny', $pet) }}" onsubmit="return confirm('Are you sure you want to deny this pet registration?')" style="display: inline;">
+                                    <form method="POST" action="{{ route('admin.pet-registrations.deny', $pet) }}" onsubmit="return confirm('Are you sure you want to deny this pet registration?')" style="display: inline;">
                                         @csrf
+                                        @method('PATCH')
                                         <button type="submit" class="text-red-600 hover:text-red-900 mr-3">Deny</button>
                                     </form>
                                 @endif

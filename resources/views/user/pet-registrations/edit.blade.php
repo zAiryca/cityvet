@@ -12,6 +12,29 @@
         @method('PUT')
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Owner Information -->
+                            <div class="md:col-span-2">
+                                <h3 class="text-lg font-semibold mb-4">Owner Information</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Name</label>
+                                        <input type="text" value="{{ auth()->user()->name }}" readonly class="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Email</label>
+                                        <input type="email" value="{{ auth()->user()->email }}" readonly class="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Phone</label>
+                                        <input type="text" value="{{ auth()->user()->phone ?? 'Not provided' }}" readonly class="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Address</label>
+                                        <input type="text" value="{{ auth()->user()->address ?? 'Not provided' }}" readonly class="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100">
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Name -->
                             <div>
                                 <label for="pet_name" class="block text-sm font-medium text-gray-700">Pet Name</label>
