@@ -81,10 +81,16 @@
                 <div class="p-4">
                     <h3 class="mb-1 text-lg font-semibold text-gray-900">{{ $pet->display_code }}</h3>
                     <p class="mb-2 text-sm text-gray-600">{{ $pet->species }} • {{ $pet->breed }}</p>
-                    <p class="mb-3 text-sm text-gray-500">{{ Str::limit($pet->description, 80) }}</p>
+                    <p class="mb-2 text-sm text-gray-600">{{ ucfirst($pet->gender) }}</p>
+                    <p class="mb-3 text-sm text-gray-500">
+                        @if($pet->remaining_days > 0)
+                            <span class="text-green-600 font-medium">{{ (int)$pet->remaining_days }} days remaining</span>
+                        @else
+                            <span class="text-red-600 font-medium">Expired</span>
+                        @endif
+                    </p>
 
                     <div class="flex items-center justify-between">
-                        <span class="text-xs text-gray-500">{{ $pet->gender }}</span>
                         @if($pet->status === 'adoptable')
                             <a href="{{ route('pets.show', $pet) }}" class="px-3 py-1 text-sm text-white transition duration-200 bg-green-600 rounded hover:bg-green-700">
                                 Adopt

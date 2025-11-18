@@ -16,6 +16,8 @@
                     <option value="adoptable" {{ old('status', $pet->status) === 'adoptable' ? 'selected' : '' }}>Adoptable</option>
                     <option value="adopted" {{ old('status', $pet->status) === 'adopted' ? 'selected' : '' }}>Adopted</option>
                     <option value="claimed" {{ old('status', $pet->status) === 'claimed' ? 'selected' : '' }}>Claimed</option>
+                    <option value="unclaimed" {{ old('status', $pet->status) === 'unclaimed' ? 'selected' : '' }}>Unclaimed</option>
+                    <option value="unadopted" {{ old('status', $pet->status) === 'unadopted' ? 'selected' : '' }}>Unadopted</option>
                 </select>
                 @error('status') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
             </div>
@@ -151,18 +153,7 @@
                     @error('caught_location') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                 </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="adoptable-fields" style="display: none;">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Decision Date</label>
-                    <input type="date" name="decision_date" value="{{ old('decision_date', $pet->decision_date ? $pet->decision_date->format('Y-m-d') : '') }}" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('decision_date') border-red-500 @enderror">
-                    @error('decision_date') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Urgent Deadline (optional)</label>
-                    <input type="date" name="urgent_deadline" value="{{ old('urgent_deadline', $pet->urgent_deadline ? $pet->urgent_deadline->format('Y-m-d') : '') }}" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('urgent_deadline') border-red-500 @enderror">
-                    @error('urgent_deadline') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                </div>
-            </div>
+            <!-- No additional fields needed for adoptable status -->
             <div>
                 <label class="block text-sm font-medium text-gray-700">Photo (current: {{ $pet->photo ? 'Uploaded' : 'None' }})</label>
                 <input type="file" name="photo" accept="image/*" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('photo') border-red-500 @enderror">
@@ -195,13 +186,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const status = statusSelect.value;
         if (status === 'impounded') {
             impoundedFields.style.display = 'grid';
-            adoptableFields.style.display = 'none';
-        } else if (status === 'adoptable') {
-            impoundedFields.style.display = 'none';
-            adoptableFields.style.display = 'grid';
         } else {
             impoundedFields.style.display = 'none';
-            adoptableFields.style.display = 'none';
         }
     }
 

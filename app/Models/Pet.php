@@ -18,7 +18,6 @@ class Pet extends Model
     protected $casts = [
         'impounded_date' => 'date',
         'decision_date' => 'date',
-        'urgent_deadline' => 'date',
     ];
 
     public function user()
@@ -39,11 +38,11 @@ class Pet extends Model
 
 
 
-    // Helper: Calculate remaining days (for impounded)
+    // Helper: Calculate remaining days (for impounded and adoptable)
     public function getRemainingDaysAttribute()
     {
-        if (!$this->impounded_date) return null;
-        return max(0, 7 - now()->diffInDays($this->impounded_date));  // 7-day example
+        $startDate = $this->impounded_date ?: $this->decision_date ?: $this->created_at;
+        return max(0, 7 - now()->diffInDays($startDate));  // 7-day holding period
     }
 
     // Helper: Generate IMP/ADO code
@@ -80,5 +79,41 @@ class Pet extends Model
     public function isUrgent()
     {
         return $this->status === 'adoptable' && $this->urgent_deadline && now() < $this->urgent_deadline;
+    }
+
+    // Scope: For user visibility (hide unclaimed/unadopted)
+    public function scopeVisibleToUsers($query)
+    {
+        return $query->whereNotIn('status', ['unclaimed', 'unadopted']);
+    }
+
+    // Scope: For admin unclaimed pets
+    public function scopeUnclaimed($query)
+    {
+        return $query->where('status', 'unclaimed');
+    }
+
+    // Scope: For admin unadopted pets
+    public function scopeUnadopted($query)
+    {
+        return $query->where('status', 'unadopted');
+    }
+
+    // Helper: Check if pet should be moved to unclaimed/unadopted
+    public function shouldBeArchived()
+    {
+        return $this->remaining_days === 0 && in_array($this->status, ['impounded', 'adoptable']);
+    }
+
+    // Helper: Move to archived status
+    public function archiveIfExpired()
+    {
+        if ($this->shouldBeArchived()) {
+            $this->update([
+                'status' => $this->status === 'impounded' ? 'unclaimed' : 'unadopted'
+            ]);
+            return true;
+        }
+        return false;
     }
 }

@@ -52,6 +52,17 @@
                                 <span class="text-gray-600">Impounded Date:</span>
                                 <span class="font-medium">{{ $pet->impounded_date ? $pet->impounded_date->format('M d, Y') : 'N/A' }}</span>
                             </div>
+                        @elseif($pet->status === 'adoptable')
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Adoptable Date:</span>
+                                <span class="font-medium">{{ $pet->created_at->format('M d, Y') }}</span>
+                            </div>
+                        @endif
+                        @if($pet->remaining_days !== null)
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Days Remaining:</span>
+                            <span class="font-medium {{ $pet->remaining_days <= 1 ? 'text-red-600' : 'text-green-600' }}">{{ $pet->remaining_days }} day{{ $pet->remaining_days !== 1 ? 's' : '' }}</span>
+                        </div>
                         @endif
                         <div class="flex justify-between">
                             <span class="text-gray-600">Date Added:</span>

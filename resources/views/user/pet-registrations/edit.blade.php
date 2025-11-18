@@ -25,12 +25,14 @@
                                         <input type="email" value="{{ auth()->user()->email }}" readonly class="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100">
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700">Phone</label>
-                                        <input type="text" value="{{ auth()->user()->phone ?? 'Not provided' }}" readonly class="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100">
+                                        <label class="block text-sm font-medium text-gray-700">Contact Number</label>
+                                        <input type="text" name="contact_number" value="{{ old('contact_number', $petRegistration->contact_number ?? auth()->user()->phone ?? '') }}" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('contact_number') border-red-500 @enderror">
+                                        @error('contact_number') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700">Address</label>
-                                        <input type="text" value="{{ auth()->user()->address ?? 'Not provided' }}" readonly class="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100">
+                                        <label class="block text-sm font-medium text-gray-700">Full Address</label>
+                                        <textarea name="address" rows="3" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('address') border-red-500 @enderror">{{ old('address', $petRegistration->address ?? auth()->user()->address ?? '') }}</textarea>
+                                        @error('address') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                                     </div>
                                 </div>
                             </div>

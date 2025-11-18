@@ -94,13 +94,11 @@ class PetController extends Controller
             'color_markings.*' => 'string',
             'description' => 'nullable|string',
             'photo' => 'nullable|image|max:10240',
-            'status' => 'required|in:impounded,adoptable,adopted,claimed',
+            'status' => 'required|in:impounded,adoptable,adopted,claimed,unclaimed,unadopted',
             'impounded_date' => 'nullable|date|required_if:status,impounded',
             'caught_location' => 'nullable|string|max:255',
-            'decision_date' => 'nullable|date|required_if:status,adoptable',
             'remaining_days' => 'nullable|integer|min:0',
             'user_id' => 'nullable|exists:users,id',
-            'urgent_deadline' => 'nullable|date|after:now',
         ]);
 
         if ($request->has('color_markings') && is_array($request->color_markings)) {

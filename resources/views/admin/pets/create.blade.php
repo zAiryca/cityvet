@@ -151,14 +151,9 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="adoptable-fields" style="display: none;">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Decision Date</label>
-                    <input type="date" name="decision_date" value="{{ old('decision_date') }}" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('decision_date') border-red-500 @enderror">
+                    <label class="block text-sm font-medium text-gray-700">Adoptable Date</label>
+                    <input type="date" name="decision_date" value="{{ old('decision_date', date('Y-m-d')) }}" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('decision_date') border-red-500 @enderror">
                     @error('decision_date') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Urgent Deadline (optional)</label>
-                    <input type="date" name="urgent_deadline" value="{{ old('urgent_deadline') }}" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('urgent_deadline') border-red-500 @enderror">
-                    @error('urgent_deadline') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                 </div>
             </div>
             <div>

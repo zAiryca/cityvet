@@ -12,6 +12,8 @@
             'Impounded' => 'impounded',
             'Claimed' => 'claimed',
             'Adopted' => 'adopted',
+            'Unclaimed' => 'unclaimed',
+            'Unadopted' => 'unadopted',
         ];
 
         // Define a readable title using universally supported if/elseif logic
@@ -25,6 +27,10 @@
                 $pageTitle = 'Adopted Pets';
             } elseif ($currentStatus === 'claimed') {
                 $pageTitle = 'Claimed Pets';
+            } elseif ($currentStatus === 'unclaimed') {
+                $pageTitle = 'Unclaimed Pets';
+            } elseif ($currentStatus === 'unadopted') {
+                $pageTitle = 'Unadopted Pets';
             }
         }
     @endphp
@@ -83,7 +89,12 @@
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">{{ $pet->species }} / {{ $pet->breed }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $pet->status === 'impounded' ? 'bg-red-100 text-red-800' : ($pet->status === 'adoptable' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800') }}">
+                                    <span class="px-2 py-1 text-xs font-semibold rounded-full
+                                        @if($pet->status === 'impounded') bg-red-100 text-red-800
+                                        @elseif($pet->status === 'adoptable') bg-green-100 text-green-800
+                                        @elseif($pet->status === 'unclaimed') bg-gray-100 text-gray-800
+                                        @elseif($pet->status === 'unadopted') bg-gray-100 text-gray-800
+                                        @else bg-blue-100 text-blue-800 @endif">
                                         {{ ucfirst($pet->status) }}
                                     </span>
                                 </td>

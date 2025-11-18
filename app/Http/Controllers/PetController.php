@@ -17,13 +17,13 @@ class PetController extends Controller
 
     public function adoptable()
     {
-        $pets = Pet::where('status', 'adoptable')->paginate(12);
+        $pets = Pet::where('status', 'adoptable')->visibleToUsers()->paginate(12);
         return view('pets.adoptable', compact('pets'));
     }
 
     public function impounded()
     {
-        $pets = Pet::where('status', 'impounded')->paginate(12);
+        $pets = Pet::where('status', 'impounded')->visibleToUsers()->paginate(12);
         return view('pets.impounded', compact('pets'));
     }
 
@@ -105,7 +105,8 @@ class PetController extends Controller
                 'address' => $request->address,
                 'contact_number' => $request->contact_number,
                 'email' => $request->email,
-                'birthday' => Auth::user()->birthday ? Auth::user()->birthday->format('Y-m-d') : null,
+                // 'birthday' => Auth::user()->birthday ? Auth::user()->birthday->format('Y-m-d') : null,
+                 'date_of_birth' => $request->date_of_birth,
                 'certify_info' => $request->certify_info,
                 'agree_terms' => $request->agree_terms,
             ];

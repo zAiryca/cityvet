@@ -1,4 +1,16 @@
-- [x] Update resources/views/user/pet-registrations/show.blade.php to use @extends('layouts.app') instead of <x-app-layout>, add @section('title'), and move header into @section('content')
-- [x] Update resources/views/livewire/pet-search-filter.blade.php to use display_code in h3, alt, and no photo placeholder
-- [x] Update resources/views/pets/show.blade.php to use display_code in title, h1, button texts, alt, and placeholder
-- [x] Update app/Livewire/PetSearchFilter.php to include display_code in search query
+# Pet Deadline System Implementation
+
+## Tasks
+
+-   [x] Create migration to add 'unclaimed' and 'unadopted' to status enum
+-   [x] Remove decision_date and urgent_deadline columns if present
+-   [x] Update Pet model remaining_days logic and add scopes
+-   [x] Update Admin PetController to include new status filters
+-   [x] Update admin pets index view to add Unclaimed/Unadopted tabs
+-   [x] Update user pet views to hide unclaimed/unadopted and show deadlines
+-   [x] Create artisan command for automatic status updates
+-   [x] Test the implementation
+
+## Status
+
+Completed - Migration run, command tested (no expired pets found as expected)

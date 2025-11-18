@@ -40,6 +40,8 @@ class PetRegistrationController extends Controller
             'color_markings' => 'nullable|array',
             'color_markings.*' => 'string',
             'description' => 'nullable|string',
+            'contact_number' => 'required|string|max:20',
+            'address' => 'required|string',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -57,6 +59,8 @@ class PetRegistrationController extends Controller
             'gender' => $request->gender,
             'color_markings' => $request->color_markings,
             'description' => $request->description,
+            'contact_number' => $request->contact_number,
+            'address' => $request->address,
             'photo' => $photoPath,
             'status' => 'pending',
         ]);
@@ -98,6 +102,8 @@ class PetRegistrationController extends Controller
             'color_markings' => 'nullable|array',
             'color_markings.*' => 'string',
             'description' => 'nullable|string',
+            'contact_number' => 'required|string|max:20',
+            'address' => 'required|string',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -114,6 +120,8 @@ class PetRegistrationController extends Controller
             'gender' => $request->gender,
             'color_markings' => $request->color_markings,
             'description' => $request->description,
+            'contact_number' => $request->contact_number,
+            'address' => $request->address,
             'photo' => $photoPath,
         ]);
 
