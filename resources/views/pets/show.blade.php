@@ -107,7 +107,7 @@
 <div id="adoptModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
     <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-4/5 lg:w-3/4 shadow-lg rounded-md bg-white max-h-[90vh] overflow-y-auto">
         <div class="mt-3">
-            <h3 class="text-xl font-bold text-gray-900 mb-4 text-center">City of [City Name] - City Veterinary Department</h3>
+            <h3 class="text-xl font-bold text-gray-900 mb-4 text-center">City of Alaminos - City Veterinary Department</h3>
             <h4 class="text-lg font-semibold text-gray-800 mb-6 text-center">Pet Adoption Application Form</h4>
             <p class="text-sm text-gray-600 mb-6 text-center">Thank you for your interest in adopting! Please fill out this form completely and honestly.</p>
 
@@ -149,6 +149,13 @@
                             <input type="email" name="email" value="{{ auth()->user()->email }}" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
                         </div>
                     </div>
+                    <!-- Hidden inputs for submission -->
+                    <input type="hidden" name="last_name" value="{{ auth()->user()->last_name }}">
+                    <input type="hidden" name="first_name" value="{{ auth()->user()->first_name }}">
+                    <input type="hidden" name="middle_name" value="{{ auth()->user()->middle_name }}">
+                    <input type="hidden" name="address" value="{{ auth()->user()->street . ', ' . auth()->user()->barangay . ', ' . auth()->user()->city_municipality }}">
+                    <input type="hidden" name="contact_number" value="{{ auth()->user()->contact_number }}">
+                    <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Date of Birth (MM/DD/YYYY)</label>
                         <input type="date" name="date_of_birth" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
@@ -324,7 +331,7 @@
 <div id="claimModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
     <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-4/5 lg:w-3/4 shadow-lg rounded-md bg-white max-h-[90vh] overflow-y-auto">
         <div class="mt-3">
-            <h3 class="text-xl font-bold text-gray-900 mb-4 text-center">City of [City Name] - City Veterinary Department</h3>
+            <h3 class="text-xl font-bold text-gray-900 mb-4 text-center">City of Alaminos - City Veterinary Department</h3>
             <h4 class="text-lg font-semibold text-gray-800 mb-6 text-center">Impounded Pet Claim Form</h4>
             <p class="text-sm text-gray-600 mb-6 text-center">Please use this form to start the process of reclaiming your impounded pet. After submission, a staff member will contact you to verify your ownership and provide details on the total fees and the schedule for release.</p>
             <p class="text-sm text-red-600 mb-6 text-center font-medium">Note: Pets not claimed within the mandatory holding period (e.g., 3 days) may be placed for adoption.</p>
@@ -367,6 +374,13 @@
                             <input type="email" name="email" value="{{ auth()->user()->email }}" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50" readonly>
                         </div>
                     </div>
+                    <!-- Hidden inputs for submission -->
+                    <input type="hidden" name="last_name" value="{{ auth()->user()->last_name }}">
+                    <input type="hidden" name="first_name" value="{{ auth()->user()->first_name }}">
+                    <input type="hidden" name="middle_name" value="{{ auth()->user()->middle_name }}">
+                    <input type="hidden" name="address" value="{{ auth()->user()->street . ', ' . auth()->user()->barangay . ', ' . auth()->user()->city_municipality }}">
+                    <input type="hidden" name="contact_number" value="{{ auth()->user()->contact_number }}">
+                    <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                 </div>
 
                 <!-- Section 2: Proof of Ownership -->

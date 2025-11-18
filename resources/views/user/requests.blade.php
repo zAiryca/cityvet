@@ -5,7 +5,7 @@
 @section('content')
 <div class="max-w-7xl mx-auto py-6 px-4">
     <h1 class="text-3xl font-bold mb-6">My Requests</h1>
-    <p class="mb-6">Track your claim, adopt, and announcement registration requests.</p>
+    <p class="mb-6">Track your claim, adopt and requests.</p>
 
     <!-- Status Tabs -->
     <div class="bg-white rounded-lg shadow mb-6">

@@ -13,28 +13,54 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Owner Information -->
             <div class="md:col-span-2">
-                <h3 class="text-lg font-semibold mb-4">Owner Information</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Name</label>
-                        <input type="text" value="{{ auth()->user()->name }}" readonly class="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Email</label>
-                        <input type="email" value="{{ auth()->user()->email }}" readonly class="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Contact Number</label>
-                        <input type="text" name="contact_number" value="{{ old('contact_number', auth()->user()->phone ?? '') }}" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('contact_number') border-red-500 @enderror">
-                        @error('contact_number') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Full Address</label>
-                        <textarea name="address" rows="3" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('address') border-red-500 @enderror">{{ old('address', auth()->user()->address ?? '') }}</textarea>
-                        @error('address') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                    </div>
-                </div>
-            </div>
+    <h3 class="text-lg font-semibold mb-4">Owner Information</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Name</label>
+            <input
+                type="text"
+                value="{{ auth()->user()->name }}"
+                readonly
+                class="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100"
+            >
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Email</label>
+            <input
+                type="email"
+                value="{{ auth()->user()->email }}"
+                readonly
+                class="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100"
+            >
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Contact Number</label>
+            <input
+                type="text"
+                value="{{ auth()->user()->contact_number }}"
+                readonly
+                class="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100"
+            >
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Full Address</label>
+            <textarea
+                rows="3"
+                readonly
+                class="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100"
+            >{{ auth()->user()->street . ', ' . auth()->user()->barangay . ', ' . auth()->user()->city_municipality }}</textarea>
+        </div>
+
+    </div>
+</div>
+
+        <!-- Hidden inputs for submission -->
+        <input type="hidden" name="contact_number" value="{{ auth()->user()->contact_number }}">
+        <input type="hidden" name="address" value="{{ auth()->user()->street . ', ' . auth()->user()->barangay . ', ' . auth()->user()->city_municipality }}">
 
             <!-- Pet Name -->
             <div>

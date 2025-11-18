@@ -36,7 +36,7 @@
                             <p><strong>Address:</strong> {{ $additionalData['address'] ?? '' }}</p>
                             <p><strong>Contact:</strong> {{ $additionalData['contact_number'] ?? '' }}</p>
                             <p><strong>Email:</strong> {{ $additionalData['email'] ?? '' }}</p>
-                            <p><strong>Date of Birth:</strong> {{ isset($additionalData['date_of_birth']) ? date('M d, Y', strtotime($additionalData['date_of_birth'])) : '' }}</p>
+                           <p><strong>Date of Birth:</strong> {{ isset($additionalData['date_of_birth']) ? date('M d, Y', strtotime($additionalData['date_of_birth'])) : '' }}</p>
                             <p><strong>Dwelling Type:</strong> {{ ucfirst(str_replace('_', ' ', $additionalData['dwelling_type'] ?? '')) }}</p>
                             @if(isset($additionalData['landlord_permission']))
                                 <p><strong>Landlord Permission:</strong> {{ ucfirst($additionalData['landlord_permission']) }}</p>
