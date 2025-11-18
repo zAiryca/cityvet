@@ -61,9 +61,9 @@ class PetRequestController extends Controller
 
         if ($status === 'approved') {
             $pet = $petRequest->requestable; // Use polymorphic relationship
-            if ($petRequest->type === 'claim') {
+            if ($pet && $petRequest->type === 'claim') {
                 $pet->update(['status' => 'claimed', 'user_id' => $petRequest->user_id]);
-            } elseif ($petRequest->type === 'adopt') {
+            } elseif ($pet && $petRequest->type === 'adopt') {
                 $pet->update(['status' => 'adopted', 'user_id' => $petRequest->user_id, 'urgent_deadline' => null]);
             }
         }
@@ -75,6 +75,35 @@ class PetRequestController extends Controller
             }
         }
 
-        return back()->with('success', 'Request ' . $status . '.');
+        return redirect()->back()->with('success', 'Request ' . $status . '.');
+    }
+
+    public function approve(PetRequest $petRequest)
+    {
+        if (!Auth::user()->isAdmin()) abort(403);
+
+        $petRequest->update(['status' => 'approved']);
+
+        // Note: Pet status is NOT changed here. Only "Mark as Adopted" or "Mark as Claimed" buttons in admin pets section will change pet status
+        // This approval just means the request is approved, but the user still needs to complete the process at the vet
+
+        if ($petRequest->user) {
+            $petRequest->user->notify(new \App\Notifications\RequestStatusNotification($petRequest, 'approved'));
+        }
+
+        return redirect()->route('admin.requests.index', ['status' => 'approved'])->with('success', 'Request approved.');
+    }
+
+    public function deny(PetRequest $petRequest)
+    {
+        if (!Auth::user()->isAdmin()) abort(403);
+
+        $petRequest->update(['status' => 'denied']);
+
+        if ($petRequest->user) {
+            $petRequest->user->notify(new \App\Notifications\RequestStatusNotification($petRequest, 'denied'));
+        }
+
+        return redirect()->route('admin.requests.index', ['status' => 'denied'])->with('success', 'Request denied.');
     }
 }

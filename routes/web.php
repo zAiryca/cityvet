@@ -176,6 +176,8 @@ Route::middleware('setlocale')->group(function () {
 
         // Requests management
         Route::resource('requests', PetRequestController::class)->only(['index', 'show', 'update', 'destroy']);
+        Route::post('/requests/{petRequest}/approve', [PetRequestController::class, 'approve'])->name('requests.approve');
+        Route::post('/requests/{petRequest}/deny', [PetRequestController::class, 'deny'])->name('requests.deny');
 
         // Reports
         Route::get('/reports/generate', [ReportController::class, 'generate'])->name('reports.generate');

@@ -83,7 +83,17 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <a href="{{ route('admin.requests.show', $request) }}" class="text-indigo-600 hover:text-indigo-900">View</a>
+                                <a href="{{ route('admin.requests.show', $request) }}" class="text-indigo-600 hover:text-indigo-900 mr-4">View</a>
+                                @if($request->status === 'pending')
+                                    <form method="POST" action="{{ route('admin.requests.approve', $request) }}" class="inline">
+                                        @csrf
+                                        <button type="submit" class="text-green-600 hover:text-green-900 mr-2" onclick="return confirm('Are you sure you want to approve this request?')">Approve</button>
+                                    </form>
+                                    <form method="POST" action="{{ route('admin.requests.deny', $request) }}" class="inline">
+                                        @csrf
+                                        <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Are you sure you want to deny this request?')">Deny</button>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                     @endforeach

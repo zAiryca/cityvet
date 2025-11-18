@@ -10,13 +10,6 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <p><strong>User:</strong> {{ $request->user->name }} ({{ $request->user->email }})</p>
                 <p><strong>Type:</strong> {{ ucfirst($request->type) }}</p>
-                @if($request->requestable)
-                    @if($request->requestable_type === 'App\\Models\\Pet')
-                        <p><strong>Pet:</strong> {{ $request->requestable->display_code }} ({{ $request->requestable->species }})</p>
-                    @elseif($request->requestable_type === 'App\\Models\\Event')
-                        <p><strong>Event:</strong> {{ $request->requestable->title }} on {{ $request->requestable->event_date->format('M d, Y') }}</p>
-                    @endif
-                @endif
                 <p><strong>Status:</strong>
                     <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $request->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : ($request->status === 'approved' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800') }}">
                         {{ ucfirst($request->status) }}
@@ -24,6 +17,50 @@
                 </p>
                 <p><strong>Date:</strong> {{ $request->created_at->format('M d, Y h:i A') }}</p>
             </div>
+
+            @if($request->requestable && $request->requestable_type === 'App\\Models\\Pet')
+                <div class="mb-6 text-center">
+                    <h3 class="text-lg font-semibold mb-4">{{ $request->type === 'adopt' ? 'Adopted' : 'Impounded' }} Pet Photo</h3>
+                    <img src="{{ $request->requestable->photo ? asset('storage/' . $request->requestable->photo) : 'https://via.placeholder.com/600x400?text=' . $request->requestable->display_code }}" alt="{{ $request->requestable->display_code }}" class="w-full h-96 object-cover">
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-4">{{ $request->type === 'adopt' ? 'Adopted' : 'Impounded' }} Pet Information</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <p><strong>Pet ID:</strong> {{ $request->requestable->display_code }}</p>
+                        <p><strong>Species:</strong> {{ $request->requestable->species }}</p>
+                        <p><strong>Breed:</strong> {{ $request->requestable->breed ?: 'Unknown' }}</p>
+                        <p><strong>Gender:</strong> {{ ucfirst($request->requestable->gender) }}</p>
+                        <p><strong>Age:</strong> {{ $request->requestable->estimated_age_years ? $request->requestable->estimated_age_years . ' years' : '' }} {{ $request->requestable->estimated_age_months ? $request->requestable->estimated_age_months . ' months' : '' }}</p>
+                        <p><strong>Color Markings:</strong> {{ $request->requestable->color_markings ?: 'Not specified' }}</p>
+                        <p><strong>Description:</strong> {{ $request->requestable->description ?: 'No description' }}</p>
+                        @if($request->requestable->caught_location)
+                            <p><strong>Location Found:</strong> {{ $request->requestable->caught_location }}</p>
+                        @endif
+                        @if($request->requestable->adoption_reason)
+                            <p><strong>Adoption Reason:</strong> {{ $request->requestable->adoption_reason }}</p>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-4">{{ ucfirst($request->type) }}er Information</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <p><strong>Name:</strong> {{ $request->user->name }}</p>
+                        <p><strong>Email:</strong> {{ $request->user->email }}</p>
+                        <p><strong>Phone:</strong> {{ $request->user->phone ?: 'Not provided' }}</p>
+                        <p><strong>Address:</strong> {{ $request->user->address ?: 'Not provided' }}</p>
+                        @if($request->additional_data)
+                            @php
+                                $additionalData = json_decode($request->additional_data, true);
+                            @endphp
+                            @if(isset($additionalData['reason']))
+                                <p><strong>Reason:</strong> {{ $additionalData['reason'] }}</p>
+                            @endif
+                        @endif
+                    </div>
+                </div>
+            @endif
 
             @if($request->additional_data)
                 @php
@@ -92,7 +129,7 @@
                 @endphp
                 @if(is_array($photos) && count($photos) > 0)
                     <div class="mb-6">
-                        <h3 class="text-lg font-semibold mb-4">Uploaded Photos</h3>
+                        <h3 class="text-lg font-semibold mb-4">Claimant/Adopter Uploaded Photos</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             @foreach($photos as $photo)
                                 <div class="relative">
@@ -104,59 +141,21 @@
                 @endif
             @endif
 
-            <!-- Update Status Tabs -->
-            <div class="mb-6">
-                <div class="border-b border-gray-200">
-                    <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                        <button type="button" onclick="setStatus('approved')" class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm {{ $request->status === 'approved' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
-                            Approve
-                        </button>
-                        <button type="button" onclick="setStatus('denied')" class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm {{ $request->status === 'denied' ? 'border-red-500 text-red-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
-                            Deny
-                        </button>
-                        <button type="button" onclick="setStatus('pending')" class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm {{ $request->status === 'pending' ? 'border-yellow-500 text-yellow-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
-                            Pending
-                        </button>
-                    </nav>
+            <!-- Success Message -->
+            @if(session('success'))
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                    {{ session('success') }}
                 </div>
+            @endif
 
-                <form action="{{ route('admin.requests.update', $request) }}" method="POST" class="mt-4">
-                    @csrf @method('PATCH')
-                    <input type="hidden" name="status" id="statusInput" value="{{ $request->status }}">
-                    <div class="grid grid-cols-1 gap-4">
-                        <textarea name="admin_notes" rows="3" placeholder="Admin notes (optional for denied requests)" class="border p-2 rounded @error('admin_notes') border-red-500 @enderror">{{ old('admin_notes', $request->admin_notes) }}</textarea>
-                    </div>
-                    @error('status') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                    @error('admin_notes') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4">Update Status</button>
-                </form>
-            </div>
 
-            <script>
-                function setStatus(status) {
-                    document.getElementById('statusInput').value = status;
 
-                    // Update tab styling
-                    const tabs = document.querySelectorAll('nav button');
-                    tabs.forEach(tab => {
-                        tab.classList.remove('border-indigo-500', 'text-indigo-600', 'border-red-500', 'text-red-600', 'border-yellow-500', 'text-yellow-600');
-                        tab.classList.add('border-transparent', 'text-gray-500');
-                    });
-
-                    const activeTab = document.querySelector(`button[onclick="setStatus('${status}')"]`);
-                    if (status === 'approved') {
-                        activeTab.classList.remove('border-transparent', 'text-gray-500');
-                        activeTab.classList.add('border-indigo-500', 'text-indigo-600');
-                    } else if (status === 'denied') {
-                        activeTab.classList.remove('border-transparent', 'text-gray-500');
-                        activeTab.classList.add('border-red-500', 'text-red-600');
-                    } else if (status === 'pending') {
-                        activeTab.classList.remove('border-transparent', 'text-gray-500');
-                        activeTab.classList.add('border-yellow-500', 'text-yellow-600');
-                    }
-                }
-            </script>
-
+            @if($request->admin_notes)
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-4">Admin Notes</h3>
+                    <p class="text-gray-700 bg-gray-100 p-4 rounded">{{ $request->admin_notes }}</p>
+                </div>
+            @endif
             <div class="flex space-x-4">
                 <a href="{{ route('admin.requests.index') }}" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Back to List</a>
             </div>

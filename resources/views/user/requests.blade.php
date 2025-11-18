@@ -11,16 +11,16 @@
     <div class="bg-white rounded-lg shadow mb-6">
         <div class="border-b border-gray-200">
             <nav class="-mb-px flex space-x-8 px-6" aria-label="Tabs">
-                <a href="{{ route('user.requests.index', array_merge(request()->query(), ['status' => ''])) }}" class="tab-link whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm {{ !request('status') ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+                <a href="{{ route('user.requests', array_merge(request()->query(), ['status' => ''])) }}" class="tab-link whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm {{ !request('status') ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
                     All ({{ $requests->total() }})
                 </a>
-                <a href="{{ route('user.requests.index', array_merge(request()->query(), ['status' => 'pending'])) }}" class="tab-link whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm {{ request('status') === 'pending' ? 'border-yellow-500 text-yellow-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+                <a href="{{ route('user.requests', array_merge(request()->query(), ['status' => 'pending'])) }}" class="tab-link whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm {{ request('status') === 'pending' ? 'border-yellow-500 text-yellow-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
                     Pending ({{ $requests->where('status', 'pending')->count() }})
                 </a>
-                <a href="{{ route('user.requests.index', array_merge(request()->query(), ['status' => 'approved'])) }}" class="tab-link whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm {{ request('status') === 'approved' ? 'border-green-500 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+                <a href="{{ route('user.requests', array_merge(request()->query(), ['status' => 'approved'])) }}" class="tab-link whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm {{ request('status') === 'approved' ? 'border-green-500 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
                     Approved ({{ $requests->where('status', 'approved')->count() }})
                 </a>
-                <a href="{{ route('user.requests.index', array_merge(request()->query(), ['status' => 'denied'])) }}" class="tab-link whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm {{ request('status') === 'denied' ? 'border-red-500 text-red-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+                <a href="{{ route('user.requests', array_merge(request()->query(), ['status' => 'denied'])) }}" class="tab-link whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm {{ request('status') === 'denied' ? 'border-red-500 text-red-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
                     Denied ({{ $requests->where('status', 'denied')->count() }})
                 </a>
             </nav>
@@ -30,13 +30,13 @@
         <div class="px-6 py-4 border-b border-gray-200">
             <div class="flex space-x-4">
                 <span class="text-sm font-medium text-gray-700">Filter by Type:</span>
-                <a href="{{ route('user.requests.index', array_merge(request()->query(), ['type' => ''])) }}" class="type-filter whitespace-nowrap py-1 px-2 text-xs font-medium rounded-full {{ !request('type') ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                <a href="{{ route('user.requests', array_merge(request()->query(), ['type' => ''])) }}" class="type-filter whitespace-nowrap py-1 px-2 text-xs font-medium rounded-full {{ !request('type') ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                     All Types
                 </a>
-                <a href="{{ route('user.requests.index', array_merge(request()->query(), ['type' => 'adopt'])) }}" class="type-filter whitespace-nowrap py-1 px-2 text-xs font-medium rounded-full {{ request('type') === 'adopt' ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                <a href="{{ route('user.requests', array_merge(request()->query(), ['type' => 'adopt'])) }}" class="type-filter whitespace-nowrap py-1 px-2 text-xs font-medium rounded-full {{ request('type') === 'adopt' ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                     Adoption
                 </a>
-                <a href="{{ route('user.requests.index', array_merge(request()->query(), ['type' => 'claim'])) }}" class="type-filter whitespace-nowrap py-1 px-2 text-xs font-medium rounded-full {{ request('type') === 'claim' ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                <a href="{{ route('user.requests', array_merge(request()->query(), ['type' => 'claim'])) }}" class="type-filter whitespace-nowrap py-1 px-2 text-xs font-medium rounded-full {{ request('type') === 'claim' ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                     Claim
                 </a>
 
@@ -52,9 +52,9 @@
                         <div class="flex justify-between items-start mb-4">
                             <div>
                                 <h3 class="text-lg font-semibold text-gray-900">
-                                    @if($request->requestable_type === 'App\Models\Pet')
+                                    @if($request->requestable_type === 'App\Models\Pet' && $request->requestable)
                                         {{ $request->requestable->display_code }}
-                                    @elseif($request->requestable_type === 'App\Models\Announcement')
+                                    @elseif($request->requestable_type === 'App\Models\Announcement' && $request->requestable)
                                         {{ Str::limit($request->requestable->title, 30) }}
                                     @else
                                         N/A
@@ -71,7 +71,7 @@
                             <p class="text-sm text-gray-600">
                                 <strong>Submitted:</strong> {{ $request->created_at->format('M d, Y') }}
                             </p>
-                            @if($request->requestable_type === 'App\Models\Pet')
+                            @if($request->requestable_type === 'App\Models\Pet' && $request->requestable)
                                 <p class="text-sm text-gray-600">
                                     <strong>Species:</strong> {{ $request->requestable->species }}
                                 </p>
@@ -89,7 +89,7 @@
                 </div>
             @endforeach
         </div>
-        {{ $requests->appends(request()->query())->links() }}
+        {{ $requests->links() }}
     @else
         <div class="bg-white p-6 rounded-lg shadow text-center">
             <p class="text-gray-500 mb-4">No requests yet. Start by browsing pets or announcements!</p>
