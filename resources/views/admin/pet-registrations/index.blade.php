@@ -10,6 +10,7 @@
         $statuses = [
             'Pending' => 'pending',
             'Registered' => 'registered',
+            'Denied' => 'denied',
         ];
 
         // Define a readable title using universally supported if/elseif logic
@@ -19,6 +20,8 @@
                 $pageTitle = 'Pending Pet Registrations';
             } elseif ($currentRegistrationStatus === 'registered') {
                 $pageTitle = 'Registered Pets';
+            } elseif ($currentRegistrationStatus === 'denied') {
+                $pageTitle = 'Denied Pet Registrations';
             }
         }
     @endphp
@@ -134,12 +137,10 @@
         <div class="border-b border-gray-200 mb-6">
             <nav class="flex space-x-4 overflow-x-auto pb-2">
                 @foreach($statuses as $label => $status)
-                    @if($status !== 'denied')
-                        <a href="{{ route('admin.pet-registrations.index', ['registration_status' => $status]) }}"
-                           class="@if($currentRegistrationStatus === $status) border-indigo-500 text-indigo-600 @else border-transparent text-gray-500 hover:text-gray-700 @endif whitespace-nowrap py-2 px-3 border-b-2 font-medium text-sm transition duration-150 ease-in-out">
-                           {{ $label }}
-                        </a>
-                    @endif
+                    <a href="{{ route('admin.pet-registrations.index', ['registration_status' => $status]) }}"
+                       class="@if($currentRegistrationStatus === $status) border-indigo-500 text-indigo-600 @else border-transparent text-gray-500 hover:text-gray-700 @endif whitespace-nowrap py-2 px-3 border-b-2 font-medium text-sm transition duration-150 ease-in-out">
+                       {{ $label }}
+                    </a>
                 @endforeach
             </nav>
         </div>
@@ -200,12 +201,10 @@
                                 @if($pet->status === 'pending')
                                     <form method="POST" action="{{ route('admin.pet-registrations.approve', $pet) }}" onsubmit="return confirm('Are you sure you want to register this pet?')" style="display: inline;">
                                         @csrf
-                                        @method('PATCH')
                                         <button type="submit" class="text-green-600 hover:text-green-900 mr-3">Register</button>
                                     </form>
                                     <form method="POST" action="{{ route('admin.pet-registrations.deny', $pet) }}" onsubmit="return confirm('Are you sure you want to deny this pet registration?')" style="display: inline;">
                                         @csrf
-                                        @method('PATCH')
                                         <button type="submit" class="text-red-600 hover:text-red-900 mr-3">Deny</button>
                                     </form>
                                 @endif

@@ -6,7 +6,7 @@
                 <!-- Logo -->
                 <div class="flex items-center shrink-0">
                     <a href="{{ route('home') }}">
-                        <x-application-logo class="block w-auto text-gray-800 fill-current h-9" />
+                        <img src="{{ asset('images/alaminos-logo.png') }}" alt="Alaminos City Veterinary Office Logo" class="block w-auto h-9">
                     </a>
                 </div>
 

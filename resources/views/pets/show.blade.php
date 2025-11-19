@@ -3,23 +3,22 @@
 @section('title', '| ' . $pet->display_code)
 
 @section('content')
-<div class="max-w-7xl mx-auto py-6 px-4">
-    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-        <!-- Pet Images Gallery -->
+<div class="px-4 py-6 mx-auto max-w-7xl">
+    <div class="overflow-hidden bg-white rounded-lg shadow-lg">
         <div class="relative">
             @if($pet->photo)
-                <img src="{{ $pet->photo ? asset('storage/' . $pet->photo) : 'https://via.placeholder.com/600x400?text=' . $pet->display_code }}" alt="{{ $pet->display_code }}" class="w-full h-96 object-cover">
+                <img src="{{ $pet->photo ? asset('storage/' . $pet->photo) : 'https://via.placeholder.com/800x600?text=' . $pet->display_code }}" alt="{{ $pet->display_code }}" class="object-contain w-full h-96 md:h-[500px] bg-gray-100 p-4">
             @else
-                <div class="w-full h-96 bg-gray-200 flex items-center justify-center">
-                    <span class="text-gray-500 text-xl">No Photo Available</span>
+                <div class="flex items-center justify-center w-full bg-gray-200 h-96 md:h-[500px]">
+                    <span class="text-xl text-gray-500">No Photo Available</span>
                 </div>
             @endif
         </div>
 
         <div class="p-8">
-            <div class="flex justify-between items-start mb-6">
+            <div class="flex items-start justify-between mb-6">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $pet->display_code }}</h1>
+                    <h1 class="mb-2 text-3xl font-bold text-gray-900">{{ $pet->display_code }}</h1>
                     <p class="text-lg text-gray-600">{{ ucfirst($pet->species) }} • {{ ucfirst($pet->breed) }}</p>
                 </div>
                 <div class="text-right">
@@ -31,9 +30,69 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            {{-- New/Revised Claim Process Section for Impounded --}}
+            @if($pet->status === 'impounded')
+            <div class="p-6 mb-8 border border-red-300 rounded-lg bg-red-50">
+                <h2 class="mb-4 text-2xl font-bold text-red-800">🚨 Claim Process - 3 Essential Steps</h2>
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                    <div class="text-center">
+                        <div class="flex items-center justify-center w-10 h-10 mx-auto mb-2 text-xl font-bold text-white bg-red-600 rounded-full">1</div>
+                        <p class="font-semibold text-red-700">Submit Claim Form Online</p>
+                        <p class="text-sm text-gray-600">Click 'Claim Pet' and submit the owner information form.</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="flex items-center justify-center w-10 h-10 mx-auto mb-2 text-xl font-bold text-white bg-red-600 rounded-full">2</div>
+                        <p class="font-semibold text-red-700">Verification & Fees</p>
+                        <p class="text-sm text-gray-600">Wait for the CVD team to contact you to verify ownership and inform you of the required fees/fines.</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="flex items-center justify-center w-10 h-10 mx-auto mb-2 text-xl font-bold text-white bg-red-600 rounded-full">3</div>
+                        <p class="font-semibold text-red-700">Pet Release & Finalization</p>
+                        <p class="text-sm text-gray-600">Pay all dues and complete paperwork at the City Veterinary Department to take your pet home.</p>
+                    </div>
+                </div>
+                <p class="p-3 mt-4 text-sm font-medium text-center text-red-800 bg-red-200 rounded-md">
+                     ⚠️ **Urgent:** You must claim your pet before the **Days Remaining** period ends. Failure to claim your pet within this period may result in **forfeiture of ownership**, and **you may not see the pet listed here anymore.**
+                </p>
+                </p>
+            </div>
+            @endif
+
+            {{-- Original Adoption Process Section (Kept for completeness, but only renders for adoptable) --}}
+            @if($pet->status === 'adoptable')
+            <div class="p-6 mb-8 border border-green-300 rounded-lg bg-green-50">
+                <h2 class="mb-4 text-2xl font-bold text-green-800">✅ Adoption Process - 4 Simple Steps</h2>
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+                    <div class="text-center">
+                        <div class="flex items-center justify-center w-10 h-10 mx-auto mb-2 text-xl font-bold text-white bg-green-600 rounded-full">1</div>
+                        <p class="font-semibold text-green-700">Online Form Submission</p>
+                        <p class="text-sm text-gray-600">Fill out and submit the comprehensive adoption form online.</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="flex items-center justify-center w-10 h-10 mx-auto mb-2 text-xl font-bold text-white bg-green-600 rounded-full">2</div>
+                        <p class="font-semibold text-green-700">Application Approval</p>
+                        <p class="text-sm text-gray-600">Our team reviews your application for initial qualification.</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="flex items-center justify-center w-10 h-10 mx-auto mb-2 text-xl font-bold text-white bg-green-600 rounded-full">3</div>
+                        <p class="font-semibold text-green-700">Home/Interview Screening</p>
+                        <p class="text-sm text-gray-600">A screening call or visit is scheduled to confirm suitability.</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="flex items-center justify-center w-10 h-10 mx-auto mb-2 text-xl font-bold text-white bg-green-600 rounded-full">4</div>
+                        <p class="font-semibold text-green-700">Pet Pickup & Finalization</p>
+                        <p class="text-sm text-gray-600">Complete paperwork and welcome your new family member!</p>
+                    </div>
+                </div>
+                <p class="p-3 mt-4 text-sm font-medium text-center text-green-800 bg-green-200 rounded-md">
+                    💡 **User Tip:** Submitting the form online is the fastest way to start the process and avoid unnecessary travel! Must submit adoption form through system. Direct pickup not available.
+                </p>
+            </div>
+            @endif
+
+            <div class="grid grid-cols-1 gap-8 mb-8 md:grid-cols-2">
                 <div>
-                    <h2 class="text-xl font-semibold mb-4">Pet Details</h2>
+                    <h2 class="mb-4 text-xl font-semibold">Pet Details</h2>
                     <div class="space-y-3">
                         <div class="flex justify-between">
                             <span class="text-gray-600">Gender:</span>
@@ -60,8 +119,8 @@
                         @endif
                         @if($pet->remaining_days !== null)
                         <div class="flex justify-between">
-                            <span class="text-gray-600">Days Remaining:</span>
-                            <span class="font-medium {{ $pet->remaining_days <= 1 ? 'text-red-600' : 'text-green-600' }}">{{ $pet->remaining_days }} day{{ $pet->remaining_days !== 1 ? 's' : '' }}</span>
+                            <span class="text-gray-600">Days Remaining to Claim:</span>
+                            <span class="font-medium {{ (int)$pet->remaining_days <= 1 ? 'text-red-600 font-bold' : 'text-orange-600' }}">{{ (int)$pet->remaining_days }} day{{ (int)$pet->remaining_days !== 1 ? 's' : '' }}</span>
                         </div>
                         @endif
                         <div class="flex justify-between">
@@ -72,30 +131,40 @@
                 </div>
 
                 <div>
-                    <h2 class="text-xl font-semibold mb-4">Description</h2>
-                    <p class="text-gray-700 leading-relaxed">{{ $pet->description ?? 'No description available.' }}</p>
+                    <h2 class="mb-4 text-xl font-semibold">Description</h2>
+                    <p class="leading-relaxed text-gray-700">{{ $pet->description ?? 'No description available.' }}</p>
+                    @if($pet->status === 'impounded')
+                        <div class="p-4 mt-4 border border-red-200 rounded-lg bg-red-50">
+                            <h3 class="mb-2 text-lg font-semibold text-red-800">Important Claim Notice</h3>
+                            <p class="text-red-700">This pet is currently **impounded**. If you are the rightful owner, please **submit a claim request** as soon as possible before the claim period expires and it becomes adoptable.</p>
+                        </div>
+                    @elseif($pet->status === 'adoptable')
+                        <div class="p-4 mt-4 border border-green-200 rounded-lg bg-green-50">
+                            <h3 class="mb-2 text-lg font-semibold text-green-800">Ready for Adoption</h3>
+                            <p class="text-green-700">This pet is available for adoption. Fill out the adoption form to start the process. Must submit adoption form through system. Direct pickup not available.</p>
+                        </div>
+                    @endif
                 </div>
             </div>
 
-            <!-- Action Button -->
-            <div class="border-t pt-8">
+            <div class="pt-8 border-t">
                 @auth
                     @if($pet->status === 'adoptable')
-                        <button onclick="openAdoptModal()" class="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold text-lg transition duration-200">
+                        <button onclick="openAdoptModal()" class="px-8 py-3 text-lg font-semibold text-white transition duration-200 bg-green-600 rounded-lg hover:bg-green-700">
                             Adopt {{ $pet->display_code }}
                         </button>
                     @elseif($pet->status === 'impounded')
-                        <button onclick="openClaimModal()" class="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-lg font-semibold text-lg transition duration-200">
+                        <button onclick="openClaimModal()" class="px-8 py-3 text-lg font-semibold text-white transition duration-200 bg-red-600 rounded-lg hover:bg-red-700">
                             Claim {{ $pet->display_code }}
                         </button>
                     @endif
                 @else
-                    <a href="{{ route('login') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold text-lg inline-block transition duration-200">
+                    <a href="{{ route('login') }}" class="inline-block px-8 py-3 text-lg font-semibold text-white transition duration-200 bg-blue-600 rounded-lg hover:bg-blue-700">
                         Login to {{ $pet->status === 'adoptable' ? 'Adopt' : 'Claim' }}
                     </a>
                 @endauth
 
-                <a href="{{ route('pets.' . $pet->status) }}" class="ml-4 text-gray-600 hover:text-gray-800 font-medium">
+                <a href="{{ route('pets.' . $pet->status) }}" class="ml-4 font-medium text-gray-600 hover:text-gray-800">
                     ← Back to {{ ucfirst($pet->status) }} Pets
                 </a>
             </div>
@@ -103,71 +172,71 @@
     </div>
 </div>
 
-<!-- Adoption Modal -->
-<div id="adoptModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+@auth
+{{-- ADOPT MODAL (Retained, but for adoptable pets) --}}
+@if($pet->status === 'adoptable')
+<div id="adoptModal" class="fixed inset-0 z-50 hidden w-full h-full overflow-y-auto bg-gray-600 bg-opacity-50">
     <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-4/5 lg:w-3/4 shadow-lg rounded-md bg-white max-h-[90vh] overflow-y-auto">
         <div class="mt-3">
-            <h3 class="text-xl font-bold text-gray-900 mb-4 text-center">City of Alaminos - City Veterinary Department</h3>
-            <h4 class="text-lg font-semibold text-gray-800 mb-6 text-center">Pet Adoption Application Form</h4>
-            <p class="text-sm text-gray-600 mb-6 text-center">Thank you for your interest in adopting! Please fill out this form completely and honestly.</p>
+            <h3 class="mb-4 text-xl font-bold text-center text-gray-900">City of Alaminos - City Veterinary Department</h3>
+            <h4 class="mb-6 text-lg font-semibold text-center text-gray-800">Pet Adoption Application Form</h4>
+            <p class="mb-6 text-sm text-center text-gray-600">Thank you for your interest in adopting! Please fill out this form completely and honestly.</p>
 
             <form action="{{ route('pets.request', $pet) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="type" value="adopt">
 
-                <!-- Section 1: Adopter's Information -->
                 <div class="mb-8">
-                    <h5 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Section 1: Adopter's Information</h5>
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                        <p class="text-sm text-blue-800 mb-2"><strong>Note:</strong> The information below is auto-filled from your profile. If you need to update your information, please go to your <a href="{{ route('profile.edit') }}" class="underline text-blue-600 hover:text-blue-800">profile settings</a> first.</p>
+                    <h5 class="pb-2 mb-4 text-lg font-semibold text-gray-800 border-b">Section 1: Adopter's Information</h5>
+                    <div class="p-4 mb-4 border border-blue-200 rounded-lg bg-blue-50">
+                        <p class="mb-2 text-sm text-blue-800"><strong>Note:</strong> The information below is auto-filled from your profile. If you need to update your information, please go to your <a href="{{ route('profile.edit') }}" class="text-blue-600 underline hover:text-blue-800">profile settings</a> first.</p>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div class="grid grid-cols-1 gap-4 mb-4 md:grid-cols-3">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                            <input type="text" name="last_name" value="{{ auth()->user()->last_name }}" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Last Name</label>
+                            <input type="text" value="{{ auth()->user()->last_name ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                            <input type="text" name="first_name" value="{{ auth()->user()->first_name }}" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">First Name</label>
+                            <input type="text" value="{{ auth()->user()->first_name ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Middle Name</label>
-                            <input type="text" name="middle_name" value="{{ auth()->user()->middle_name }}" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Middle Name</label>
+                            <input type="text" value="{{ auth()->user()->middle_name ?? '' }}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
                         </div>
                     </div>
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Complete Address (House No., Street, Barangay, City)</label>
-                        <input type="text" name="address" value="{{ auth()->user()->street . ', ' . auth()->user()->barangay . ', ' . auth()->user()->city_municipality }}" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Complete Address (House No., Street, Barangay, City)</label>
+                        <input type="text" value="{{ (auth()->user()->street ?? '') . ', ' . (auth()->user()->barangay ?? '') . ', ' . (auth()->user()->city_municipality ?? '') }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="grid grid-cols-1 gap-4 mb-4 md:grid-cols-2">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Contact Number</label>
-                            <input type="tel" name="contact_number" value="{{ auth()->user()->contact_number }}" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Contact Number</label>
+                            <input type="tel" value="{{ auth()->user()->contact_number ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                            <input type="email" name="email" value="{{ auth()->user()->email }}" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Email Address</label>
+                            <input type="email" value="{{ auth()->user()->email ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
                         </div>
                     </div>
-                    <!-- Hidden inputs for submission -->
-                    <input type="hidden" name="last_name" value="{{ auth()->user()->last_name }}">
-                    <input type="hidden" name="first_name" value="{{ auth()->user()->first_name }}">
-                    <input type="hidden" name="middle_name" value="{{ auth()->user()->middle_name }}">
-                    <input type="hidden" name="address" value="{{ auth()->user()->street . ', ' . auth()->user()->barangay . ', ' . auth()->user()->city_municipality }}">
-                    <input type="hidden" name="contact_number" value="{{ auth()->user()->contact_number }}">
-                    <input type="hidden" name="email" value="{{ auth()->user()->email }}">
+                    {{-- Hidden fields to pass auto-filled data to controller --}}
+                    <input type="hidden" name="last_name" value="{{ auth()->user()->last_name ?? '' }}">
+                    <input type="hidden" name="first_name" value="{{ auth()->user()->first_name ?? '' }}">
+                    <input type="hidden" name="middle_name" value="{{ auth()->user()->middle_name ?? '' }}">
+                    <input type="hidden" name="address" value="{{ (auth()->user()->street ?? '') . ', ' . (auth()->user()->barangay ?? '') . ', ' . (auth()->user()->city_municipality ?? '') }}">
+                    <input type="hidden" name="contact_number" value="{{ auth()->user()->contact_number ?? '' }}">
+                    <input type="hidden" name="email" value="{{ auth()->user()->email ?? '' }}">
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Date of Birth (MM/DD/YYYY)</label>
-                        <input type="date" name="date_of_birth" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Date of Birth (MM/DD/YYYY)</label>
+                        <input type="date" name="date_of_birth" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
                     </div>
                 </div>
 
-                <!-- Section 2: Household Information -->
                 <div class="mb-8">
-                    <h5 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Section 2: Household Information</h5>
+                    <h5 class="pb-2 mb-4 text-lg font-semibold text-gray-800 border-b">Section 2: Household Information</h5>
 
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">1. Type of Dwelling:</label>
+                        <label class="block mb-2 text-sm font-medium text-gray-700">1. Type of Dwelling:</label>
                         <div class="space-y-2">
                             <label class="flex items-center">
                                 <input type="radio" name="dwelling_type" value="owned" required class="mr-2">
@@ -185,7 +254,7 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">2. If you rent, do you have your landlord's permission to keep a pet?</label>
+                        <label class="block mb-2 text-sm font-medium text-gray-700">2. If you rent, do you have your landlord's permission to keep a pet?</label>
                         <div class="space-y-2">
                             <label class="flex items-center">
                                 <input type="radio" name="landlord_permission" value="yes" class="mr-2">
@@ -203,7 +272,7 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">3. Is your property securely fenced or gated?</label>
+                        <label class="block mb-2 text-sm font-medium text-gray-700">3. Is your property securely fenced or gated?</label>
                         <div class="space-y-2">
                             <label class="flex items-center">
                                 <input type="radio" name="fenced_property" value="yes" required class="mr-2">
@@ -216,19 +285,19 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="grid grid-cols-1 gap-4 mb-4 md:grid-cols-2">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">4. How many people live in your home? Adults (18+)</label>
-                            <input type="number" name="adults_count" min="1" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <label class="block mb-1 text-sm font-medium text-gray-700">4. How many people live in your home? Adults (18+)</label>
+                            <input type="number" name="adults_count" min="1" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Children (under 18)</label>
-                            <input type="number" name="children_count" min="0" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Children (under 18)</label>
+                            <input type="number" name="children_count" min="0" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
                         </div>
                     </div>
 
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">5. Is anyone in your household allergic to animals?</label>
+                        <label class="block mb-2 text-sm font-medium text-gray-700">5. Is anyone in your household allergic to animals?</label>
                         <div class="space-y-2">
                             <label class="flex items-center">
                                 <input type="radio" name="allergies" value="yes" required class="mr-2">
@@ -246,7 +315,7 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">6. Do you currently have other pets?</label>
+                        <label class="block mb-2 text-sm font-medium text-gray-700">6. Do you currently have other pets?</label>
                         <div class="space-y-2">
                             <label class="flex items-center">
                                 <input type="radio" name="other_pets" value="yes" required class="mr-2">
@@ -260,12 +329,12 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">7. If yes, please list them (e.g., "1 Dog, 5 y/o, vaccinated"; "2 Cats, vaccinated")</label>
-                        <textarea name="other_pets_list" rows="3" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">7. If yes, please list them (e.g., "1 Dog, 5 y/o, vaccinated"; "2 Cats, vaccinated")</label>
+                        <textarea name="other_pets_list" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
                     </div>
 
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">8. Where will this pet primarily live?</label>
+                        <label class="block mb-2 text-sm font-medium text-gray-700">8. Where will this pet primarily live?</label>
                         <div class="space-y-2">
                             <label class="flex items-center">
                                 <input type="radio" name="pet_living_area" value="indoors" required class="mr-2">
@@ -283,16 +352,15 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">9. Please briefly explain why you would like to adopt a pet</label>
-                        <textarea name="reason" rows="4" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">9. Please briefly explain why you would like to adopt a pet</label>
+                        <textarea name="reason" rows="4" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
                     </div>
                 </div>
 
-                <!-- Section 3: Adoption Agreement -->
                 <div class="mb-8">
-                    <h5 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Section 3: Adoption Agreement</h5>
-                    <p class="text-sm text-gray-600 mb-4">By submitting this application, I understand and agree to the following:</p>
-                    <ul class="text-sm text-gray-700 mb-4 space-y-1">
+                    <h5 class="pb-2 mb-4 text-lg font-semibold text-gray-800 border-b">Section 3: Adoption Agreement</h5>
+                    <p class="mb-4 text-sm text-gray-600">By submitting this application, I understand and agree to the following:</p>
+                    <ul class="mb-4 space-y-1 text-sm text-gray-700">
                         <li>• I will provide the adopted pet with proper shelter, sufficient food, clean water, and all necessary medical care (including veterinary visits).</li>
                         <li>• I will ensure the pet receives its annual Anti-Rabies vaccination and other required boosters.</li>
                         <li>• I will not keep the pet permanently caged or tethered on a short leash.</li>
@@ -313,150 +381,113 @@
                 </div>
 
                 <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Home Environment Photos (Optional - 2-3 photos)</label>
-                    <input type="file" name="photos[]" multiple accept="image/*" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
-                    <p class="text-sm text-gray-500 mt-1">Upload photos of your home environment to help us assess suitability.</p>
+                    <label class="block mb-2 text-sm font-medium text-gray-700">Home Environment Photos (Optional - 2-3 photos)</label>
+                    <input type="file" name="photos[]" multiple accept="image/*" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <p class="mt-1 text-sm text-gray-500">Upload photos of your home environment to help us assess suitability.</p>
                 </div>
 
                 <div class="flex justify-end space-x-3">
-                    <button type="button" onclick="closeAdoptModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">Cancel</button>
-                    <button type="submit" class="px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 font-semibold">Submit Adoption Application</button>
+                    <button type="button" onclick="closeAdoptModal()" class="px-4 py-2 text-gray-700 bg-gray-300 rounded-md hover:bg-gray-400">Cancel</button>
+                    <button type="submit" class="px-6 py-3 font-semibold text-white bg-green-600 rounded-md hover:bg-green-700">Submit Adoption Application</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+@endif
 
-<!-- Claim Modal -->
-<div id="claimModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-    <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-4/5 lg:w-3/4 shadow-lg rounded-md bg-white max-h-[90vh] overflow-y-auto">
+{{-- CLAIM MODAL (Revised to be much simpler and only for claiming) --}}
+@if($pet->status === 'impounded')
+<div id="claimModal" class="fixed inset-0 z-50 hidden w-full h-full overflow-y-auto bg-gray-600 bg-opacity-50">
+    <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/5 lg:w-1/2 shadow-lg rounded-md bg-white max-h-[90vh] overflow-y-auto">
         <div class="mt-3">
-            <h3 class="text-xl font-bold text-gray-900 mb-4 text-center">City of Alaminos - City Veterinary Department</h3>
-            <h4 class="text-lg font-semibold text-gray-800 mb-6 text-center">Impounded Pet Claim Form</h4>
-            <p class="text-sm text-gray-600 mb-6 text-center">Please use this form to start the process of reclaiming your impounded pet. After submission, a staff member will contact you to verify your ownership and provide details on the total fees and the schedule for release.</p>
-            <p class="text-sm text-red-600 mb-6 text-center font-medium">Note: Pets not claimed within the mandatory holding period (e.g., 3 days) may be placed for adoption.</p>
+            <h3 class="mb-4 text-xl font-bold text-center text-gray-900">City of Alaminos - City Veterinary Department</h3>
+            <h4 class="mb-6 text-lg font-semibold text-center text-gray-800">Impounded Pet Claim Request</h4>
+            <p class="mb-6 text-sm text-center text-gray-600">Please use this form to start the process of **reclaiming your impounded pet**. After submission, a staff member will contact you to verify your ownership, determine required fees/fines, and schedule the release.</p>
+            <p class="mb-6 text-sm font-medium text-center text-red-600">Note: Pets not claimed within the mandatory holding period ({{ $pet->remaining_days ? (int)$pet->remaining_days : 'N/A' }} days remaining) will be placed for adoption.</p>
 
             <form action="{{ route('pets.request', $pet) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="type" value="claim">
+                <input type="hidden" name="last_name" value="{{ auth()->user()->last_name ?? '' }}">
+                <input type="hidden" name="first_name" value="{{ auth()->user()->first_name ?? '' }}">
+                <input type="hidden" name="middle_name" value="{{ auth()->user()->middle_name ?? '' }}">
+                <input type="hidden" name="address" value="{{ (auth()->user()->street ?? '') . ', ' . (auth()->user()->barangay ?? '') . ', ' . (auth()->user()->city_municipality ?? '') }}">
+                <input type="hidden" name="contact_number" value="{{ auth()->user()->contact_number ?? '' }}">
+                <input type="hidden" name="email" value="{{ auth()->user()->email ?? '' }}">
 
-                <!-- Section 1: Owner's Information -->
                 <div class="mb-8">
-                    <h5 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Section 1: Owner's Information</h5>
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                        <p class="text-sm text-blue-800 mb-2"><strong>Note:</strong> The information below is auto-filled from your profile. If you need to update your information, please go to your <a href="{{ route('profile.edit') }}" class="underline text-blue-600 hover:text-blue-800">profile settings</a> first.</p>
+                    <h5 class="pb-2 mb-4 text-lg font-semibold text-gray-800 border-b">Section 1: Owner's Information</h5>
+                    <div class="p-4 mb-4 border border-blue-200 rounded-lg bg-blue-50">
+                        <p class="mb-2 text-sm text-blue-800"><strong>Note:</strong> Your profile information is auto-filled below. Please ensure it is up-to-date as this is what we will use to contact you.</p>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div class="grid grid-cols-1 gap-4 mb-4 md:grid-cols-3">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                            <input type="text" name="last_name" value="{{ auth()->user()->last_name }}" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50" readonly>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Last Name</label>
+                            <input type="text" value="{{ auth()->user()->last_name ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" readonly>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                            <input type="text" name="first_name" value="{{ auth()->user()->first_name }}" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50" readonly>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">First Name</label>
+                            <input type="text" value="{{ auth()->user()->first_name ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" readonly>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Middle Name</label>
-                            <input type="text" name="middle_name" value="{{ auth()->user()->middle_name }}" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50" readonly>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Middle Name</label>
+                            <input type="text" value="{{ auth()->user()->middle_name ?? '' }}" class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" readonly>
                         </div>
                     </div>
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Complete Address (House No., Street, Barangay, City)</label>
-                        <input type="text" name="address" value="{{ auth()->user()->street . ', ' . auth()->user()->barangay . ', ' . auth()->user()->city_municipality }}" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50" readonly>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Complete Address</label>
+                        <input type="text" value="{{ (auth()->user()->street ?? '') . ', ' . (auth()->user()->barangay ?? '') . ', ' . (auth()->user()->city_municipality ?? '') }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" readonly>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="grid grid-cols-1 gap-4 mb-4 md:grid-cols-2">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Contact Number</label>
-                            <input type="tel" name="contact_number" value="{{ auth()->user()->contact_number }}" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50" readonly>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Contact Number</label>
+                            <input type="tel" value="{{ auth()->user()->contact_number ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" readonly>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                            <input type="email" name="email" value="{{ auth()->user()->email }}" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50" readonly>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Email Address</label>
+                            <input type="email" value="{{ auth()->user()->email ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" readonly>
                         </div>
                     </div>
-                    <!-- Hidden inputs for submission -->
-                    <input type="hidden" name="last_name" value="{{ auth()->user()->last_name }}">
-                    <input type="hidden" name="first_name" value="{{ auth()->user()->first_name }}">
-                    <input type="hidden" name="middle_name" value="{{ auth()->user()->middle_name }}">
-                    <input type="hidden" name="address" value="{{ auth()->user()->street . ', ' . auth()->user()->barangay . ', ' . auth()->user()->city_municipality }}">
-                    <input type="hidden" name="contact_number" value="{{ auth()->user()->contact_number }}">
-                    <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                </div>
 
-                <!-- Section 2: Proof of Ownership -->
-                <div class="mb-8">
-                    <h5 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Section 2: Proof of Ownership</h5>
-                    <p class="text-sm text-gray-600 mb-4">Please upload at least one (1) proof of ownership:</p>
-                    <p class="text-sm text-gray-700 mb-4">(Examples: Pet's vaccination/medical record, clear photos of you with your pet, barangay pet registration.)</p>
+                    <h5 class="pb-2 mt-6 mb-4 text-lg font-semibold text-gray-800 border-b">Section 2: Proof of Ownership</h5>
 
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Upload Proof Documents/Photos</label>
-                        <input type="file" name="photos[]" multiple accept="image/*,.pdf,.doc,.docx" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500">
-                        <p class="text-sm text-gray-500 mt-1">Upload photos showing you with the pet or other proof of ownership. At least one file is required.</p>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">1. Describe the unique features of the pet (e.g., small scar near right eye, specific bark, behavioral trait) *Required for verification*</label>
+                        <textarea name="proof_of_ownership_description" rows="3" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
                     </div>
-                </div>
 
-                <!-- Section 3: Owner's Affidavit and Agreement -->
-                <div class="mb-8">
-                    <h5 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Section 3: Owner's Affidavit and Agreement</h5>
-                    <p class="text-sm text-gray-600 mb-4">By submitting this claim, I understand and agree to the following:</p>
-                    <ul class="text-sm text-gray-700 mb-4 space-y-1">
-                        <li>• I declare under penalty of law that I am the true and legal owner of the pet described above.</li>
-                        <li>• I understand that my pet was impounded for violating city ordinances (e.g., being a "stray animal").</li>
-                        <li>• I agree to pay all corresponding Impounding Fees as mandated by the city ordinance before my pet is released.</li>
-                        <li>• I promise to keep my pet securely within my property and will not allow it to roam freely in public again.</li>
-                        <li>• I agree to have my pet vaccinated against Rabies (if not up-to-date) as a condition of its release and will cover any associated costs.</li>
-                    </ul>
-
-                    <div class="space-y-3">
-                        <label class="flex items-center">
-                            <input type="checkbox" name="certify_info" required class="mr-2">
-                            I certify that all information in this application is true and correct.
-                        </label>
-                        <label class="flex items-center">
-                            <input type="checkbox" name="agree_terms" required class="mr-2">
-                            I have read and agree to all terms for claiming my pet.
-                        </label>
+                    <div class="mb-4">
+                        <label class="block mb-1 text-sm font-medium text-gray-700">2. Upload Proof of Ownership/Care (Optional but highly recommended)</label>
+                        <input type="file" name="photos[]" multiple accept="image/*, .pdf" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                        <p class="mt-1 text-sm text-gray-500">Examples: Vet records, photo of you with the pet, barangay registration, etc.</p>
                     </div>
                 </div>
 
                 <div class="flex justify-end space-x-3">
-                    <button type="button" onclick="closeClaimModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">Cancel</button>
-                    <button type="submit" class="px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 font-semibold">Submit Claim Request</button>
+                    <button type="button" onclick="closeClaimModal()" class="px-4 py-2 text-gray-700 bg-gray-300 rounded-md hover:bg-gray-400">Cancel</button>
+                    <button type="submit" class="px-6 py-3 font-semibold text-white bg-red-600 rounded-md hover:bg-red-700">Submit Claim Request</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+@endif
+@endauth
 
 <script>
-function openAdoptModal() {
-    document.getElementById('adoptModal').classList.remove('hidden');
-}
-
-function closeAdoptModal() {
-    document.getElementById('adoptModal').classList.add('hidden');
-}
-
-function openClaimModal() {
-    document.getElementById('claimModal').classList.remove('hidden');
-}
-
-function closeClaimModal() {
-    document.getElementById('claimModal').classList.add('hidden');
-}
-
-// Close modals when clicking outside
-window.onclick = function(event) {
-    const adoptModal = document.getElementById('adoptModal');
-    const claimModal = document.getElementById('claimModal');
-
-    if (event.target === adoptModal) {
-        closeAdoptModal();
+    // Assuming you have these JavaScript functions to control the modals
+    function openAdoptModal() {
+        document.getElementById('adoptModal').classList.remove('hidden');
     }
-    if (event.target === claimModal) {
-        closeClaimModal();
+    function closeAdoptModal() {
+        document.getElementById('adoptModal').classList.add('hidden');
     }
-}
+    function openClaimModal() {
+        document.getElementById('claimModal').classList.remove('hidden');
+    }
+    function closeClaimModal() {
+        document.getElementById('claimModal').classList.add('hidden');
+    }
 </script>
 @endsection

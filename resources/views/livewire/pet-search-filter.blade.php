@@ -71,9 +71,9 @@
         @forelse($pets as $pet)
             <div class="overflow-hidden transition duration-300 bg-white rounded-lg shadow-md hover:shadow-lg">
                 @if($pet->photo)
-                    <img src="{{ asset('storage/' . $pet->photo) }}" alt="{{ $pet->display_code }}" class="object-cover w-full h-48">
+                    <img src="{{ asset('storage/' . $pet->photo) }}" alt="{{ $pet->display_code }}" class="object-contain w-full h-64 bg-gray-100">
                 @else
-                    <div class="flex items-center justify-center w-full h-48 bg-gray-200">
+                    <div class="flex items-center justify-center w-full h-64 bg-gray-200">
                         <span class="text-gray-500">{{ $pet->display_code }}</span>
                     </div>
                 @endif
@@ -84,9 +84,9 @@
                     <p class="mb-2 text-sm text-gray-600">{{ ucfirst($pet->gender) }}</p>
                     <p class="mb-3 text-sm text-gray-500">
                         @if($pet->remaining_days > 0)
-                            <span class="text-green-600 font-medium">{{ (int)$pet->remaining_days }} days remaining</span>
+                            <span class="font-medium text-green-600">{{ (int)$pet->remaining_days }} days remaining</span>
                         @else
-                            <span class="text-red-600 font-medium">Expired</span>
+                            <span class="font-medium text-red-600">Expired</span>
                         @endif
                     </p>
 

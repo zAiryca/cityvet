@@ -10,7 +10,7 @@
 <!-- Hero -->
 <div class="relative bg-gradient-to-r from-blue-600 to-green-600 text-white py-20">
     <div class="max-w-7xl mx-auto px-4 text-center">
-        <h1 class="text-4xl font-bold mb-4">Welcome to CityVet</h1>
+        <h1 class="text-4xl font-bold mb-4">Welcome to Pet Recovery and Adoption System for Alaminos City</h1>
         <p class="text-xl mb-8">Helping pets find homes and owners reunite. Explore impounded pets, adoptions, lost & found, and announcements.</p>
         <div class="space-x-4">
             <a href="{{ route('pets.impounded') }}" class="bg-white text-blue-600 px-6 py-3 rounded-md font-semibold hover:bg-gray-100">Impounded Pets</a>

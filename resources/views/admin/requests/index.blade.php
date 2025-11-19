@@ -91,7 +91,7 @@
                                     </form>
                                     <form method="POST" action="{{ route('admin.requests.deny', $request) }}" class="inline">
                                         @csrf
-                                        <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Are you sure you want to deny this request?')">Deny</button>
+                                        <button type="submit" class="text-red-600 hover:text-red-900 mr-2" onclick="return confirm('Are you sure you want to deny this request?')">Deny</button>
                                     </form>
                                 @endif
                             </td>

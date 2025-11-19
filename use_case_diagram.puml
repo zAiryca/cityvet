@@ -1,0 +1,70 @@
+@startuml Use Case Diagram for CityVet Pet Management System
+
+actor "User" as User
+actor "Admin" as Admin
+actor "Database" as DB
+
+Admin --|> User : inherits
+
+rectangle "CityVet Pet Management System" {
+
+  usecase "Login" as UC1
+  usecase "View Pets" as UC2
+  usecase "View Announcements" as UC3
+
+  usecase "Register Account" as UC4
+  usecase "Create Poster" as UC5
+  usecase "Submit Request" as UC6
+  usecase "Manage Pet Registration" as UC7
+
+  usecase "Manage Pets" as UC8
+  usecase "Manage Announcements" as UC9
+  usecase "Manage Requests" as UC10
+  usecase "Manage Users" as UC11
+  usecase "View Posters" as UC12
+
+  usecase "Store Data" as UC13
+  usecase "Retrieve Data" as UC14
+
+}
+
+' Common use cases for both User and Admin
+User --> UC1
+User --> UC2
+User --> UC3
+Admin --> UC1
+Admin --> UC2
+Admin --> UC3
+
+' User specific use cases
+User --> UC4
+User --> UC5
+User --> UC6
+User --> UC7
+
+' Admin specific use cases
+Admin --> UC8
+Admin --> UC9
+Admin --> UC10
+Admin --> UC11
+Admin --> UC12
+
+' Database interactions
+UC1 --> UC14 : retrieve
+UC2 --> UC14 : retrieve
+UC3 --> UC14 : retrieve
+UC4 --> UC13 : store
+UC5 --> UC13 : store
+UC6 --> UC13 : store
+UC7 --> UC13 : store
+UC8 --> UC13 : store
+UC8 --> UC14 : retrieve
+UC9 --> UC13 : store
+UC9 --> UC14 : retrieve
+UC10 --> UC13 : store
+UC10 --> UC14 : retrieve
+UC11 --> UC13 : store
+UC11 --> UC14 : retrieve
+UC12 --> UC14 : retrieve
+
+@enduml

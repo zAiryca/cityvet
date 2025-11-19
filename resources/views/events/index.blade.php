@@ -5,7 +5,7 @@
 @section('content')
 <div class="px-4 py-6 mx-auto max-w-7xl">
     <h1 class="mb-6 text-3xl font-bold">Announcements</h1>
-    <p class="mb-6">Stay updated with the latest announcements from CityVet.</p>
+    <p class="mb-6">Stay updated with the latest announcements from Pet Recovery and Adoption System for Alaminos City.</p>
 
     <!-- Filters -->
     <form method="GET" action="{{ route('announcements.index') }}" class="p-4 mb-6 bg-white rounded-lg shadow">

@@ -1,0 +1,25 @@
+@startuml View Pets Flow
+
+start
+
+:User navigates to pets page;
+
+:System retrieves pets from database (visible to users, not unclaimed/unadopted);
+
+:Display list of pets with filters (species, status, etc.);
+
+:User applies filters or searches;
+
+:System queries database with filters;
+
+:Display filtered results;
+
+:User selects a pet to view details;
+
+:System retrieves pet details and related data;
+
+:Display pet show page;
+
+stop
+
+@enduml

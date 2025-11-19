@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CityVet @yield('title', '')</title>
+    <title>Pet Recovery and Adoption System for Alaminos City @yield('title', '')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <meta name="theme-color" content="#ffffff">
 </head>
@@ -29,7 +29,7 @@
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-4">
         <div class="max-w-7xl mx-auto px-4 text-center">
-            <p>&copy; {{ date('Y') }} City Veterinary Department. All rights reserved.</p>
+            <p>&copy; {{ date('Y') }} Alaminos City Veterinary Office. All rights reserved.</p>
         </div>
     </footer>
 </body>

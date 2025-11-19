@@ -3,8 +3,12 @@
 @section('title', '| Create Poster')
 
 @section('content')
+<div class="max-w-7xl mx-auto py-6 px-4">
+    <div class="flex items-center mb-6">
+        <img src="{{ asset('images/findfurever-logo.png') }}" alt="FindFurEver Logo" class="w-12 h-12 mr-4">
+        <h1 class="text-3xl font-bold">Create Lost & Found Poster</h1>
+    </div>
 <div class="px-4 py-6 mx-auto max-w-7xl">
-    <h1 class="mb-6 text-3xl font-bold">Create Lost or Found Poster</h1>
     <p class="mb-6">Post your lost or found pet directly.</p>
 
     <form action="{{ route('posters.store') }}" method="POST" enctype="multipart/form-data" class="max-w-2xl p-6 bg-white rounded-lg shadow">

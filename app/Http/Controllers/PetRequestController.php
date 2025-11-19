@@ -106,4 +106,13 @@ class PetRequestController extends Controller
 
         return redirect()->route('admin.requests.index', ['status' => 'denied'])->with('success', 'Request denied.');
     }
+
+    public function destroy(PetRequest $petRequest)
+    {
+        if (!Auth::user()->isAdmin()) abort(403);
+
+        $petRequest->delete();
+
+        return redirect()->route('admin.requests.index')->with('success', 'Request deleted successfully.');
+    }
 }

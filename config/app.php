@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Pet Recovery and Adoption System for Alaminos City'),
 
     /*
     |--------------------------------------------------------------------------

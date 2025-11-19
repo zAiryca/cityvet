@@ -1,232 +1,254 @@
+
 @extends('layouts.app')
 
-@section('title', '| New Pet')
+@section('title', '| New Pet Registration')
 
 @section('content')
-<div class="max-w-7xl mx-auto py-6 px-4">
-    <h1 class="text-3xl font-bold mb-6">New Pet</h1>
-    <p class="mb-6">Pre-register your pet for official registration.</p>
+<div class="min-h-screen px-4 py-12 bg-gray-50 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
 
-    <form action="{{ route('pet-registrations.store') }}" method="POST" enctype="multipart/form-data" class="max-w-4xl bg-white rounded-lg shadow p-6">
-        @csrf
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Owner Information -->
-            <div class="md:col-span-2">
-    <h3 class="text-lg font-semibold mb-4">Owner Information</h3>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
-
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Name</label>
-            <input
-                type="text"
-                value="{{ auth()->user()->name }}"
-                readonly
-                class="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100"
-            >
+        <div class="mb-10 text-center">
+            <h1 class="text-4xl font-extrabold text-indigo-700 sm:text-5xl">Register Your Pet 🐶🐱</h1>
+            <p class="mt-3 text-xl text-gray-600">Secure your pet's official record in just a few steps.</p>
         </div>
 
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Email</label>
-            <input
-                type="email"
-                value="{{ auth()->user()->email }}"
-                readonly
-                class="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100"
-            >
-        </div>
+        <form action="{{ route('pet-registrations.store') }}" method="POST" enctype="multipart/form-data" class="bg-white divide-y divide-gray-200 shadow-2xl rounded-xl">
+            @csrf
 
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Contact Number</label>
-            <input
-                type="text"
-                value="{{ auth()->user()->contact_number }}"
-                readonly
-                class="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100"
-            >
-        </div>
+            <div class="px-6 py-8 sm:p-10">
+                <div class="flex items-center mb-6 space-x-4">
+                    <span class="p-3 text-indigo-600 bg-indigo-100 rounded-full">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    </span>
+                    <h2 class="text-2xl font-bold text-gray-900">1. Owner Information</h2>
+                </div>
+                <p class="mb-6 text-sm text-gray-500">This information is pre-filled from your user account and is read-only.</p>
 
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Full Address</label>
-            <textarea
-                rows="3"
-                readonly
-                class="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100"
-            >{{ auth()->user()->street . ', ' . auth()->user()->barangay . ', ' . auth()->user()->city_municipality }}</textarea>
-        </div>
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
 
+                    <div>
+                        <label for="owner_name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                        <input
+                            type="text"
+                            id="owner_name"
+                            value="{{ auth()->user()->name ?? 'N/A' }}"
+                            readonly
+                            class="block w-full p-3 mt-1 text-gray-600 bg-gray-100 border border-gray-200 rounded-lg shadow-sm cursor-not-allowed"
+                        >
+                    </div>
+
+                    <div>
+                        <label for="owner_email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                        <input
+                            type="email"
+                            id="owner_email"
+                            value="{{ auth()->user()->email ?? 'N/A' }}"
+                            readonly
+                            class="block w-full p-3 mt-1 text-gray-600 bg-gray-100 border border-gray-200 rounded-lg shadow-sm cursor-not-allowed"
+                        >
+                    </div>
+
+                    <div>
+                        <label for="contact_number_display" class="block text-sm font-medium text-gray-700">Contact Number</label>
+                        <input
+                            type="text"
+                            id="contact_number_display"
+                            value="{{ auth()->user()->contact_number ?? 'N/A' }}"
+                            readonly
+                            class="block w-full p-3 mt-1 text-gray-600 bg-gray-100 border border-gray-200 rounded-lg shadow-sm cursor-not-allowed"
+                        >
+                    </div>
+
+                    <div>
+                        <label for="address_display" class="block text-sm font-medium text-gray-700">Complete Address</label>
+                        <textarea
+                            id="address_display"
+                            rows="3"
+                            readonly
+                            class="block w-full p-3 mt-1 text-gray-600 bg-gray-100 border border-gray-200 rounded-lg shadow-sm cursor-not-allowed resize-none"
+                        >{{ (auth()->user()->street ?? '') . ', ' . (auth()->user()->barangay ?? '') . ', ' . (auth()->user()->city_municipality ?? '') }}</textarea>
+                    </div>
+                </div>
+
+                <input type="hidden" name="contact_number" value="{{ auth()->user()->contact_number ?? '' }}">
+                <input type="hidden" name="address" value="{{ (auth()->user()->street ?? '') . ', ' . (auth()->user()->barangay ?? '') . ', ' . (auth()->user()->city_municipality ?? '') }}">
+
+            </div>
+
+            <div class="px-6 py-8 sm:p-10">
+                <div class="flex items-center mb-6 space-x-4">
+                    <span class="p-3 text-teal-600 bg-teal-100 rounded-full">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zM12 2a10 10 0 100 20 10 10 0 000-20z"></path></svg>
+                    </span>
+                    <h2 class="text-2xl font-bold text-gray-900">2. Pet Details</h2>
+                </div>
+                <p class="mb-6 text-sm text-gray-500">Tell us about your furry friend.</p>
+
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+
+                    <div class="lg:col-span-1">
+                        <label for="pet_name" class="block text-sm font-medium text-gray-700">Pet Name <span class="text-red-500">*</span></label>
+                        <input type="text" name="pet_name" id="pet_name" value="{{ old('pet_name') }}" required class="mt-1 block w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:ring-teal-500 focus:border-teal-500 @error('pet_name') border-red-500 @enderror" placeholder="e.g., Buddy or Princess">
+                        @error('pet_name') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div class="lg:col-span-1">
+                        <label for="species" class="block text-sm font-medium text-gray-700">Species <span class="text-red-500">*</span></label>
+                        <select name="species" id="species" required class="mt-1 block w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:ring-teal-500 focus:border-teal-500 @error('species') border-red-500 @enderror">
+                            <option value="">Select Species</option>
+                            <option value="Canine" {{ old('species') === 'Canine' ? 'selected' : '' }}>Canine 🐕</option>
+                            <option value="Feline" {{ old('species') === 'Feline' ? 'selected' : '' }}>Feline 🐈</option>
+                        </select>
+                        @error('species') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div class="lg:col-span-1">
+                        <label for="breed" class="block text-sm font-medium text-gray-700">Breed <span class="text-red-500">*</span></label>
+                        <select name="breed" id="breed" required class="mt-1 block w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:ring-teal-500 focus:border-teal-500 @error('breed') border-red-500 @enderror">
+                            <option value="">Select Species First</option>
+                            </select>
+                        @error('breed') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label for="birthday" class="block text-sm font-medium text-gray-700">Birthday (Approximate)</label>
+                        <input type="date" name="birthday" id="birthday" value="{{ old('birthday') }}" class="mt-1 block w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:ring-teal-500 focus:border-teal-500 @error('birthday') border-red-500 @enderror">
+                        @error('birthday') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label for="gender" class="block text-sm font-medium text-gray-700">Gender <span class="text-red-500">*</span></label>
+                        <select name="gender" id="gender" required class="mt-1 block w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:ring-teal-500 focus:border-teal-500 @error('gender') border-red-500 @enderror">
+                            <option value="">Select Gender</option>
+                            <option value="male" {{ old('gender') === 'male' ? 'selected' : '' }}>Male</option>
+                            <option value="female" {{ old('gender') === 'female' ? 'selected' : '' }}>Female</option>
+                            <option value="unknown" {{ old('gender') === 'unknown' ? 'selected' : '' }}>Unknown</option>
+                        </select>
+                        @error('gender') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <label class="block mb-3 text-sm font-medium text-gray-700">Color/Markings (Select all that apply)</label>
+                    <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                        @php
+                            $colors = ['Black', 'White', 'Brown', 'Gray', 'Orange', 'Cream', 'Red', 'Tabby'];
+                            $old_colors = old('color_markings', []);
+                        @endphp
+
+                        @foreach($colors as $color)
+                        <label class="flex items-center p-2 text-sm font-medium text-gray-700 transition duration-150 rounded-lg bg-gray-50 hover:bg-teal-50">
+                            <input type="checkbox" name="color_markings[]" value="{{ $color }}" {{ in_array($color, $old_colors) ? 'checked' : '' }} class="w-4 h-4 mr-2 text-teal-600 border-gray-300 rounded focus:ring-teal-500">
+                            {{ $color }}
+                        </label>
+                        @endforeach
+                    </div>
+                    @error('color_markings') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                </div>
+
+                <div class="mt-6">
+                    <label for="description" class="block text-sm font-medium text-gray-700">Description / Unique Characteristics</label>
+                    <textarea name="description" id="description" rows="4" class="mt-1 block w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:ring-teal-500 focus:border-teal-500 @error('description') border-red-500 @enderror" placeholder="Describe any distinguishing features, special needs, or temperament.">{{ old('description') }}</textarea>
+                    @error('description') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                </div>
+            </div>
+
+            <div class="px-6 py-8 sm:p-10">
+                <div class="flex items-center mb-6 space-x-4">
+                    <span class="p-3 text-indigo-600 bg-indigo-100 rounded-full">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.808-1.212A2 2 0 0110.608 4h2.784a2 2 0 011.664.89l.808 1.212a2 2 0 001.664.89H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    </span>
+                    <h2 class="text-2xl font-bold text-gray-900">3. Photo & Finalize</h2>
+                </div>
+
+                <div class="mt-6">
+                    <label for="photo" class="block text-sm font-medium text-gray-700">Pet Photo <span class="text-red-500">*</span></label>
+                    <div class="flex justify-center px-6 pt-5 pb-6 mt-1 transition duration-150 border-2 border-gray-300 border-dashed rounded-lg hover:border-indigo-400">
+                        <div class="space-y-1 text-center">
+                            <svg class="w-12 h-12 mx-auto text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m-4-4h2m-2 4h4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            <div class="flex text-sm text-gray-600">
+                                <label for="file-upload" class="relative font-medium text-indigo-600 bg-white rounded-md cursor-pointer hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+                                    <span>Upload a file</span>
+                                    <input id="file-upload" name="photo" type="file" accept="image/*" required class="sr-only">
+                                </label>
+                                <p class="pl-1">or drag and drop</p>
+                            </div>
+                            <p id="file-name" class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                        </div>
+                    </div>
+                    @error('photo') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between px-6 py-4 sm:px-10 bg-gray-50 rounded-b-xl">
+                <a href="{{ route('pet-registrations.index') }}" class="inline-flex justify-center px-6 py-2 text-sm font-medium text-gray-700 transition duration-150 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100">
+                    Cancel
+                </a>
+                <button type="submit" class="inline-flex justify-center px-8 py-3 text-base font-medium text-white transition duration-150 bg-teal-600 border border-transparent rounded-lg shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
+                    Submit Registration
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
-        <!-- Hidden inputs for submission -->
-        <input type="hidden" name="contact_number" value="{{ auth()->user()->contact_number }}">
-        <input type="hidden" name="address" value="{{ auth()->user()->street . ', ' . auth()->user()->barangay . ', ' . auth()->user()->city_municipality }}">
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const speciesSelect = document.getElementById('species');
+        const breedSelect = document.getElementById('breed');
+        const fileUpload = document.getElementById('file-upload');
+        const fileNameDisplay = document.getElementById('file-name');
 
-            <!-- Pet Name -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Pet Name</label>
-                <input type="text" name="pet_name" value="{{ old('pet_name') }}" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('pet_name') border-red-500 @enderror">
-                @error('pet_name') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-            </div>
+        const canineBreeds = [
+            'Aspin', 'Poodle', 'Shih Tzu', 'Maltese', 'Pug', 'Beagle',
+            'Cocker Spaniel', 'Labrador Retriever', 'German Shepherd', 'Golden Retriever'
+        ];
+        const felineBreeds = [
+            'Philippine Domestic Cat', 'Siamese', 'Persian', 'Maine Coon',
+            'British Shorthair', 'Ragdoll', 'Bengal', 'Scottish Fold', 'Abyssinian', 'Russian Blue'
+        ];
 
-            <!-- Species -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Species</label>
-                <select name="species" id="species" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('species') border-red-500 @enderror">
-                    <option value="">Select Species</option>
-                    <option value="Canine" {{ old('species') === 'Canine' ? 'selected' : '' }}>Canine</option>
-                    <option value="Feline" {{ old('species') === 'Feline' ? 'selected' : '' }}>Feline</option>
-                </select>
-                @error('species') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-            </div>
+        function updateBreedOptions(selectedSpecies) {
+            breedSelect.innerHTML = '<option value="">Select Breed</option>';
+            let breeds = [];
 
-            <!-- Breed -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Breed</label>
-                <select name="breed" id="breed" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('breed') border-red-500 @enderror">
-                    <option value="">Select Breed</option>
-                    @if(old('species') === 'Canine' || (isset($pet) && $pet->species === 'Canine'))
-                        <option value="Aspin" {{ old('breed') === 'Aspin' ? 'selected' : '' }}>Aspin</option>
-                        <option value="Poodle" {{ old('breed') === 'Poodle' ? 'selected' : '' }}>Poodle</option>
-                        <option value="Shih Tzu" {{ old('breed') === 'Shih Tzu' ? 'selected' : '' }}>Shih Tzu</option>
-                        <option value="Maltese" {{ old('breed') === 'Maltese' ? 'selected' : '' }}>Maltese</option>
-                        <option value="Pug" {{ old('breed') === 'Pug' ? 'selected' : '' }}>Pug</option>
-                        <option value="Beagle" {{ old('breed') === 'Beagle' ? 'selected' : '' }}>Beagle</option>
-                        <option value="Cocker Spaniel" {{ old('breed') === 'Cocker Spaniel' ? 'selected' : '' }}>Cocker Spaniel</option>
-                        <option value="Labrador Retriever" {{ old('breed') === 'Labrador Retriever' ? 'selected' : '' }}>Labrador Retriever</option>
-                        <option value="German Shepherd" {{ old('breed') === 'German Shepherd' ? 'selected' : '' }}>German Shepherd</option>
-                        <option value="Golden Retriever" {{ old('breed') === 'Golden Retriever' ? 'selected' : '' }}>Golden Retriever</option>
-                    @elseif(old('species') === 'Feline' || (isset($pet) && $pet->species === 'Feline'))
-                        <option value="Philippine Domestic Cat" {{ old('breed') === 'Philippine Domestic Cat' ? 'selected' : '' }}>Philippine Domestic Cat</option>
-                        <option value="Siamese" {{ old('breed') === 'Siamese' ? 'selected' : '' }}>Siamese</option>
-                        <option value="Persian" {{ old('breed') === 'Persian' ? 'selected' : '' }}>Persian</option>
-                        <option value="Maine Coon" {{ old('breed') === 'Maine Coon' ? 'selected' : '' }}>Maine Coon</option>
-                        <option value="British Shorthair" {{ old('breed') === 'British Shorthair' ? 'selected' : '' }}>British Shorthair</option>
-                        <option value="Ragdoll" {{ old('breed') === 'Ragdoll' ? 'selected' : '' }}>Ragdoll</option>
-                        <option value="Bengal" {{ old('breed') === 'Bengal' ? 'selected' : '' }}>Bengal</option>
-                        <option value="Scottish Fold" {{ old('breed') === 'Scottish Fold' ? 'selected' : '' }}>Scottish Fold</option>
-                        <option value="Abyssinian" {{ old('breed') === 'Abyssinian' ? 'selected' : '' }}>Abyssinian</option>
-                        <option value="Russian Blue" {{ old('breed') === 'Russian Blue' ? 'selected' : '' }}>Russian Blue</option>
-                    @endif
-                </select>
-                @error('breed') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-            </div>
+            if (selectedSpecies === 'Canine') {
+                breeds = canineBreeds;
+            } else if (selectedSpecies === 'Feline') {
+                breeds = felineBreeds;
+            }
 
-            <!-- Birthday -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Birthday</label>
-                <input type="date" name="birthday" value="{{ old('birthday') }}" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('birthday') border-red-500 @enderror">
-                @error('birthday') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-            </div>
+            const oldBreed = "{{ old('breed', '') }}";
 
-            <!-- Gender -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Gender</label>
-                <select name="gender" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('gender') border-red-500 @enderror">
-                    <option value="">Select Gender</option>
-                    <option value="male" {{ old('gender') === 'male' ? 'selected' : '' }}>Male</option>
-                    <option value="female" {{ old('gender') === 'female' ? 'selected' : '' }}>Female</option>
-                    <option value="unknown" {{ old('gender') === 'unknown' ? 'selected' : '' }}>Unknown</option>
-                </select>
-                @error('gender') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-            </div>
-
-            <!-- Color -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Color</label>
-                <div class="grid grid-cols-2 gap-2">
-                    <label class="flex items-center">
-                        <input type="checkbox" name="color_markings[]" value="Black" {{ in_array('Black', old('color_markings', [])) ? 'checked' : '' }} class="mr-2">
-                        Black
-                    </label>
-                    <label class="flex items-center">
-                        <input type="checkbox" name="color_markings[]" value="White" {{ in_array('White', old('color_markings', [])) ? 'checked' : '' }} class="mr-2">
-                        White
-                    </label>
-                    <label class="flex items-center">
-                        <input type="checkbox" name="color_markings[]" value="Brown" {{ in_array('Brown', old('color_markings', [])) ? 'checked' : '' }} class="mr-2">
-                        Brown
-                    </label>
-                    <label class="flex items-center">
-                        <input type="checkbox" name="color_markings[]" value="Gray" {{ in_array('Gray', old('color_markings', [])) ? 'checked' : '' }} class="mr-2">
-                        Gray
-                    </label>
-                    <label class="flex items-center">
-                        <input type="checkbox" name="color_markings[]" value="Orange" {{ in_array('Orange', old('color_markings', [])) ? 'checked' : '' }} class="mr-2">
-                        Orange
-                    </label>
-                    <label class="flex items-center">
-                        <input type="checkbox" name="color_markings[]" value="Cream" {{ in_array('Cream', old('color_markings', [])) ? 'checked' : '' }} class="mr-2">
-                        Cream
-                    </label>
-                    <label class="flex items-center">
-                        <input type="checkbox" name="color_markings[]" value="Red" {{ in_array('Red', old('color_markings', [])) ? 'checked' : '' }} class="mr-2">
-                        Red
-                    </label>
-                    <label class="flex items-center">
-                        <input type="checkbox" name="color_markings[]" value="Tabby" {{ in_array('Tabby', old('color_markings', [])) ? 'checked' : '' }} class="mr-2">
-                        Tabby
-                    </label>
-                </div>
-                @error('color_markings') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-            </div>
-        </div>
-
-        <!-- Description -->
-        <div class="mt-6">
-            <label class="block text-sm font-medium text-gray-700">Description</label>
-            <textarea name="description" rows="4" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('description') border-red-500 @enderror">{{ old('description') }}</textarea>
-            @error('description') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-        </div>
-
-        <!-- Photo -->
-        <div class="mt-6">
-            <label class="block text-sm font-medium text-gray-700">Photo</label>
-            <input type="file" name="photo" accept="image/*" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('photo') border-red-500 @enderror">
-            <p class="text-sm text-gray-500 mt-1">No file chosen</p>
-            @error('photo') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-        </div>
-
-        <div class="flex justify-end mt-6">
-            <a href="{{ route('pet-registrations.index') }}" class="mr-4 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</a>
-            <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">Save</button>
-        </div>
-    </form>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const speciesSelect = document.getElementById('species');
-            const breedSelect = document.getElementById('breed');
-
-            speciesSelect.addEventListener('change', function() {
-                const selectedSpecies = this.value;
-                breedSelect.innerHTML = '<option value="">Select Breed</option>';
-
-                if (selectedSpecies === 'Canine') {
-                    const canineBreeds = [
-                        'Aspin', 'Poodle', 'Shih Tzu', 'Maltese', 'Pug', 'Beagle',
-                        'Cocker Spaniel', 'Labrador Retriever', 'German Shepherd', 'Golden Retriever'
-                    ];
-                    canineBreeds.forEach(breed => {
-                        const option = document.createElement('option');
-                        option.value = breed;
-                        option.textContent = breed;
-                        breedSelect.appendChild(option);
-                    });
-                } else if (selectedSpecies === 'Feline') {
-                    const felineBreeds = [
-                        'Philippine Domestic Cat', 'Siamese', 'Persian', 'Maine Coon',
-                        'British Shorthair', 'Ragdoll', 'Bengal', 'Scottish Fold', 'Abyssinian', 'Russian Blue'
-                    ];
-                    felineBreeds.forEach(breed => {
-                        const option = document.createElement('option');
-                        option.value = breed;
-                        option.textContent = breed;
-                        breedSelect.appendChild(option);
-                    });
+            breeds.forEach(breed => {
+                const option = document.createElement('option');
+                option.value = breed;
+                option.textContent = breed;
+                if (breed === oldBreed) {
+                    option.selected = true;
                 }
+                breedSelect.appendChild(option);
             });
+        }
+
+        // Initialize breeds on load if old input exists
+        updateBreedOptions(speciesSelect.value);
+
+        // Update breeds on species change
+        speciesSelect.addEventListener('change', function() {
+            updateBreedOptions(this.value);
         });
-    </script>
-</div>
+
+        // Update file name display
+        fileUpload.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                fileNameDisplay.textContent = this.files[0].name;
+            } else {
+                fileNameDisplay.textContent = 'PNG, JPG, GIF up to 10MB';
+            }
+        });
+    });
+</script>
 @endsection

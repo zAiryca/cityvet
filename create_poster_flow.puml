@@ -1,0 +1,25 @@
+@startuml Create Poster Flow
+
+start
+
+:User navigates to create poster page;
+
+:User selects type (lost/found);
+
+:User fills poster form (pet_name, species, breed, gender, color_markings, date_lost_found, location, contact_info, reward, photo, description);
+
+:User submits form;
+
+if (Form validation fails?) then (yes)
+  :Display validation errors;
+  :Return to form;
+else (no)
+  :Create new Poster record in database;
+  :If admin approval required, set status to pending;
+  :Display success message;
+  :Redirect to posters list;
+endif
+
+stop
+
+@enduml

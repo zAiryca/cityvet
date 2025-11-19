@@ -1,0 +1,27 @@
+@startuml Submit Request Flow
+
+start
+
+:User navigates to submit request page;
+
+:User selects request type (adoption, claim, etc.);
+
+:User selects pet or event;
+
+:User fills request form (reason, contact_info, photos, additional_data);
+
+:User submits form;
+
+if (Form validation fails?) then (yes)
+  :Display validation errors;
+  :Return to form;
+else (no)
+  :Create new PetRequest record in database;
+  :Send notification to admin;
+  :Display success message;
+  :Redirect to requests list;
+endif
+
+stop
+
+@enduml

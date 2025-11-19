@@ -1,0 +1,25 @@
+@startuml User Registration Flow
+
+start
+
+:User navigates to registration page;
+
+:User selects role (user/admin);
+
+:User fills registration form (first_name, last_name, contact_number, address, email, password);
+
+:User submits form;
+
+if (Form validation fails?) then (yes)
+  :Display validation errors;
+  :Return to registration form;
+else (no)
+  :Create new User record in database;
+  :Send email verification link;
+  :Display success message;
+  :Redirect to login page;
+endif
+
+stop
+
+@enduml

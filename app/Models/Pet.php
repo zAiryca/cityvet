@@ -10,7 +10,7 @@ class Pet extends Model
     use HasFactory;
     protected $fillable = [
         'user_id', 'species', 'breed', 'estimated_age_years', 'estimated_age_months', 'gender', 'color_markings',
-        'description', 'photo', 'status', 'impounded_date', 'caught_location', 'decision_date', 'remaining_days', 'urgent_deadline',
+        'description', 'photo', 'status', 'impounded_date', 'caught_location', 'decision_date', 'urgent_deadline',
         'registration_status', 'admin_notes',
     ];
 
@@ -42,7 +42,8 @@ class Pet extends Model
     public function getRemainingDaysAttribute()
     {
         $startDate = $this->impounded_date ?: $this->decision_date ?: $this->created_at;
-        return max(0, 7 - now()->diffInDays($startDate));  // 7-day holding period
+        $daysPassed = now()->diffInDays($startDate);
+        return max(0, 3 - $daysPassed);  // 3-day holding period
     }
 
     // Helper: Generate IMP/ADO code
@@ -109,9 +110,11 @@ class Pet extends Model
     public function archiveIfExpired()
     {
         if ($this->shouldBeArchived()) {
-            $this->update([
-                'status' => $this->status === 'impounded' ? 'unclaimed' : 'unadopted'
-            ]);
+            if ($this->status === 'impounded') {
+                $this->update(['status' => 'adoptable', 'decision_date' => now()]);
+            } elseif ($this->status === 'adoptable') {
+                $this->update(['status' => 'unadopted']);
+            }
             return true;
         }
         return false;

@@ -3,6 +3,11 @@
 @section('title', '| Poster Details')
 
 @section('content')
+<div class="max-w-7xl mx-auto py-6 px-4">
+    <div class="flex items-center mb-6">
+        <img src="{{ asset('images/findfurever-logo.png') }}" alt="FindFurEver Logo" class="w-12 h-12 mr-4">
+        <h1 class="text-3xl font-bold">Poster Details</h1>
+    </div>
 <div class="px-4 py-6 mx-auto max-w-7xl">
     <div class="max-w-6xl mx-auto overflow-hidden bg-white rounded-lg shadow">
         <div class="md:flex">

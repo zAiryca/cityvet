@@ -12,8 +12,7 @@
             'Impounded' => 'impounded',
             'Claimed' => 'claimed',
             'Adopted' => 'adopted',
-            'Unclaimed' => 'unclaimed',
-            'Unadopted' => 'unadopted',
+            'Unclaimed/Unadopted' => 'unclaimed',
         ];
 
         // Define a readable title using universally supported if/elseif logic
@@ -28,9 +27,9 @@
             } elseif ($currentStatus === 'claimed') {
                 $pageTitle = 'Claimed Pets';
             } elseif ($currentStatus === 'unclaimed') {
-                $pageTitle = 'Unclaimed Pets';
+                $pageTitle = 'Unclaimed/Unadopted Pets';
             } elseif ($currentStatus === 'unadopted') {
-                $pageTitle = 'Unadopted Pets';
+                $pageTitle = 'Unclaimed/Unadopted Pets';
             }
         }
     @endphp

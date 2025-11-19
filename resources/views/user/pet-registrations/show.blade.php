@@ -28,82 +28,99 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <h4 class="text-md font-semibold mb-4">Owner Information</h4>
-                        <div class="space-y-3">
-                            <div>
-                                <strong>Name:</strong> {{ $petRegistration->user->name }}
-                            </div>
-                            <div>
-                                <strong>Email:</strong> {{ $petRegistration->user->email }}
-                            </div>
-                            <div>
-                                <strong>Phone:</strong> {{ $petRegistration->user->phone ?? 'Not provided' }}
-                            </div>
-                            <div>
-                                <strong>Address:</strong> {{ $petRegistration->user->address ?? 'Not provided' }}
-                            </div>
-                        </div>
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Pet Information -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                    <div class="bg-gradient-to-r from-green-600 to-teal-600 px-8 py-6">
+                        <h2 class="text-2xl font-bold text-white">🐾 Pet Information</h2>
                     </div>
 
-                    <div>
-                        <h4 class="text-md font-semibold mb-4">Registration Status</h4>
-                        <div class="space-y-3">
-                            <div>
-                                <strong>Status:</strong>
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                    @if($petRegistration->status === 'pending') bg-yellow-100 text-yellow-800
-                                    @elseif($petRegistration->status === 'registered') bg-green-100 text-green-800
-                                    @else bg-red-100 text-red-800 @endif">
-                                    {{ ucfirst($petRegistration->status) }}
-                                </span>
+                    <div class="px-8 py-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-600">Pet Name</label>
+                                    <p class="text-lg font-medium text-gray-900">{{ $petRegistration->pet_name }}</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-600">Species</label>
+                                    <p class="text-lg font-medium text-gray-900">{{ $petRegistration->species }}</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-600">Breed</label>
+                                    <p class="text-lg font-medium text-gray-900">{{ $petRegistration->breed }}</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-600">Birth Date</label>
+                                    <p class="text-lg font-medium text-gray-900">{{ $petRegistration->birthday ? $petRegistration->birthday->format('M d, Y') : 'Not specified' }}</p>
+                                </div>
                             </div>
-                            <div>
-                                <strong>Submitted:</strong> {{ $petRegistration->created_at->format('M d, Y H:i') }}
+
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-600">Gender</label>
+                                    <p class="text-lg font-medium text-gray-900">{{ ucfirst($petRegistration->gender) }}</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-600">Color Markings</label>
+                                    <p class="text-lg font-medium text-gray-900">{{ is_array($petRegistration->color_markings) ? implode(', ', $petRegistration->color_markings) : $petRegistration->color_markings }}</p>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-semibold text-gray-600">Description</label>
+                                    <p class="text-gray-700 bg-gray-50 p-3 rounded-lg">{{ $petRegistration->description ?: 'No description provided' }}</p>
+                                </div>
                             </div>
-                            <div>
-                                <strong>Last Updated:</strong> {{ $petRegistration->updated_at->format('M d, Y H:i') }}
+                        </div>
+
+                        @if($petRegistration->photo)
+                            <div class="mt-6">
+                                <label class="block text-sm font-semibold text-gray-600 mb-3">Pet Photo</label>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <img src="{{ asset('storage/' . $petRegistration->photo) }}" alt="{{ $petRegistration->pet_name }}" class="max-w-full h-auto rounded-lg shadow-md">
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <!-- Owner Information -->
+            <div>
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                    <div class="bg-gradient-to-r from-purple-600 to-pink-600 px-8 py-6">
+                        <h2 class="text-2xl font-bold text-white">👤 Owner Information</h2>
+                    </div>
+
+                    <div class="px-8 py-6 space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600">Full Name</label>
+                            <p class="text-lg font-medium text-gray-900">{{ $petRegistration->user->name ?? 'N/A' }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600">Email Address</label>
+                            <p class="text-lg font-medium text-gray-900">{{ $petRegistration->user->email ?? 'N/A' }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600">Contact Number</label>
+                            <p class="text-lg font-medium text-gray-900">{{ $petRegistration->user->contact_number ?? 'N/A' }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600">Complete Address</label>
+                            <p class="text-gray-700 bg-gray-50 p-3 rounded-lg text-sm">
+                                {{ ($petRegistration->user->street ?? '') . ', ' . ($petRegistration->user->barangay ?? '') . ', ' . ($petRegistration->user->city_municipality ?? '') }}
+                            </p>
+                        </div>
+                        <div class="border-t pt-4">
+                            <label class="block text-sm font-semibold text-gray-600">Registration Timeline</label>
+                            <div class="space-y-2 text-sm">
+                                <p><span class="font-medium">Submitted:</span> {{ $petRegistration->created_at->format('M d, Y H:i') }}</p>
+                                <p><span class="font-medium">Last Updated:</span> {{ $petRegistration->updated_at->format('M d, Y H:i') }}</p>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                    <div>
-                        <h4 class="text-md font-semibold mb-4">Pet Information</h4>
-                        <div class="space-y-3">
-                            <div>
-                                <strong>Name:</strong> {{ $petRegistration->pet_name }}
-                            </div>
-                            <div>
-                                <strong>Species:</strong> {{ $petRegistration->species }}
-                            </div>
-                            <div>
-                                <strong>Breed:</strong> {{ $petRegistration->breed }}
-                            </div>
-                            <div>
-                                <strong>Birth Date:</strong> {{ $petRegistration->birthday ? $petRegistration->birthday->format('M d, Y') : 'N/A' }}
-                            </div>
-                            <div>
-                                <strong>Gender:</strong> {{ ucfirst($petRegistration->gender) }}
-                            </div>
-                            <div>
-                                <strong>Color Markings:</strong> {{ is_array($petRegistration->color_markings) ? implode(', ', $petRegistration->color_markings) : $petRegistration->color_markings }}
-                            </div>
-                            <div>
-                                <strong>Description:</strong> {{ $petRegistration->description ?: 'N/A' }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                @if($petRegistration->photo)
-                    <div class="mt-6">
-                        <h4 class="text-md font-semibold mb-4">Photo</h4>
-                        <img src="{{ asset('storage/' . $petRegistration->photo) }}" alt="{{ $petRegistration->pet_name }}" class="max-w-xs rounded-lg shadow-md">
-                    </div>
-                @endif
             </div>
         </div>
     </div>
