@@ -94,9 +94,10 @@
         <div class="bg-white p-6 rounded-lg shadow text-center">
             <p class="text-gray-500 mb-4">No requests yet. Start by browsing pets or announcements!</p>
             <div class="space-x-4">
-                <a href="{{ route('pets.adoptable') }}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Browse Adoptable</a>
                 <a href="{{ route('pets.impounded') }}" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">View Impounded</a>
-                <a href="{{ route('announcements.index') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Upcoming Announcements</a>
+                <a href="{{ route('pets.adoptable') }}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Browse Adoptable</a>
+
+                {{-- <a href="{{ route('announcements.index') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Upcoming Announcements</a> --}}
             </div>
         </div>
     @endif

@@ -218,6 +218,9 @@
                             <label class="block mb-1 text-sm font-medium text-gray-700">Email Address</label>
                             <input type="email" value="{{ auth()->user()->email ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
                         </div>
+
+
+                </div>
                     </div>
                     {{-- Hidden fields to pass auto-filled data to controller --}}
                     <input type="hidden" name="last_name" value="{{ auth()->user()->last_name ?? '' }}">
@@ -226,6 +229,8 @@
                     <input type="hidden" name="address" value="{{ (auth()->user()->street ?? '') . ', ' . (auth()->user()->barangay ?? '') . ', ' . (auth()->user()->city_municipality ?? '') }}">
                     <input type="hidden" name="contact_number" value="{{ auth()->user()->contact_number ?? '' }}">
                     <input type="hidden" name="email" value="{{ auth()->user()->email ?? '' }}">
+                    <input type="hidden" name="birthday" value="{{ auth()->user()->birthday ?? '' }}">
+
                     @if(auth()->user()->id_photo)
                         <div class="mb-4">
                             <label class="block mb-1 text-sm font-medium text-gray-700">ID Photo</label>
@@ -240,11 +245,22 @@
                             <p class="text-sm text-yellow-800"><strong>Note:</strong> You haven't uploaded an ID photo yet. Please upload one in your <a href="{{ route('profile.edit') }}" class="text-blue-600 underline hover:text-blue-800">profile settings</a> for faster verification.</p>
                         </div>
                     @endif
-                    <div class="mb-4">
+                    {{-- <div class="mb-4">
                         <label class="block mb-1 text-sm font-medium text-gray-700">Date of Birth (MM/DD/YYYY)</label>
                         <input type="date" name="date_of_birth" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
                     </div>
-                </div>
+                </div> --}}
+                <div>
+    <label class="block mb-1 text-sm font-medium text-gray-700">Date of Birth (MM/DD/YYYY)</label>
+    <input
+        type="date"
+        name="date_of_birth"
+        value="{{ auth()->user()->birthday ? auth()->user()->birthday->format('Y-m-d') : '' }}"
+        required
+        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50"
+        readonly
+    >
+</div>
 
                 <div class="mb-8">
                     <h5 class="pb-2 mb-4 text-lg font-semibold text-gray-800 border-b">Section 2: Household Information</h5>

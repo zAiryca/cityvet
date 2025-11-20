@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto py-6 px-4">
-    <h1 class="text-3xl font-bold mb-6">My Posters</h1>
+    <h1 class="text-3xl font-bold mb-6">Lost & Found Posters</h1>
     <p class="mb-6">Manage your lost and found pet posters.</p>
 
     <div class="mb-6">

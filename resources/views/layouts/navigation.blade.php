@@ -67,25 +67,26 @@
                             </button>
                         </x-slot>
 
-                        <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            Profile
-                        </x-dropdown-link>
-                        <x-dropdown-link :href="route('profile.edit')">
-                            Profile
-                        </x-dropdown-link>
-                        <x-dropdown-link :href="route('user.requests')">
-                            My Requests
-                        </x-dropdown-link>
-                        <x-dropdown-link :href="route('user.posters')">
-                            My Posters
-                        </x-dropdown-link>
-                        <x-dropdown-link :href="route('posters.create')">
-                            Create Poster
-                        </x-dropdown-link>
-                        <x-dropdown-link :href="route('pet-registrations.index')">
-                            My Pets
-                        </x-dropdown-link>
+                            <x-slot name="content">
+                                {{-- Profile --}}
+                                <x-dropdown-link :href="route('profile.edit')">
+                                    Profile
+                                </x-dropdown-link>
+
+                                {{-- My Pets --}}
+                                <x-dropdown-link :href="route('pet-registrations.index')">
+                                    My Pets
+                                </x-dropdown-link>
+
+                                {{-- My Posters --}}
+                                <x-dropdown-link :href="route('user.posters')">
+                                    Lost & Found Posters
+                                </x-dropdown-link>
+
+                                {{-- My Requests --}}
+                                <x-dropdown-link :href="route('user.requests')">
+                                    My Requests
+                                </x-dropdown-link>
 
                             <!-- Authentication -->
                             <form method="POST" action="{{ route('logout') }}">

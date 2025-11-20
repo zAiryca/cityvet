@@ -11,7 +11,7 @@ class Pet extends Model
     protected $fillable = [
         'user_id', 'species', 'breed', 'estimated_age_years', 'estimated_age_months', 'gender', 'color_markings',
         'description', 'photo', 'status', 'impounded_date', 'caught_location', 'decision_date', 'urgent_deadline',
-        'registration_status', 'admin_notes',
+        // 'registration_status',
     ];
 
     // Cast dates
@@ -78,10 +78,10 @@ class Pet extends Model
     }
 
     // Helper: Is urgent?
-    public function isUrgent()
-    {
-        return $this->status === 'adoptable' && $this->urgent_deadline && now() < $this->urgent_deadline;
-    }
+    // public function isUrgent()
+    // {
+    //     return $this->status === 'adoptable' && $this->urgent_deadline && now() < $this->urgent_deadline;
+    // }
 
     // Scope: For user visibility (hide unclaimed/unadopted)
     public function scopeVisibleToUsers($query)
