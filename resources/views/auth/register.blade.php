@@ -1,22 +1,55 @@
 <x-guest-layout>
-    <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-md w-full space-y-8">
-            <!-- Hero/Welcome -->
-            <div class="text-center">
-                <div class="mx-auto h-24 w-24 {{ request('role') === 'admin' ? 'bg-blue-100' : 'bg-green-100' }} rounded-full flex items-center justify-center mb-4">
-                    <svg class="h-12 w-12 {{ request('role') === 'admin' ? 'text-blue-600' : 'text-green-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />  <!-- Plus icon for "add user" -->
-                    </svg>
-                </div>
-                <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                    {{ request('role') === 'admin' ? 'Employee Registration' : 'User Registration' }}
-                </h2>
-                <p class="mt-2 text-center text-sm text-gray-600">
-                    {{ request('role') === 'admin' ? 'Create an account to manage the Pet Recovery and Adoption System for Alaminos City.' : 'Create an account to register pets and post lost/found.' }}
-                </p>
-            </div>
+    <!-- Background with subtle pet pattern -->
+    <div class="relative min-h-screen overflow-hidden bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">
+        <!-- Decorative paw prints background -->
+        <div class="absolute inset-0 opacity-5">
+            <svg class="w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <pattern id="paw-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                        <path d="M10 5c0-1.1-.9-2-2-2s-2 .9-2 2c0 .7.4 1.4 1 1.7V9c0 .6.4 1 1 1s1-.4 1-1V6.7c.6-.3 1-1 1-1.7zM8 12c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" fill="currentColor"/>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#paw-pattern)"/>
+            </svg>
+        </div>
 
-        <div class="bg-white py-8 px-6 shadow rounded-lg sm:px-10">
+        <div class="relative z-10 flex items-center justify-center min-h-screen px-4 py-12 sm:px-6 lg:px-8">
+            <div class="w-full max-w-lg space-y-8">
+                <!-- Hero Section with Pet Theme -->
+                <div class="text-center">
+                    <!-- Cute pet illustration -->
+                    <div class="relative mx-auto mb-6">
+                        <div class="flex items-center justify-center w-32 h-32 transition-transform duration-300 transform rounded-full shadow-lg bg-gradient-to-br from-green-400 to-emerald-500 hover:scale-105">
+                            <svg class="w-20 h-20 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                        </div>
+                        <!-- Floating stars -->
+                        <div class="absolute flex items-center justify-center w-8 h-8 bg-yellow-400 rounded-full -top-2 -right-2 animate-bounce">
+                            <span class="text-sm text-white">⭐</span>
+                        </div>
+                        <div class="absolute flex items-center justify-center w-6 h-6 bg-blue-400 rounded-full -bottom-1 -left-1 animate-pulse">
+                            <span class="text-xs text-white">🌟</span>
+                        </div>
+                    </div>
+
+                    <h1 class="mb-2 text-4xl font-bold text-gray-900">
+                        Join Our Family! 🐾
+                    </h1>
+                    <h2 class="mb-3 text-xl font-semibold text-green-600">
+                        {{ request('role') === 'admin' ? 'Employee Registration' : 'Pet Lover Registration' }}
+                    </h2>
+                    <p class="max-w-sm mx-auto text-sm text-gray-600">
+                        {{ request('role') === 'admin' ? 'Create an account to help manage our pet recovery and adoption system.' : 'Join our community to help reunite pets with their families and find loving homes.' }}
+                    </p>
+                </div>
+
+                <!-- Registration Form -->
+                <div class="px-6 py-8 border border-green-100 shadow-xl bg-white/90 backdrop-blur-sm rounded-2xl">
+                    <div class="mb-6 text-center">
+                        <h3 class="text-2xl font-bold text-gray-900">Create Account</h3>
+                        <p class="mt-1 text-sm text-gray-600">Start your pet-loving journey today</p>
+                    </div>
             <form class="space-y-6" method="POST" action="{{ route('register') }}">
                 @csrf
                 <input type="hidden" name="role" value="{{ request('role') }}">
@@ -29,7 +62,7 @@
                                class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none {{ request('role') === 'admin' ? 'focus:ring-blue-500 focus:border-blue-500' : 'focus:ring-green-500 focus:border-green-500' }} focus:z-10 sm:text-sm @error('last_name') border-red-500 @enderror"
                                placeholder="Last name">
                         @error('last_name')
-                            <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                            <span class="mt-1 text-sm text-red-500">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -40,7 +73,7 @@
                                class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none {{ request('role') === 'admin' ? 'focus:ring-blue-500 focus:border-blue-500' : 'focus:ring-green-500 focus:border-green-500' }} focus:z-10 sm:text-sm @error('middle_name') border-red-500 @enderror"
                                placeholder="Middle name (optional)">
                         @error('middle_name')
-                            <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                            <span class="mt-1 text-sm text-red-500">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -51,7 +84,7 @@
                                class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none {{ request('role') === 'admin' ? 'focus:ring-blue-500 focus:border-blue-500' : 'focus:ring-green-500 focus:border-green-500' }} focus:z-10 sm:text-sm @error('first_name') border-red-500 @enderror"
                                placeholder="First name">
                         @error('first_name')
-                            <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                            <span class="mt-1 text-sm text-red-500">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
@@ -63,7 +96,7 @@
                            class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none {{ request('role') === 'admin' ? 'focus:ring-blue-500 focus:border-blue-500' : 'focus:ring-green-500 focus:border-green-500' }} focus:z-10 sm:text-sm @error('contact_number') border-red-500 @enderror"
                            placeholder="e.g. 09171234567">
                     @error('contact_number')
-                        <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                        <span class="mt-1 text-sm text-red-500">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -74,7 +107,7 @@
                            class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none {{ request('role') === 'admin' ? 'focus:ring-blue-500 focus:border-blue-500' : 'focus:ring-green-500 focus:border-green-500' }} focus:z-10 sm:text-sm @error('email') border-red-500 @enderror"
                            placeholder="your.email@example.com">
                     @error('email')
-                        <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                        <span class="mt-1 text-sm text-red-500">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -84,15 +117,15 @@
                         <input id="password" name="password" type="password" autocomplete="new-password" required
                                class="mt-1 appearance-none relative block w-full px-3 py-2 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none {{ request('role') === 'admin' ? 'focus:ring-blue-500 focus:border-blue-500' : 'focus:ring-green-500 focus:border-green-500' }} focus:z-10 sm:text-sm @error('password') border-red-500 @enderror"
                                placeholder="At least 8 characters">
-                        <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                             </svg>
                         </button>
                     </div>
                     @error('password')
-                        <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                        <span class="mt-1 text-sm text-red-500">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -102,8 +135,8 @@
                         <input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password" required
                                class="mt-1 appearance-none relative block w-full px-3 py-2 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none {{ request('role') === 'admin' ? 'focus:ring-blue-500 focus:border-blue-500' : 'focus:ring-green-500 focus:border-green-500' }} focus:z-10 sm:text-sm"
                                placeholder="Confirm your password">
-                        <button type="button" id="toggle-password-confirmation" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button type="button" id="toggle-password-confirmation" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                             </svg>
@@ -112,7 +145,7 @@
                 </div>
 
                 <div>
-                    <div class="bg-blue-50 border border-blue-200 rounded-md p-4">
+                    <div class="p-4 border border-blue-200 rounded-md bg-blue-50">
                         <label for="terms" class="flex items-start">
                             <input id="terms" name="terms" type="checkbox" required class="h-4 w-4 mt-0.5 {{ request('role') === 'admin' ? 'text-blue-600 focus:ring-blue-500' : 'text-green-600 focus:ring-green-500' }} border-gray-300 rounded">
                             <span class="ml-2 text-sm text-gray-700">
@@ -122,7 +155,7 @@
                         </label>
                     </div>
                     @error('terms')
-                        <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                        <span class="mt-1 text-sm text-red-500">{{ $message }}</span>
                     @enderror
                 </div>
 

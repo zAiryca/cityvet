@@ -226,6 +226,20 @@
                     <input type="hidden" name="address" value="{{ (auth()->user()->street ?? '') . ', ' . (auth()->user()->barangay ?? '') . ', ' . (auth()->user()->city_municipality ?? '') }}">
                     <input type="hidden" name="contact_number" value="{{ auth()->user()->contact_number ?? '' }}">
                     <input type="hidden" name="email" value="{{ auth()->user()->email ?? '' }}">
+                    @if(auth()->user()->id_photo)
+                        <div class="mb-4">
+                            <label class="block mb-1 text-sm font-medium text-gray-700">ID Photo</label>
+                            <div class="flex items-center space-x-4">
+                                <img src="{{ asset('storage/' . auth()->user()->id_photo) }}" alt="Your ID Photo" class="object-cover w-24 h-16 border border-gray-300 rounded">
+                                <span class="text-sm text-gray-600">Your uploaded ID photo will be used for verification.</span>
+                            </div>
+                        </div>
+                        <input type="hidden" name="id_photo_path" value="{{ auth()->user()->id_photo }}">
+                    @else
+                        <div class="p-3 mb-4 border border-yellow-200 rounded bg-yellow-50">
+                            <p class="text-sm text-yellow-800"><strong>Note:</strong> You haven't uploaded an ID photo yet. Please upload one in your <a href="{{ route('profile.edit') }}" class="text-blue-600 underline hover:text-blue-800">profile settings</a> for faster verification.</p>
+                        </div>
+                    @endif
                     <div class="mb-4">
                         <label class="block mb-1 text-sm font-medium text-gray-700">Date of Birth (MM/DD/YYYY)</label>
                         <input type="date" name="date_of_birth" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
@@ -415,6 +429,9 @@
                 <input type="hidden" name="address" value="{{ (auth()->user()->street ?? '') . ', ' . (auth()->user()->barangay ?? '') . ', ' . (auth()->user()->city_municipality ?? '') }}">
                 <input type="hidden" name="contact_number" value="{{ auth()->user()->contact_number ?? '' }}">
                 <input type="hidden" name="email" value="{{ auth()->user()->email ?? '' }}">
+                @if(auth()->user()->id_photo)
+                    <input type="hidden" name="id_photo_path" value="{{ auth()->user()->id_photo }}">
+                @endif
 
                 <div class="mb-8">
                     <h5 class="pb-2 mb-4 text-lg font-semibold text-gray-800 border-b">Section 1: Owner's Information</h5>

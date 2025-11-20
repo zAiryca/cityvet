@@ -3,18 +3,18 @@
 @section('title', '| Pet Registration Details')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen px-4 py-12 bg-gradient-to-br from-blue-50 to-indigo-100 sm:px-6 lg:px-8">
     <div class="max-w-6xl mx-auto">
         <!-- Header -->
-        <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
-            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6">
-                <div class="flex justify-between items-center">
+        <div class="mb-6 overflow-hidden bg-white shadow-xl rounded-2xl">
+            <div class="px-8 py-6 bg-gradient-to-r from-blue-600 to-indigo-600">
+                <div class="flex items-center justify-between">
                     <div>
                         <h1 class="text-3xl font-bold text-white">Pet Registration Details</h1>
-                        <p class="text-blue-100 mt-1">Review and manage pet registration application</p>
+                        <p class="mt-1 text-blue-100">Review and manage pet registration application</p>
                     </div>
                     <div class="flex space-x-3">
-                        <a href="{{ route('admin.pet-registrations.index') }}" class="bg-white/20 hover:bg-white/30 text-white font-semibold py-2 px-4 rounded-lg transition duration-200">
+                        <a href="{{ route('admin.pet-registrations.index') }}" class="px-4 py-2 font-semibold text-white transition duration-200 rounded-lg bg-white/20 hover:bg-white/30">
                             ← Back to List
                         </a>
                     </div>
@@ -22,7 +22,7 @@
             </div>
 
             <!-- Status Badge -->
-            <div class="px-8 py-4 bg-gray-50 border-b">
+            <div class="px-8 py-4 border-b bg-gray-50">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-4">
                         <span class="text-sm font-medium text-gray-600">Status:</span>
@@ -40,16 +40,16 @@
         </div>
 
         <!-- Main Content -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <!-- Pet Information -->
             <div class="lg:col-span-2">
-                <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-                    <div class="bg-gradient-to-r from-green-600 to-teal-600 px-8 py-6">
+                <div class="overflow-hidden bg-white shadow-xl rounded-2xl">
+                    <div class="px-8 py-6 bg-gradient-to-r from-green-600 to-teal-600">
                         <h2 class="text-2xl font-bold text-white">Pet Information</h2>
                     </div>
 
                     <div class="px-8 py-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <div class="space-y-4">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-600">Pet Name</label>
@@ -80,16 +80,16 @@
                                 </div>
                                 <div class="md:col-span-2">
                                     <label class="block text-sm font-semibold text-gray-600">Description</label>
-                                    <p class="text-gray-700 bg-gray-50 p-3 rounded-lg">{{ $pet_registration->description ?: 'No description provided' }}</p>
+                                    <p class="p-3 text-gray-700 rounded-lg bg-gray-50">{{ $pet_registration->description ?: 'No description provided' }}</p>
                                 </div>
                             </div>
                         </div>
 
                         @if($pet_registration->photo)
                             <div class="mt-6">
-                                <label class="block text-sm font-semibold text-gray-600 mb-3">Pet Photo</label>
-                                <div class="bg-gray-50 p-4 rounded-lg">
-                                    <img src="{{ asset('storage/' . $pet_registration->photo) }}" alt="{{ $pet_registration->pet_name }}" class="max-w-full h-auto rounded-lg shadow-md">
+                                <label class="block mb-3 text-sm font-semibold text-gray-600">Pet Photo</label>
+                                <div class="p-4 rounded-lg bg-gray-50">
+                                    <img src="{{ asset('storage/' . $pet_registration->photo) }}" alt="{{ $pet_registration->pet_name }}" class="h-auto max-w-full rounded-lg shadow-md">
                                 </div>
                             </div>
                         @endif
@@ -99,8 +99,8 @@
 
             <!-- Owner Information -->
             <div>
-                <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-                    <div class="bg-gradient-to-r from-purple-600 to-pink-600 px-8 py-6">
+                <div class="overflow-hidden bg-white shadow-xl rounded-2xl">
+                    <div class="px-8 py-6 bg-gradient-to-r from-purple-600 to-pink-600">
                         <h2 class="text-2xl font-bold text-white">Owner Information</h2>
                     </div>
 
@@ -119,11 +119,17 @@
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-gray-600">Complete Address</label>
-                            <p class="text-gray-700 bg-gray-50 p-3 rounded-lg text-sm">
+                            <p class="p-3 text-sm text-gray-700 rounded-lg bg-gray-50">
                                 {{ ($pet_registration->user->street ?? '') . ', ' . ($pet_registration->user->barangay ?? '') . ', ' . ($pet_registration->user->city_municipality ?? '') }}
                             </p>
                         </div>
-                        <div class="border-t pt-4">
+                        @if($pet_registration->user->id_photo)
+                            <div class="pt-4 border-t">
+                                <label class="block mb-2 text-sm font-semibold text-gray-600">ID Photo</label>
+                                <img src="{{ asset('storage/' . $pet_registration->user->id_photo) }}" alt="User ID Photo" class="object-cover w-48 h-32 border rounded-lg shadow-md">
+                            </div>
+                        @endif
+                        <div class="pt-4 border-t">
                             <label class="block text-sm font-semibold text-gray-600">Registration Timeline</label>
                             <div class="space-y-2 text-sm">
                                 <p><span class="font-medium">Submitted:</span> {{ $pet_registration->created_at->format('M d, Y H:i') }}</p>
@@ -134,8 +140,8 @@
                 </div>
 
                 <!-- Actions -->
-                <div class="bg-white rounded-2xl shadow-xl overflow-hidden mt-6">
-                    <div class="bg-gradient-to-r from-gray-600 to-gray-700 px-8 py-6">
+                <div class="mt-6 overflow-hidden bg-white shadow-xl rounded-2xl">
+                    <div class="px-8 py-6 bg-gradient-to-r from-gray-600 to-gray-700">
                         <h2 class="text-xl font-bold text-white">Actions</h2>
                     </div>
 
@@ -143,7 +149,7 @@
                         <form method="POST" action="{{ route('admin.pet-registrations.destroy', $pet_registration) }}" class="block">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200"
+                            <button type="submit" class="w-full px-4 py-3 font-semibold text-white transition duration-200 bg-red-600 rounded-lg hover:bg-red-700"
                                     onclick="return confirm('Are you sure you want to delete this registration?')">
                                 🗑️ Delete Registration
                             </button>

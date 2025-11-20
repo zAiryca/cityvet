@@ -13,7 +13,7 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-4">
+    <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="mt-6 space-y-4">
         @csrf
         @method('patch')
 
@@ -36,8 +36,19 @@
         </div>
 
         <div>
+            <x-input-label for="gender" :value="__('Gender')" />
+            <select id="gender" name="gender" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                <option value="">Select Gender</option>
+                <option value="male" {{ old('gender', $user->gender) == 'male' ? 'selected' : '' }}>Male</option>
+                <option value="female" {{ old('gender', $user->gender) == 'female' ? 'selected' : '' }}>Female</option>
+                <option value="other" {{ old('gender', $user->gender) == 'other' ? 'selected' : '' }}>Other</option>
+            </select>
+            <x-input-error class="mt-2" :messages="$errors->get('gender')" />
+        </div>
+
+        <div>
             <x-input-label for="birthday" :value="__('Birthday')" />
-            <x-text-input id="birthday" name="birthday" type="date" class="block w-full mt-1" :value="old('birthday', $user->birthday ? $user->birthday->format('Y-m-d') : '')" />
+            <x-text-input id="birthday" name="birthday" type="date" class="block w-full mt-1" :value="old('birthday', $user->birthday ? $user->birthday->format('Y-m-d') : '')" required />
             <x-input-error class="mt-2" :messages="$errors->get('birthday')" />
         </div>
 
@@ -108,6 +119,18 @@
                             {{ __('A new verification link has been sent to your email address.') }}
                         </p>
                     @endif
+                </div>
+            @endif
+        </div>
+
+        <div>
+            <x-input-label for="id_photo" :value="__('ID Photo')" />
+            <input type="file" name="id_photo" accept="image/*" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 @error('id_photo') border-red-500 @enderror">
+            @error('id_photo') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
+            @if($user->id_photo)
+                <div class="mt-2">
+                    <p class="text-sm text-gray-600">Current ID Photo:</p>
+                    <img src="{{ asset('storage/' . $user->id_photo) }}" alt="Current ID Photo" class="object-cover w-32 h-32 mt-1 rounded-md">
                 </div>
             @endif
         </div>

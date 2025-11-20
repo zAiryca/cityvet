@@ -67,8 +67,9 @@ class PetController extends Controller
                 'address' => 'required|string',
                 'contact_number' => 'required|string|max:20',
                 'email' => 'required|email|max:255',
-                'photos' => 'required|array|min:1',
-                'photos.*' => 'required|file|mimes:jpeg,png,jpg,gif,pdf,doc,docx|max:5120',
+                'proof_of_ownership_description' => 'required|string|max:1000',
+                'photos' => 'nullable|array',
+                'photos.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,pdf,doc,docx|max:5120',
                 'certify_info' => 'required|accepted',
                 'agree_terms' => 'required|accepted',
             ]);
@@ -125,7 +126,7 @@ class PetController extends Controller
         $petRequest = $pet->requests()->create([
             'user_id' => Auth::id(),
             'type' => $request->type,
-            'reason' => $request->reason ?? '',
+            'reason' => $request->reason ?? $request->proof_of_ownership_description ?? '',
             'contact_info' => $request->contact_number ?? $request->contact_info ?? '',
             'photos' => json_encode($photoPaths), // Store as JSON array
             'additional_data' => json_encode($additionalData),

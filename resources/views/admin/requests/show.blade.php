@@ -3,11 +3,11 @@
 @section('title', '| Admin - Request Details')
 
 @section('content')
-<div class="max-w-7xl mx-auto py-6 px-4">
-    <h1 class="text-3xl font-bold mb-6">Request Details</h1>
-    <div class="bg-white rounded-lg shadow max-w-4xl">
+<div class="px-4 py-6 mx-auto max-w-7xl">
+    <h1 class="mb-6 text-3xl font-bold">Request Details</h1>
+    <div class="max-w-4xl bg-white rounded-lg shadow">
         <div class="p-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="grid grid-cols-1 gap-6 mb-6 md:grid-cols-2">
                 <p><strong>User:</strong> {{ $request->user->name }} ({{ $request->user->email }})</p>
                 <p><strong>Type:</strong> {{ ucfirst($request->type) }}</p>
                 <p><strong>Status:</strong>
@@ -20,13 +20,13 @@
 
             @if($request->requestable && $request->requestable_type === 'App\\Models\\Pet')
                 <div class="mb-6 text-center">
-                    <h3 class="text-lg font-semibold mb-4">{{ $request->type === 'adopt' ? 'Adopted' : 'Impounded' }} Pet Photo</h3>
-                    <img src="{{ $request->requestable->photo ? asset('storage/' . $request->requestable->photo) : 'https://via.placeholder.com/600x400?text=' . $request->requestable->display_code }}" alt="{{ $request->requestable->display_code }}" class="w-full h-96 object-cover">
+                    <h3 class="mb-4 text-lg font-semibold">{{ $request->type === 'adopt' ? 'Adopted' : 'Impounded' }} Pet Photo</h3>
+                    <img src="{{ $request->requestable->photo ? asset('storage/' . $request->requestable->photo) : 'https://via.placeholder.com/600x400?text=' . $request->requestable->display_code }}" alt="{{ $request->requestable->display_code }}" class="object-cover w-full h-96">
                 </div>
 
                 <div class="mb-6">
-                    <h3 class="text-lg font-semibold mb-4">{{ $request->type === 'adopt' ? 'Adopted' : 'Impounded' }} Pet Information</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <h3 class="mb-4 text-lg font-semibold">{{ $request->type === 'adopt' ? 'Adopted' : 'Impounded' }} Pet Information</h3>
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <p><strong>Pet ID:</strong> {{ $request->requestable->display_code }}</p>
                         <p><strong>Species:</strong> {{ $request->requestable->species }}</p>
                         <p><strong>Breed:</strong> {{ $request->requestable->breed ?: 'Unknown' }}</p>
@@ -44,8 +44,8 @@
                 </div>
 
                 <div class="mb-6">
-                    <h3 class="text-lg font-semibold mb-4">{{ ucfirst($request->type) }}er Information</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <h3 class="mb-4 text-lg font-semibold">{{ ucfirst($request->type) }}er Information</h3>
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <p><strong>Name:</strong> {{ $request->user->name }}</p>
                         <p><strong>Email:</strong> {{ $request->user->email }}</p>
                         <p><strong>Phone:</strong> {{ $request->user->phone ?: 'Not provided' }}</p>
@@ -68,8 +68,8 @@
                 @endphp
                 @if($request->type === 'adopt')
                     <div class="mb-6">
-                        <h3 class="text-lg font-semibold mb-4">Adopter Information</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <h3 class="mb-4 text-lg font-semibold">Adopter Information</h3>
+                        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                             <p><strong>Name:</strong> {{ $additionalData['first_name'] ?? '' }} {{ $additionalData['middle_name'] ?? '' }} {{ $additionalData['last_name'] ?? '' }}</p>
                             <p><strong>Address:</strong> {{ $additionalData['address'] ?? '' }}</p>
                             <p><strong>Contact:</strong> {{ $additionalData['contact_number'] ?? '' }}</p>
@@ -92,11 +92,17 @@
                         <div class="mt-4">
                             <p><strong>Reason for Adoption:</strong> {{ $additionalData['reason'] ?? '' }}</p>
                         </div>
+                        @if($request->user->id_photo)
+                            <div class="mt-4">
+                                <h4 class="mb-2 font-semibold text-md">User ID Photo</h4>
+                                <img src="{{ asset('storage/' . $request->user->id_photo) }}" alt="User ID Photo" class="object-cover w-48 h-32 border rounded-lg shadow-md">
+                            </div>
+                        @endif
                     </div>
                 @elseif($request->type === 'claim')
                     <div class="mb-6">
-                        <h3 class="text-lg font-semibold mb-4">Claimant Information</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <h3 class="mb-4 text-lg font-semibold">Claimant Information</h3>
+                        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                             <p><strong>Name:</strong> {{ $additionalData['first_name'] ?? '' }} {{ $additionalData['middle_name'] ?? '' }} {{ $additionalData['last_name'] ?? '' }}</p>
                             <p><strong>Address:</strong> {{ $additionalData['address'] ?? '' }}</p>
                             <p><strong>Contact:</strong> {{ $additionalData['contact_number'] ?? '' }}</p>
@@ -106,8 +112,8 @@
                     </div>
                 @elseif($request->type === 'impound')
                     <div class="mb-6">
-                        <h3 class="text-lg font-semibold mb-4">Impound Request Information</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <h3 class="mb-4 text-lg font-semibold">Impound Request Information</h3>
+                        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                             <p><strong>Name:</strong> {{ $additionalData['first_name'] ?? '' }} {{ $additionalData['middle_name'] ?? '' }} {{ $additionalData['last_name'] ?? '' }}</p>
                             <p><strong>Address:</strong> {{ $additionalData['address'] ?? '' }}</p>
                             <p><strong>Contact:</strong> {{ $additionalData['contact_number'] ?? '' }}</p>
@@ -115,6 +121,12 @@
                             <p><strong>Location Found:</strong> {{ $additionalData['location_found'] ?? '' }}</p>
                             <p><strong>Description:</strong> {{ $additionalData['description'] ?? '' }}</p>
                         </div>
+                        @if($request->user->id_photo)
+                            <div class="mt-4">
+                                <h4 class="mb-2 font-semibold text-md">User ID Photo</h4>
+                                <img src="{{ asset('storage/' . $request->user->id_photo) }}" alt="User ID Photo" class="object-cover w-48 h-32 border rounded-lg shadow-md">
+                            </div>
+                        @endif
                     </div>
                 @endif
             @endif
@@ -129,11 +141,11 @@
                 @endphp
                 @if(is_array($photos) && count($photos) > 0)
                     <div class="mb-6">
-                        <h3 class="text-lg font-semibold mb-4">Claimant/Adopter Uploaded Photos</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <h3 class="mb-4 text-lg font-semibold">Claimant/Adopter Uploaded Photos</h3>
+                        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                             @foreach($photos as $photo)
                                 <div class="relative">
-                                    <img src="{{ asset('storage/' . $photo) }}" alt="Request Photo" class="w-full h-48 object-cover rounded-lg shadow-md">
+                                    <img src="{{ asset('storage/' . $photo) }}" alt="Request Photo" class="object-cover w-full h-48 rounded-lg shadow-md">
                                 </div>
                             @endforeach
                         </div>
@@ -143,7 +155,7 @@
 
             <!-- Success Message -->
             @if(session('success'))
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                <div class="px-4 py-3 mb-4 text-green-700 bg-green-100 border border-green-400 rounded">
                     {{ session('success') }}
                 </div>
             @endif
@@ -152,7 +164,7 @@
 
 
             <div class="flex space-x-4">
-                <a href="{{ route('admin.requests.index') }}" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Back to List</a>
+                <a href="{{ route('admin.requests.index') }}" class="px-4 py-2 text-white bg-gray-600 rounded hover:bg-gray-700">Back to List</a>
             </div>
         </div>
     </div>

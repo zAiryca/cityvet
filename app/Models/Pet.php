@@ -43,7 +43,8 @@ class Pet extends Model
     {
         $startDate = $this->impounded_date ?: $this->decision_date ?: $this->created_at;
         $daysPassed = now()->diffInDays($startDate);
-        return max(0, 3 - $daysPassed);  // 3-day holding period
+        $holdingPeriod = $this->status === 'adoptable' ? 4 : 3;  // 3 days for impounded, 4 days for adoptable
+        return max(0, $holdingPeriod - $daysPassed);
     }
 
     // Helper: Generate IMP/ADO code

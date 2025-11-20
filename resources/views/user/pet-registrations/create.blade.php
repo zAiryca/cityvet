@@ -24,14 +24,36 @@
                 </div>
                 <p class="mb-6 text-sm text-gray-500">This information is pre-filled from your user account and is read-only.</p>
 
-                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
 
                     <div>
-                        <label for="owner_name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                        <label for="first_name" class="block text-sm font-medium text-gray-700">First Name</label>
                         <input
                             type="text"
-                            id="owner_name"
-                            value="{{ auth()->user()->name ?? 'N/A' }}"
+                            id="first_name"
+                            value="{{ auth()->user()->first_name ?? 'N/A' }}"
+                            readonly
+                            class="block w-full p-3 mt-1 text-gray-600 bg-gray-100 border border-gray-200 rounded-lg shadow-sm cursor-not-allowed"
+                        >
+                    </div>
+
+                    <div>
+                        <label for="middle_name" class="block text-sm font-medium text-gray-700">Middle Name</label>
+                        <input
+                            type="text"
+                            id="middle_name"
+                            value="{{ auth()->user()->middle_name ?? '' }}"
+                            readonly
+                            class="block w-full p-3 mt-1 text-gray-600 bg-gray-100 border border-gray-200 rounded-lg shadow-sm cursor-not-allowed"
+                        >
+                    </div>
+
+                    <div>
+                        <label for="last_name" class="block text-sm font-medium text-gray-700">Last Name</label>
+                        <input
+                            type="text"
+                            id="last_name"
+                            value="{{ auth()->user()->last_name ?? 'N/A' }}"
                             readonly
                             class="block w-full p-3 mt-1 text-gray-600 bg-gray-100 border border-gray-200 rounded-lg shadow-sm cursor-not-allowed"
                         >
@@ -72,6 +94,20 @@
 
                 <input type="hidden" name="contact_number" value="{{ auth()->user()->contact_number ?? '' }}">
                 <input type="hidden" name="address" value="{{ (auth()->user()->street ?? '') . ', ' . (auth()->user()->barangay ?? '') . ', ' . (auth()->user()->city_municipality ?? '') }}">
+                @if(auth()->user()->id_photo)
+                    <div class="mb-4">
+                        <label class="block mb-1 text-sm font-medium text-gray-700">ID Photo</label>
+                        <div class="flex items-center space-x-4">
+                            <img src="{{ asset('storage/' . auth()->user()->id_photo) }}" alt="Your ID Photo" class="object-cover w-24 h-16 border border-gray-300 rounded">
+                            <span class="text-sm text-gray-600">Your uploaded ID photo will be used for verification.</span>
+                        </div>
+                    </div>
+                    <input type="hidden" name="id_photo_path" value="{{ auth()->user()->id_photo }}">
+                @else
+                    <div class="p-3 mb-4 border border-yellow-200 rounded bg-yellow-50">
+                        <p class="text-sm text-yellow-800"><strong>Note:</strong> You haven't uploaded an ID photo yet. Please upload one in your <a href="{{ route('profile.edit') }}" class="text-blue-600 underline hover:text-blue-800">profile settings</a> for faster verification.</p>
+                    </div>
+                @endif
 
             </div>
 

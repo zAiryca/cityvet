@@ -16,17 +16,21 @@ class ProfileUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => ['required', 'string', 'max:255', 'regex:/^[A-Z]/'],
-            'middle_name' => ['nullable', 'string', 'max:255', 'regex:/^[A-Z]/'],
-            'last_name' => ['required', 'string', 'max:255', 'regex:/^[A-Z]/'],
-            'birthday' => ['nullable', 'date', 'before:today'],
-            'contact_number' => ['required', 'string', 'max:20'],
-            'emergency_contact' => ['nullable', 'string', 'max:20', 'regex:/^[0-9+\-\s()]+$/'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'middle_name' => ['nullable', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'gender' => ['required', 'in:male,female,other'],
+            'birthday' => ['required', 'date', 'before:today'],
+            'contact_number' => ['required', 'regex:/^09\d{10}$/'],
+            'emergency_contact' => ['required', 'regex:/^09\d{10}$/'],
             'street' => ['required', 'string', 'max:255'],
             'barangay' => ['required', 'string', 'max:255'],
             'city_municipality' => ['required', 'string', 'max:255'],
-            'zip_code' => ['nullable', 'string', 'max:10'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
+            'province' => ['required', 'string', 'max:255'],
+            'zip_code' => ['required', 'string', 'max:10'],
+            'email' => ['required', 'string', 'lowercase', 'email:rfc,dns', 'max:255', 'unique:users,email,' . $this->user()->id],
+            'id_photo' => ['nullable', 'file', 'mimes:jpeg,png,jpg,gif,pdf,doc,docx', 'max:5120'],
         ];
     }
+
 }
