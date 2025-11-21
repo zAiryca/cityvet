@@ -22,13 +22,13 @@ class ProfileUpdateRequest extends FormRequest
             'gender' => ['required', 'in:male,female,other'],
             'birthday' => ['required', 'date', 'before:today'],
             'contact_number' => ['required', 'regex:/^09\d{10}$/'],
-            'emergency_contact' => ['required', 'regex:/^09\d{10}$/'],
+            'emergency_contact' => ['required', 'regex:/^09\d{09}$/'],
             'street' => ['required', 'string', 'max:255'],
             'barangay' => ['required', 'string', 'max:255'],
             'city_municipality' => ['required', 'string', 'max:255'],
             'province' => ['required', 'string', 'max:255'],
             'zip_code' => ['required', 'string', 'max:10'],
-            'email' => ['required', 'string', 'lowercase', 'email:rfc,dns', 'max:255', 'unique:users,email,' . $this->user()->id],
+          'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,' . $this->user()->id],
             'id_photo' => ['nullable', 'file', 'mimes:jpeg,png,jpg,gif,pdf,doc,docx', 'max:5120'],
         ];
     }

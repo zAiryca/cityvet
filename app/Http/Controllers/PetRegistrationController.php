@@ -130,10 +130,16 @@ class PetRegistrationController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     * Users can delete both pending and registered pets (not denied)
      */
     public function destroy(string $id)
     {
-        $petRegistration = PetRegistration::where('id', $id)->where('user_id', Auth::id())->where('status', 'pending')->firstOrFail();
+        // Users can only delete their own pending or registered pets (not denied ones)
+        $petRegistration = PetRegistration::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->whereIn('status', ['pending', 'registered'])
+            ->firstOrFail();
+
         $petRegistration->delete();
 
         return redirect()->route('pet-registrations.index')->with('success', 'Pet registration deleted successfully!');
@@ -141,11 +147,21 @@ class PetRegistrationController extends Controller
 
     /**
      * Approve a pet registration (Admin only)
+     * Only admins can approve pending registrations
      */
     public function approve(string $id)
     {
-        if (!Auth::user()->isAdmin()) abort(403);
+        if (!Auth::user()->isAdmin()) {
+            return back()->with('error', 'Unauthorized action.');
+        }
+
         $petRegistration = PetRegistration::findOrFail($id);
+
+        // Only allow approving pending registrations
+        if ($petRegistration->status !== 'pending') {
+            return back()->with('error', 'Only pending registrations can be approved.');
+        }
+
         $petRegistration->update(['status' => 'registered']);
 
         // Create corresponding record in pets table
@@ -172,8 +188,17 @@ class PetRegistrationController extends Controller
      */
     public function deny(string $id)
     {
-        if (!Auth::user()->isAdmin()) abort(403);
+        if (!Auth::user()->isAdmin()) {
+            return back()->with('error', 'Unauthorized action.');
+        }
+
         $petRegistration = PetRegistration::findOrFail($id);
+
+        // Only allow denying pending registrations
+        if ($petRegistration->status !== 'pending') {
+            return back()->with('error', 'Only pending registrations can be denied.');
+        }
+
         $petRegistration->update(['status' => 'denied']);
 
         return back()->with('success', 'Pet registration denied.');

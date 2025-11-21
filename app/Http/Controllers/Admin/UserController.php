@@ -12,15 +12,23 @@ class UserController extends Controller
 {
     public function index()
     {
+        // Security Check
         if (!auth()->user()->isAdmin()) abort(403);
-        $users = User::withCount(['adoptedPets', 'claimedPets', 'requests'])->paginate(10);
+
+        // 💡 FIX APPLIED: Removed 'adoptedPets' and 'claimedPets' from withCount()
+        $users = User::withCount(['requests'])->paginate(10);
+
         return view('admin.users.index', compact('users'));
     }
 
     public function show(User $user)
     {
+        // Security Check
         if (!auth()->user()->isAdmin()) abort(403);
-        $user->load(['adoptedPets', 'claimedPets', 'posters', 'requests.requestable']);
+
+        // 💡 FIX APPLIED: Removed 'adoptedPets' and 'claimedPets' from load()
+        $user->load(['posters', 'requests.requestable']);
+
         return view('admin.users.show', compact('user'));
     }
 
@@ -45,7 +53,7 @@ class UserController extends Controller
             'city_municipality' => 'nullable|string|max:255',
             'province' => 'nullable|string|max:255',
             'emergency_contact' => 'nullable|string|max:255',
-            'role' => 'required|in:user,admin',
+            'role' => 'required|in:user,admin', // Admin can assign roles
             'password' => 'nullable|string|min:8|confirmed',
         ]);
 

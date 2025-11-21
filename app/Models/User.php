@@ -49,16 +49,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(PetRequest::class, 'user_id');  // As requester
     }
 
-    public function adoptedPets()
-    {
-        return $this->hasMany(Pet::class)->where('status', 'adopted');
-    }
-
-    public function claimedPets()
-    {
-        return $this->hasMany(Pet::class)->where('status', 'claimed');
-    }
-
     public function petRegistrations()
     {
         return $this->hasMany(PetRegistration::class);

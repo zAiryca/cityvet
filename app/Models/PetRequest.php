@@ -13,6 +13,12 @@ class PetRequest extends Model
         'requestable_id', 'requestable_type', 'admin_notes', 'photos', 'additional_data'
     ];
 
+    // 💡 RECOMMENDATION: Add casts for automatic JSON handling
+    protected $casts = [
+        'photos' => 'array',
+        'additional_data' => 'array',
+    ];
+
     // 🧩 Polymorphic relationship (can belong to Pet or Event)
     public function requestable()
     {

@@ -10,10 +10,12 @@
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-lg font-semibold">{{ $petRegistration->pet_name }}</h3>
                     <div class="flex space-x-2">
-                        @if($petRegistration->status === 'pending')
-                            <a href="{{ route('pet-registrations.edit', $petRegistration) }}" class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700">
-                                Edit
-                            </a>
+                        @if($petRegistration->status === 'pending' || $petRegistration->status === 'registered')
+                            @if($petRegistration->status === 'pending')
+                                <a href="{{ route('pet-registrations.edit', $petRegistration) }}" class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700">
+                                    Edit
+                                </a>
+                            @endif
                             <form method="POST" action="{{ route('pet-registrations.destroy', $petRegistration) }}" class="inline">
                                 @csrf
                                 @method('DELETE')

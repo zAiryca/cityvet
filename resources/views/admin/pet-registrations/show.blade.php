@@ -146,6 +146,24 @@
                     </div>
 
                     <div class="px-8 py-6 space-y-3">
+                        @if($pet_registration->status === 'pending')
+                            <form method="POST" action="{{ route('admin.pet-registrations.approve', $pet_registration) }}" class="block">
+                                @csrf
+                                <button type="submit" class="w-full px-4 py-3 font-semibold text-white transition duration-200 bg-green-600 rounded-lg hover:bg-green-700"
+                                        onclick="return confirm('Are you sure you want to register this pet?')">
+                                    ✅ Register Pet
+                                </button>
+                            </form>
+
+                            <form method="POST" action="{{ route('admin.pet-registrations.deny', $pet_registration) }}" class="block">
+                                @csrf
+                                <button type="submit" class="w-full px-4 py-3 font-semibold text-white transition duration-200 bg-orange-600 rounded-lg hover:bg-orange-700"
+                                        onclick="return confirm('Are you sure you want to deny this pet registration?')">
+                                    ❌ Deny Registration
+                                </button>
+                            </form>
+                        @endif
+
                         <form method="POST" action="{{ route('admin.pet-registrations.destroy', $pet_registration) }}" class="block">
                             @csrf
                             @method('DELETE')

@@ -16,10 +16,16 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\PetRegistrationController;
 
+
+
+
+
 Route::middleware('setlocale')->group(function () {
+    // Pet browsing routes (Viewing)
     Route::get('/pets', [PetController::class, 'index'])->name('pets.index');
     Route::get('/pets/{pet}', [PetController::class, 'show'])->name('pets.show');
-    Route::post('/pets/{pet}/request', [PetController::class, 'request'])->name('pets.request');
+    // 💡 Security Fix: The 'pets.request' route is removed from here
+    // to ensure it is only accessible to authenticated users (see line 100).
 
     // Language switcher
     Route::get('/lang/{locale}', function ($locale) {
@@ -45,10 +51,7 @@ Route::middleware('setlocale')->group(function () {
 
     Route::get('/location', [PageController::class, 'location'])->name('location');
 
-    // Role selection (keep for backward compatibility, but redirect to login)
-    Route::get('/role-selection', function () {
-        return redirect()->route('login');
-    })->name('role-selection');
+    // 💡 REMOVED: Role selection route deleted as requested.
 
     // Auth scaffolding (Breeze)
     require __DIR__.'/auth.php';
@@ -69,8 +72,6 @@ Route::middleware('setlocale')->group(function () {
             return redirect()->route('profile.edit');
         })->name('user.dashboard');
 
-        // Profile routes are defined above
-
         // Pet registration (pre-register)
         Route::post('/pets', [PetController::class, 'store'])->name('pets.store');
 
@@ -90,8 +91,7 @@ Route::middleware('setlocale')->group(function () {
         Route::delete('/posters/{poster}', [PosterController::class, 'destroy'])->name('posters.destroy');
 
 
-
-        // Pet requests: Submit claim/adopt
+        // Pet requests: Submit claim/adopt (PROTECTED ROUTE)
         Route::post('/pets/{pet}/request', [PetController::class, 'request'])->name('pets.request');
 
         // My requests view
@@ -116,7 +116,7 @@ Route::middleware('setlocale')->group(function () {
             return view('user.requests.show', compact('request'));
         })->name('user.requests.show');
 
-        // Pet registration routes
+        // Pet registration routes (User only)
         Route::resource('pet-registrations', PetRegistrationController::class);
         Route::post('/pet-registrations/{pet}/approve', [PetRegistrationController::class, 'approve'])->name('pet-registrations.approve');
         Route::post('/pet-registrations/{pet}/deny', [PetRegistrationController::class, 'deny'])->name('pet-registrations.deny');
@@ -133,25 +133,10 @@ Route::middleware('setlocale')->group(function () {
         Route::post('/pets/{pet}/mark-adopted', [AdminPetController::class, 'markAsAdopted'])->name('pets.mark-adopted');
         Route::post('/pets/{pet}/mark-claimed', [AdminPetController::class, 'markAsClaimed'])->name('pets.mark-claimed');
 
-        // Pet Registrations CRUD
+        // Pet Registrations CRUD (Admin only) - Independent from user pet-registrations
         Route::resource('pet-registrations', \App\Http\Controllers\Admin\PetRegistrationController::class);
-        Route::post('/pet-registrations/{pet}/approve', [\App\Http\Controllers\Admin\PetRegistrationController::class, 'approve'])->name('pet-registrations.approve');
-        Route::post('/pet-registrations/{pet}/deny', [\App\Http\Controllers\Admin\PetRegistrationController::class, 'deny'])->name('pet-registrations.deny');
-
-        // Announcements CRUD
-        Route::resource('announcements', AdminAnnouncementController::class);
-    });
-
-    // Admin routes (auth + admin middleware)
-    Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-        // Dashboard
-        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-        // Pets CRUD
-        Route::resource('pets', AdminPetController::class);
-        Route::post('/pets/{pet}/urgent', [AdminPetController::class, 'setUrgent'])->name('pets.set-urgent');
-        Route::post('/pets/{pet}/mark-adopted', [AdminPetController::class, 'markAsAdopted'])->name('pets.mark-adopted');
-        Route::post('/pets/{pet}/mark-claimed', [AdminPetController::class, 'markAsClaimed'])->name('pets.mark-claimed');
+        Route::post('/pet-registrations/{pet_registration}/approve', [\App\Http\Controllers\Admin\PetRegistrationController::class, 'approve'])->name('pet-registrations.approve');
+        Route::post('/pet-registrations/{pet_registration}/deny', [\App\Http\Controllers\Admin\PetRegistrationController::class, 'deny'])->name('pet-registrations.deny');
 
         // Announcements CRUD
         Route::resource('announcements', AdminAnnouncementController::class);
