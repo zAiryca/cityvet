@@ -64,7 +64,7 @@ class PetRequestController extends Controller
             if ($pet && $petRequest->type === 'claim') {
                 $pet->update(['status' => 'claimed', 'user_id' => $petRequest->user_id]);
             } elseif ($pet && $petRequest->type === 'adopt') {
-                $pet->update(['status' => 'adopted', 'user_id' => $petRequest->user_id, 'urgent_deadline' => null]);
+                $pet->update(['status' => 'adopted', 'user_id' => $petRequest->user_id]);
             }
         }
 

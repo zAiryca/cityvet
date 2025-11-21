@@ -70,6 +70,7 @@
                             <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Name</th>
                             <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Species/Breed</th>
                             <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Status</th>
+                               <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Approved Requester</th>
                             <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Impounded/Adopt Date</th>
                             <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Actions</th>
                         </tr>
@@ -97,22 +98,46 @@
                                         {{ ucfirst($pet->status) }}
                                     </span>
                                 </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        @php
+                                            $approvedReq = $pet->requests->first();
+                                        @endphp
+                                        @if($approvedReq)
+                                            <a href="{{ route('admin.requests.show', $approvedReq) }}" class="text-sm text-indigo-600 hover:underline">
+                                                {{ $approvedReq->user->first_name ?? 'Requester' }} {{ $approvedReq->user->last_name ?? '' }}
+                                                <span class="text-gray-400 text-xs">({{ ucfirst($approvedReq->type) }})</span>
+                                            </a>
+                                        @else
+                                            <span class="text-sm text-gray-500">—</span>
+                                        @endif
+                                    </td>
                                 <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                                     {{ $pet->impounded_date ? $pet->impounded_date->format('M d, Y') : ($pet->adoptable_date ? $pet->adoptable_date->format('M d, Y') : 'N/A') }}
                                 </td>
                                 <td class="px-6 py-4 text-sm font-medium whitespace-nowrap">
                                     <a href="{{ route('admin.pets.show', $pet) }}" class="mr-4 text-indigo-600 hover:text-indigo-900">View</a>
                                     <a href="{{ route('admin.pets.edit', $pet) }}" class="mr-4 text-indigo-600 hover:text-indigo-900">Edit</a>
+                                    @php
+                                        $hasApproved = $pet->requests()->where('status', 'approved')->exists();
+                                    @endphp
                                     @if($pet->status === 'impounded')
-                                        <form action="{{ route('admin.pets.mark-claimed', $pet) }}" method="POST" class="inline mr-2">
-                                            @csrf
-                                            <button type="submit" class="text-green-600 hover:text-green-900" onclick="return confirm('Mark this pet as claimed?')">Mark Claimed</button>
-                                        </form>
+                                        @if($hasApproved)
+                                            <form action="{{ route('admin.pets.mark-claimed', $pet) }}" method="POST" class="inline mr-2">
+                                                @csrf
+                                                <button type="submit" class="text-green-600 hover:text-green-900" onclick="return confirm('Mark this pet as claimed?')">Mark Claimed</button>
+                                            </form>
+                                        @else
+                                            <button type="button" class="text-yellow-600 hover:text-yellow-900 mr-2" onclick="showNoRequesterModal('{{ $pet->display_code }}')">Mark Claimed</button>
+                                        @endif
                                     @elseif($pet->status === 'adoptable')
-                                        <form action="{{ route('admin.pets.mark-adopted', $pet) }}" method="POST" class="inline mr-2">
-                                            @csrf
-                                            <button type="submit" class="text-green-600 hover:text-green-900" onclick="return confirm('Mark this pet as adopted?')">Mark Adopted</button>
-                                        </form>
+                                        @if($hasApproved)
+                                            <form action="{{ route('admin.pets.mark-adopted', $pet) }}" method="POST" class="inline mr-2">
+                                                @csrf
+                                                <button type="submit" class="text-green-600 hover:text-green-900" onclick="return confirm('Mark this pet as adopted?')">Mark Adopted</button>
+                                            </form>
+                                        @else
+                                            <button type="button" class="text-yellow-600 hover:text-yellow-900 mr-2" onclick="showNoRequesterModal('{{ $pet->display_code }}')">Mark Adopted</button>
+                                        @endif
                                     @endif
                                     <form action="{{ route('admin.pets.destroy', $pet) }}" method="POST" class="inline ml-4">
                                         @csrf @method('DELETE')
@@ -131,3 +156,36 @@
     </div>
 </div>
 @endsection
+
+    @push('scripts')
+    <script>
+        function showNoRequesterModal(code) {
+            var modal = document.getElementById('noRequesterModal');
+            var petCodeSpan = document.getElementById('noRequesterPetCode');
+            petCodeSpan.textContent = code;
+            modal.classList.remove('hidden');
+        }
+
+        function closeNoRequesterModal() {
+            var modal = document.getElementById('noRequesterModal');
+            modal.classList.add('hidden');
+        }
+    </script>
+    @endpush
+
+    <!-- No-requester Modal -->
+    <div id="noRequesterModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+        <div class="fixed inset-0 bg-black opacity-50" onclick="closeNoRequesterModal()"></div>
+        <div class="bg-white rounded-lg shadow-lg max-w-lg w-full mx-4 z-10">
+            <div class="px-6 py-4 border-b">
+                <h3 class="text-lg font-semibold">No Approved Requester</h3>
+            </div>
+            <div class="p-6">
+                <p class="mb-4">There is no approved requester for pet <strong id="noRequesterPetCode"></strong>. You must approve a claim or adoption request before marking the pet as adopted or claimed.</p>
+                <div class="flex justify-end space-x-3">
+                    <button class="px-4 py-2 bg-gray-200 rounded" onclick="closeNoRequesterModal()">Close</button>
+                    <a href="{{ route('admin.requests.index') }}" class="px-4 py-2 bg-blue-600 text-white rounded">Go to Requests</a>
+                </div>
+            </div>
+        </div>
+    </div>

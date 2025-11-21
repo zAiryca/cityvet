@@ -34,7 +34,6 @@ class PetFactory extends Factory
             'impounded_date' => $this->faker->optional(0.3, null)->dateTimeBetween('-1 month', 'now')?->format('Y-m-d'), // 30% chance
             'caught_location' => $this->faker->optional(0.3, null)->address, // 30% chance
             'decision_date' => $this->faker->optional(0.2, null)->dateTimeBetween('-1 month', 'now')?->format('Y-m-d'), // 20% chance
-            'urgent_deadline' => $this->faker->optional(0.1, null)->dateTimeBetween('now', '+2 weeks')?->format('Y-m-d'), // 10% chance of being urgent
             'user_id' => User::inRandomOrder()->first()->id,
         ];
     }

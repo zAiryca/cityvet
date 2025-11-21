@@ -1,310 +1,329 @@
 @extends('layouts.admin')
 
-@section('title', '| Admin - View Pet')
+@section('title', '| Admin - Pet Details & Request Workflow')
 
 @section('content')
 <div class="min-h-screen py-8 bg-gray-50">
     <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <!-- Header -->
-        <div class="mb-8 overflow-hidden bg-white rounded-lg shadow-sm">
-            <div class="px-6 py-4 border-b border-gray-200">
+        <!-- Header with Pet Info -->
+        <div class="mb-8 overflow-hidden bg-white rounded-lg shadow-md">
+            <div class="px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-4">
                         @if($pet->photo)
-                            <img src="{{ asset('storage/' . $pet->photo) }}" alt="{{ $pet->display_code }}" class="object-cover w-16 h-16 border border-gray-200 rounded-lg">
+                            <img src="{{ asset('storage/' . $pet->photo) }}" alt="{{ $pet->display_code }}" class="object-cover w-20 h-20 border-4 border-white rounded-lg shadow-md">
                         @else
-                            <div class="flex items-center justify-center w-16 h-16 bg-gray-200 rounded-lg">
-                                <span class="text-sm text-gray-500">{{ substr($pet->display_code, 0, 1) }}</span>
+                            <div class="flex items-center justify-center w-20 h-20 bg-white rounded-lg">
+                                <span class="text-2xl font-bold text-blue-600">{{ substr($pet->display_code, 0, 1) }}</span>
                             </div>
                         @endif
                         <div>
-                            <h1 class="text-2xl font-bold text-gray-900">{{ $pet->display_code }}</h1>
-                            <p class="text-sm text-gray-600">{{ $pet->species }} • {{ $pet->breed }} • {{ $pet->estimated_age }}</p>
+                            <h1 class="text-3xl font-bold text-white">{{ $pet->display_code }}</h1>
+                            <p class="text-blue-100">{{ $pet->species }} • {{ $pet->breed }} • {{ $pet->estimated_age }}</p>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-3">
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-                            @if($pet->status === 'impounded') bg-red-100 text-red-800
-                            @elseif($pet->status === 'adoptable') bg-green-100 text-green-800
-                            @elseif($pet->status === 'claimed') bg-blue-100 text-blue-800
-                            @elseif($pet->status === 'adopted') bg-purple-100 text-purple-800
-                            @elseif($pet->status === 'unclaimed' || $pet->status === 'unadopted') bg-gray-100 text-gray-800
-                            @else bg-gray-100 text-gray-800 @endif">
-                            @if($pet->status === 'unclaimed' || $pet->status === 'unadopted')
-                                Unclaimed/Unadopted
-                            @else
-                                {{ ucfirst($pet->status) }}
-                            @endif
+                    <div class="text-right">
+                        <span class="inline-flex items-center px-4 py-2 rounded-full text-lg font-bold
+                            @if($pet->status === 'impounded') bg-red-200 text-red-900
+                            @elseif($pet->status === 'adoptable') bg-green-200 text-green-900
+                            @elseif($pet->status === 'claimed') bg-blue-200 text-blue-900
+                            @elseif($pet->status === 'adopted') bg-purple-200 text-purple-900
+                            @else bg-gray-200 text-gray-900 @endif">
+                            {{ ucfirst(str_replace('_', ' ', $pet->status)) }}
                         </span>
-                        <a href="{{ route('admin.pets.edit', $pet) }}"
-                           class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                            </svg>
-                            Edit Pet
-                        </a>
-                        <a href="{{ route('admin.pets.index') }}"
-                           class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                            </svg>
-                            Back to List
-                        </a>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
-            <!-- Main Information -->
-            <div class="space-y-8 lg:col-span-2">
-                <!-- Pet Details -->
-                <div class="overflow-hidden bg-white rounded-lg shadow-sm">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-lg font-medium text-gray-900">Pet Information</h2>
+            <!-- Main Content Area -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Pet Details Card -->
+                <div class="overflow-hidden bg-white rounded-lg shadow-md">
+                    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                        <h2 class="text-xl font-bold text-gray-900">📋 Pet Information</h2>
                     </div>
                     <div class="px-6 py-6">
-                        <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+                        <div class="grid grid-cols-2 gap-6">
                             <div>
-                                <dt class="text-sm font-medium text-gray-500">Pet ID</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $pet->display_code }}</dd>
+                                <p class="text-sm font-medium text-gray-600">Species</p>
+                                <p class="text-lg font-semibold text-gray-900">{{ $pet->species }}</p>
                             </div>
                             <div>
-                                <dt class="text-sm font-medium text-gray-500">Species & Breed</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $pet->species }} • {{ $pet->breed }}</dd>
+                                <p class="text-sm font-medium text-gray-600">Breed</p>
+                                <p class="text-lg font-semibold text-gray-900">{{ $pet->breed }}</p>
                             </div>
                             <div>
-                                <dt class="text-sm font-medium text-gray-500">Estimated Age</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $pet->estimated_age }}</dd>
+                                <p class="text-sm font-medium text-gray-600">Gender</p>
+                                <p class="text-lg font-semibold text-gray-900">{{ ucfirst($pet->gender) }}</p>
                             </div>
                             <div>
-                                <dt class="text-sm font-medium text-gray-500">Gender</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ ucfirst($pet->gender ?? 'Unknown') }}</dd>
+                                <p class="text-sm font-medium text-gray-600">Age</p>
+                                <p class="text-lg font-semibold text-gray-900">{{ $pet->estimated_age }}</p>
                             </div>
                             <div>
-                                <dt class="text-sm font-medium text-gray-500">Color Markings</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $pet->color_markings ?: 'Not specified' }}</dd>
+                                <p class="text-sm font-medium text-gray-600">Color Markings</p>
+                                <p class="text-lg font-semibold text-gray-900">{{ $pet->color_markings ?: 'Not specified' }}</p>
                             </div>
                             <div>
-                                <dt class="text-sm font-medium text-gray-500">Status</dt>
-                                <dd class="mt-1">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                        @if($pet->status === 'impounded') bg-red-100 text-red-800
-                                        @elseif($pet->status === 'adoptable') bg-green-100 text-green-800
-                                        @elseif($pet->status === 'claimed') bg-blue-100 text-blue-800
-                                        @elseif($pet->status === 'adopted') bg-purple-100 text-purple-800
-                                        @elseif($pet->status === 'unclaimed' || $pet->status === 'unadopted') bg-gray-100 text-gray-800
-                                        @else bg-gray-100 text-gray-800 @endif">
-                                        @if($pet->status === 'unclaimed' || $pet->status === 'unadopted')
-                                            Unclaimed/Unadopted
-                                        @else
-                                            {{ ucfirst($pet->status) }}
-                                        @endif
-                                    </span>
-                                    @if($pet->remaining_days !== null && $pet->remaining_days <= 3)
-                                        <div class="mt-1 text-xs text-orange-600">{{ $pet->remaining_days }} days remaining</div>
+                                <p class="text-sm font-medium text-gray-600">Current Owner</p>
+                                <p class="text-lg font-semibold text-gray-900">
+                                    @if($pet->user)
+                                        {{ $pet->user->name }}
+                                    @else
+                                        <span class="text-red-600">Unassigned</span>
                                     @endif
-                                </dd>
-                            </div>
-                        </dl>
-                    </div>
-                </div>
-
-                <!-- Description -->
-                <div class="overflow-hidden bg-white rounded-lg shadow-sm">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-lg font-medium text-gray-900">Description</h2>
-                    </div>
-                    <div class="px-6 py-6">
-                        <p class="text-sm leading-relaxed text-gray-700">{{ $pet->description ?: 'No description provided.' }}</p>
-                    </div>
-                </div>
-
-                <!-- Status-Specific Information -->
-                @if($pet->status === 'impounded' || $pet->status === 'adoptable')
-                <div class="overflow-hidden bg-white rounded-lg shadow-sm">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-lg font-medium text-gray-900">Status Information</h2>
-                    </div>
-                    <div class="px-6 py-6">
-                        <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
-                            @if($pet->status === 'impounded')
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Impounded Date</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">{{ $pet->impounded_date ? $pet->impounded_date->format('M d, Y') : 'Not set' }}</dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Caught Location</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">{{ $pet->caught_location ?: 'Not specified' }}</dd>
-                                </div>
-                            @elseif($pet->status === 'adoptable')
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Adoptable Date</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">{{ $pet->decision_date ? $pet->decision_date->format('M d, Y') : 'Not set' }}</dd>
-                                </div>
-                                @if($pet->adoption_reason)
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Adoption Reason</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">{{ $pet->adoption_reason }}</dd>
-                                </div>
-                                @endif
-                                @if($pet->adoption_notes)
-                                <div class="sm:col-span-2">
-                                    <dt class="text-sm font-medium text-gray-500">Adoption Notes</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">{{ $pet->adoption_notes }}</dd>
-                                </div>
-                                @endif
-                            @endif
-                        </dl>
-
-                        <!-- Status Notes -->
-                        <div class="mt-6 rounded-md p-4
-                            @if($pet->status === 'impounded') bg-blue-50 border border-blue-200
-                            @elseif($pet->status === 'adoptable') bg-green-50 border border-green-200
-                            @endif">
-                            <div class="flex">
-                                <div class="flex-shrink-0">
-                                    @if($pet->status === 'impounded')
-                                        <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                                        </svg>
-                                    @elseif($pet->status === 'adoptable')
-                                        <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                        </svg>
-                                    @endif
-                                </div>
-                                <div class="ml-3">
-                                    <h3 class="text-sm font-medium
-                                        @if($pet->status === 'impounded') text-blue-800
-                                        @elseif($pet->status === 'adoptable') text-green-800
-                                        @endif">
-                                        @if($pet->status === 'impounded')
-                                            Important Notice
-                                        @elseif($pet->status === 'adoptable')
-                                            Adoption Process
-                                        @endif
-                                    </h3>
-                                    <div class="mt-2 text-sm
-                                        @if($pet->status === 'impounded') text-blue-700
-                                        @elseif($pet->status === 'adoptable') text-green-700
-                                        @endif">
-                                        @if($pet->status === 'impounded')
-                                            <p>If unclaimed after 3 days, this pet will be moved to the adoptable section.</p>
-                                        @elseif($pet->status === 'adoptable')
-                                            <p>This pet requires submission of an adoption form through the system. Direct pickup is not available.</p>
-                                        @endif
-                                    </div>
-                                </div>
+                                </p>
                             </div>
                         </div>
-                    </div>
-                </div>
-                @endif
-            </div>
-
-            <!-- Sidebar -->
-            <div class="space-y-8">
-                <!-- Photo -->
-                <div class="overflow-hidden bg-white rounded-lg shadow-sm">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-lg font-medium text-gray-900">Photo</h2>
-                    </div>
-                    <div class="p-6">
-                        @if($pet->photo)
-                            <img src="{{ asset('storage/' . $pet->photo) }}" alt="{{ $pet->display_code }}" class="object-cover w-full rounded-lg shadow-sm">
-                        @else
-                            <div class="flex items-center justify-center w-full bg-gray-100 rounded-lg aspect-square">
-                                <div class="text-center">
-                                    <svg class="w-12 h-12 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
-                                    <p class="mt-2 text-sm text-gray-500">No photo available</p>
-                                </div>
+                        @if($pet->description)
+                            <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                                <p class="text-sm font-medium text-gray-600">Description</p>
+                                <p class="text-gray-900 mt-2">{{ $pet->description }}</p>
                             </div>
                         @endif
                     </div>
                 </div>
 
-                <!-- Quick Actions -->
-                <div class="overflow-hidden bg-white rounded-lg shadow-sm">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-lg font-medium text-gray-900">Quick Actions</h2>
+                <!-- Requests Timeline Card -->
+                <div class="overflow-hidden bg-white rounded-lg shadow-md">
+                    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                        <h2 class="text-xl font-bold text-gray-900">📊 Claim/Adoption Requests</h2>
                     </div>
-                    <div class="p-6 space-y-3">
-                        @if($pet->status === 'impounded')
-                            <form action="{{ route('admin.pets.mark-claimed', $pet) }}" method="POST">
-                                @csrf
-                                <button type="submit"
-                                        class="inline-flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                                        onclick="return confirm('Mark this pet as claimed?')">
-                                    <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                    </svg>
-                                    Mark as Claimed
-                                </button>
-                            </form>
-                        @elseif($pet->status === 'adoptable')
-                            <form action="{{ route('admin.pets.mark-adopted', $pet) }}" method="POST">
-                                @csrf
-                                <button type="submit"
-                                        class="inline-flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                                        onclick="return confirm('Mark this pet as adopted?')">
-                                    <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                    </svg>
-                                    Mark as Adopted
-                                </button>
-                            </form>
+                    <div class="px-6 py-6">
+                        @php
+                            $allRequests = $pet->requests()->get();
+                            $pendingRequests = $allRequests->where('status', 'pending');
+                            $approvedRequests = $allRequests->where('status', 'approved');
+                            $deniedRequests = $allRequests->where('status', 'denied');
+                        @endphp
+
+                        @if($allRequests->isEmpty())
+                            <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                <p class="text-yellow-800">ℹ️ No requests yet for this pet.</p>
+                            </div>
+                        @else
+                            <!-- Approved Requests Section (list all if any) -->
+                            @if($approvedRequests->count() > 0)
+                                <div class="mb-6 space-y-4">
+                                    @foreach($approvedRequests as $approvedRequest)
+                                        <div class="p-6 bg-green-50 border-2 border-green-500 rounded-lg">
+                                            <div class="flex items-center mb-4 justify-between">
+                                                <div class="flex items-center">
+                                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-green-500 text-white">
+                                                        ✅ APPROVED
+                                                    </span>
+                                                    <span class="ml-3 text-sm text-gray-600">
+                                                        {{ $approvedRequest->type === 'claim' ? 'Claim Request' : 'Adoption Request' }} - {{ $approvedRequest->user->name }}
+                                                    </span>
+                                                </div>
+                                                <div class="text-sm text-gray-500">Submitted {{ $approvedRequest->updated_at->diffForHumans() }}</div>
+                                            </div>
+
+                                            @php
+                                                $additionalData = is_array($approvedRequest->additional_data) ? $approvedRequest->additional_data : json_decode($approvedRequest->additional_data, true);
+                                            @endphp
+
+                                            <div class="grid grid-cols-2 gap-4 mb-4">
+                                                <div>
+                                                    <p class="text-xs font-medium text-gray-600">Name</p>
+                                                    <p class="font-semibold text-gray-900">
+                                                        {{ $additionalData['first_name'] ?? $approvedRequest->user->name }}
+                                                        {{ $additionalData['last_name'] ?? '' }}
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <p class="text-xs font-medium text-gray-600">Email</p>
+                                                    <p class="font-semibold text-gray-900">{{ $approvedRequest->user->email }}</p>
+                                                </div>
+                                                <div>
+                                                    <p class="text-xs font-medium text-gray-600">Contact</p>
+                                                    <p class="font-semibold text-gray-900">{{ $additionalData['contact_number'] ?? $approvedRequest->contact_info ?? 'N/A' }}</p>
+                                                </div>
+                                                <div>
+                                                    <p class="text-xs font-medium text-gray-600">Address</p>
+                                                    <p class="font-semibold text-gray-900">{{ $additionalData['address'] ?? 'N/A' }}</p>
+                                                </div>
+                                            </div>
+
+                                            @if($approvedRequest->type === 'adopt' && isset($additionalData['dwelling_type']))
+                                                <div class="p-3 bg-white rounded border border-green-200">
+                                                    <p class="text-xs font-medium text-gray-600 mb-2">Adoption Details</p>
+                                                    <div class="grid grid-cols-2 gap-2 text-sm">
+                                                        <div><span class="font-medium">Dwelling:</span> {{ ucfirst(str_replace('_', ' ', $additionalData['dwelling_type'])) }}</div>
+                                                        <div><span class="font-medium">Fenced Property:</span> {{ ucfirst($additionalData['fenced_property']) }}</div>
+                                                        <div><span class="font-medium">Adults:</span> {{ $additionalData['adults_count'] ?? 'N/A' }}</div>
+                                                        <div><span class="font-medium">Children:</span> {{ $additionalData['children_count'] ?? 'N/A' }}</div>
+                                                        <div><span class="font-medium">Other Pets:</span> {{ $additionalData['other_pets'] ?? 'N/A' }}</div>
+                                                        @if($approvedRequest->reason)
+                                                            <div class="col-span-2"><span class="font-medium">Reason:</span> {{ $approvedRequest->reason }}</div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @elseif($approvedRequest->type === 'claim')
+                                                @if($approvedRequest->reason)
+                                                    <div class="p-3 bg-white rounded border border-green-200">
+                                                        <p class="text-xs font-medium text-gray-600 mb-2">Claim Details</p>
+                                                        <p class="text-sm text-gray-900">{{ $approvedRequest->reason }}</p>
+                                                    </div>
+                                                @endif
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
+
+                            <!-- Pending Requests -->
+                            @if($pendingRequests->count() > 0)
+                                <div class="mb-6">
+                                    <h3 class="text-lg font-semibold text-yellow-900 mb-4">⏳ Pending Requests ({{ $pendingRequests->count() }})</h3>
+                                    <div class="space-y-3">
+                                        @foreach($pendingRequests as $req)
+                                            <div class="p-4 bg-yellow-50 border border-yellow-300 rounded-lg">
+                                                <div class="flex items-center justify-between">
+                                                    <div>
+                                                        <p class="font-semibold text-gray-900">{{ $req->user->name }}</p>
+                                                        <p class="text-sm text-gray-600">{{ ucfirst($req->type) }} Request - {{ $req->created_at->format('M d, Y') }}</p>
+                                                    </div>
+                                                    <a href="{{ route('admin.requests.show', $req) }}" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700">
+                                                        Review
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+
+                            <!-- Denied Requests -->
+                            @if($deniedRequests->count() > 0)
+                                <div>
+                                    <h3 class="text-lg font-semibold text-red-900 mb-4">❌ Denied Requests ({{ $deniedRequests->count() }})</h3>
+                                    <div class="space-y-2">
+                                        @foreach($deniedRequests as $req)
+                                            <div class="p-3 bg-red-50 border border-red-200 rounded text-sm">
+                                                <p class="font-semibold text-gray-900">{{ $req->user->name }}</p>
+                                                <p class="text-gray-600">{{ ucfirst($req->type) }} Request - {{ $req->created_at->format('M d, Y') }}</p>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar: Quick Actions -->
+            <div class="space-y-6">
+                <!-- Action Buttons -->
+                <div class="overflow-hidden bg-white rounded-lg shadow-md">
+                    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                        <h2 class="text-lg font-bold text-gray-900">⚡ Actions</h2>
+                    </div>
+                    <div class="px-6 py-6 space-y-3">
+                        @php
+                            $approvedRequests = $pet->requests->where('status', 'approved');
+                        @endphp
+
+                        @if(in_array($pet->status, ['impounded', 'adoptable']) && $approvedRequests->count() > 0)
+                            @if($approvedRequests->count() === 1)
+                                @php $approvedRequest = $approvedRequests->first(); @endphp
+                                @if($approvedRequest->type === 'claim')
+                                    <form action="{{ route('admin.pets.mark-claimed', $pet) }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="pet_request_id" value="{{ $approvedRequest->id }}">
+                                        <button type="submit" class="w-full px-4 py-3 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
+                                                onclick="return confirm('Mark this pet as CLAIMED and transfer ownership to {{ $approvedRequest->user->name }}?')">
+                                            ✅ Mark as Claimed
+                                        </button>
+                                    </form>
+                                @elseif($approvedRequest->type === 'adopt')
+                                    <form action="{{ route('admin.pets.mark-adopted', $pet) }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="pet_request_id" value="{{ $approvedRequest->id }}">
+                                        <button type="submit" class="w-full px-4 py-3 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 transition"
+                                                onclick="return confirm('Mark this pet as ADOPTED and transfer ownership to {{ $approvedRequest->user->name }}?')">
+                                            🏠 Mark as Adopted
+                                        </button>
+                                    </form>
+                                @endif
+                            @else
+                                {{-- Multiple approved requests: choose which to finalize --}}
+                                <div class="mb-4">
+                                    <label for="pet_request_id" class="block mb-2 text-sm font-medium text-gray-700">Select Approved Requester</label>
+                                    <form action="{{ $pet->status === 'impounded' ? route('admin.pets.mark-claimed', $pet) : route('admin.pets.mark-adopted', $pet) }}" method="POST">
+                                        @csrf
+                                        <select name="pet_request_id" id="pet_request_id" class="w-full p-2 mb-3 border rounded">
+                                            @foreach($approvedRequests as $req)
+                                                <option value="{{ $req->id }}">{{ $req->user->name }} — {{ ucfirst($req->type) }} (submitted {{ $req->updated_at->diffForHumans() }})</option>
+                                            @endforeach
+                                        </select>
+                                        <button type="submit" class="w-full px-4 py-3 font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition"
+                                                onclick="return confirm('Finalize selected approved requester and transfer ownership?')">
+                                            ✅ Finalize Selected Requester
+                                        </button>
+                                    </form>
+                                </div>
+                            @endif
+                        @elseif(in_array($pet->status, ['impounded', 'adoptable']))
+                            <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                <p class="text-sm text-yellow-800">⚠️ No approved request yet. Admin approval required before marking pet as adopted/claimed.</p>
+                            </div>
                         @endif
 
-                        <a href="{{ route('admin.pets.edit', $pet) }}"
-                           class="inline-flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                            </svg>
-                            Edit Pet
+                        <a href="{{ route('admin.pets.edit', $pet) }}" class="w-full px-4 py-3 font-semibold text-center text-gray-700 bg-white border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition block">
+                            ✏️ Edit Pet
                         </a>
 
                         <form action="{{ route('admin.pets.destroy', $pet) }}" method="POST">
                             @csrf @method('DELETE')
-                            <button type="submit"
-                                    class="inline-flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                                    onclick="return confirm('Delete this pet?')">
-                                <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                </svg>
-                                Delete Pet
+                            <button type="submit" class="w-full px-4 py-3 font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 transition"
+                                    onclick="return confirm('Delete this pet? This action cannot be undone.')">
+                                🗑️ Delete Pet
                             </button>
                         </form>
                     </div>
                 </div>
 
-                <!-- Pet Statistics -->
-                <div class="overflow-hidden bg-white rounded-lg shadow-sm">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-lg font-medium text-gray-900">Pet Statistics</h2>
+                <!-- Pet Timeline -->
+                <div class="overflow-hidden bg-white rounded-lg shadow-md">
+                    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                        <h2 class="text-lg font-bold text-gray-900">📅 Timeline</h2>
                     </div>
-                    <div class="px-6 py-6">
-                        <dl class="space-y-4">
-                            <div class="flex items-center justify-between">
-                                <dt class="text-sm font-medium text-gray-500">Created</dt>
-                                <dd class="text-sm text-gray-900">{{ $pet->created_at->format('M d, Y') }}</dd>
+                    <div class="px-6 py-6 space-y-3">
+                        <div>
+                            <p class="text-xs font-medium text-gray-600">Created</p>
+                            <p class="font-semibold text-gray-900">{{ $pet->created_at->format('M d, Y H:i') }}</p>
+                        </div>
+                        @if($pet->impounded_date)
+                            <div>
+                                <p class="text-xs font-medium text-gray-600">Impounded</p>
+                                <p class="font-semibold text-gray-900">{{ $pet->impounded_date->format('M d, Y') }}</p>
+                                <p class="text-sm text-gray-600">Days: {{ $pet->impounded_date->diffInDays(now()) }}</p>
                             </div>
-                            <div class="flex items-center justify-between">
-                                <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
-                                <dd class="text-sm text-gray-900">{{ $pet->updated_at->format('M d, Y') }}</dd>
+                        @endif
+                        @if($pet->decision_date)
+                            <div>
+                                <p class="text-xs font-medium text-gray-600">Decision Date</p>
+                                <p class="font-semibold text-gray-900">{{ $pet->decision_date->format('M d, Y') }}</p>
                             </div>
-                            @if($pet->impounded_date)
-                            <div class="flex items-center justify-between">
-                                <dt class="text-sm font-medium text-gray-500">Days Impounded</dt>
-                                <dd class="text-sm text-gray-900">{{ $pet->impounded_date->diffInDays(now()) }} days</dd>
-                            </div>
-                            @endif
-                        </dl>
+                        @endif
+                        <div>
+                            <p class="text-xs font-medium text-gray-600">Last Updated</p>
+                            <p class="font-semibold text-gray-900">{{ $pet->updated_at->format('M d, Y H:i') }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Back Button -->
+        <div class="mt-8">
+            <a href="{{ route('admin.pets.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                ← Back to Pets
+            </a>
         </div>
     </div>
 </div>

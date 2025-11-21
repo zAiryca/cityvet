@@ -34,6 +34,20 @@ class PetController extends Controller
 
     public function request(Request $request, Pet $pet)
     {
+        // Require type early so validation branches are reliable
+        $request->validate([
+            'type' => 'required|in:adopt,claim',
+        ]);
+        // Check if user already has a pending/approved request for this pet
+        $existingRequest = $pet->requests()
+            ->where('user_id', Auth::id())
+            ->whereIn('status', ['pending', 'approved'])
+            ->first();
+
+        if ($existingRequest) {
+            return redirect()->back()->with('error', 'You already have a ' . $existingRequest->status . ' request for this pet. Please wait for admin review.');
+        }
+
         if ($request->type === 'adopt') {
             $request->validate([
                 'type' => 'required|in:adopt,claim',
@@ -122,14 +136,14 @@ class PetController extends Controller
             }
         }
 
-        // Create the request
+        // Create the request (store arrays — the model casts will handle JSON)
         $petRequest = $pet->requests()->create([
             'user_id' => Auth::id(),
             'type' => $request->type,
             'reason' => $request->reason ?? $request->proof_of_ownership_description ?? '',
             'contact_info' => $request->contact_number ?? $request->contact_info ?? '',
-            'photos' => json_encode($photoPaths), // Store as JSON array
-            'additional_data' => json_encode($additionalData),
+            'photos' => $photoPaths,
+            'additional_data' => $additionalData,
             'status' => 'pending',
         ]);
 

@@ -52,7 +52,7 @@
                         <p><strong>Address:</strong> {{ $request->user->address ?: 'Not provided' }}</p>
                         @if($request->additional_data)
                             @php
-                                $additionalData = json_decode($request->additional_data, true);
+                                $additionalData = is_array($request->additional_data) ? $request->additional_data : json_decode($request->additional_data, true);
                             @endphp
                             @if(isset($additionalData['reason']))
                                 <p><strong>Reason:</strong> {{ $additionalData['reason'] }}</p>
@@ -64,7 +64,7 @@
 
             @if($request->additional_data)
                 @php
-                    $additionalData = json_decode($request->additional_data, true);
+                    $additionalData = is_array($request->additional_data) ? $request->additional_data : json_decode($request->additional_data, true);
                 @endphp
                 @if($request->type === 'adopt')
                     <div class="mb-6">
@@ -137,7 +137,7 @@
             <!-- Display Photos -->
             @if($request->photos)
                 @php
-                    $photos = json_decode($request->photos, true);
+                    $photos = is_array($request->photos) ? $request->photos : json_decode($request->photos, true);
                 @endphp
                 @if(is_array($photos) && count($photos) > 0)
                     <div class="mb-6">

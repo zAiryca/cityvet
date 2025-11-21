@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pet;
+use App\Models\PetRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,7 +15,14 @@ class PetController extends Controller
         if (!Auth::user()->isAdmin()) abort(403);
 
         $status = $request->get('status');
-        $petsQuery = Pet::query()->with('user');
+        // Eager-load the owner and any approved requests (with their users) to show requester info in the index
+        $petsQuery = Pet::query()->with([
+            'user',
+            'requests' => function ($q) {
+                $q->where('status', 'approved')->orderBy('updated_at', 'desc');
+            },
+            'requests.user',
+        ]);
         $petsQuery->when($status, function ($query, $status) {
             return $query->where('status', $status);
         });
@@ -131,30 +139,73 @@ class PetController extends Controller
     }
 
     // Custom: Set urgent deadline (from routes)
-    public function setUrgent(Request $request, Pet $pet)
-    {
-        if (!Auth::user()->isAdmin()) abort(403);
-        $request->validate(['urgent_deadline' => 'required|date|after:now']);
-        $pet->update([
-            'status' => 'adoptable',
-            'urgent_deadline' => $request->urgent_deadline,
-        ]);
-        return back()->with('success', 'Pet marked as urgent with deadline.');
-    }
+    // Note: urgent_deadline feature removed; no setUrgent action.
 
     // Mark pet as adopted
-    public function markAsAdopted(Pet $pet)
+    public function markAsAdopted(Request $request, Pet $pet)
     {
         if (!Auth::user()->isAdmin()) abort(403);
-        $pet->update(['status' => 'adopted']);
-        return back()->with('success', 'Pet marked as adopted.');
+        $petRequestId = $request->input('pet_request_id');
+
+        if ($petRequestId) {
+            $approvedRequest = PetRequest::where('id', $petRequestId)
+                ->where('requestable_type', Pet::class)
+                ->where('requestable_id', $pet->id)
+                ->where('type', 'adopt')
+                ->where('status', 'approved')
+                ->first();
+        } else {
+            $approvedRequest = $pet->requests()
+                ->where('type', 'adopt')
+                ->where('status', 'approved')
+                ->first();
+        }
+
+        if (!$approvedRequest) {
+            return back()->with('error', 'No approved adoption request found for this pet.');
+        }
+
+        $pet->update([
+            'status' => 'adopted',
+            'user_id' => $approvedRequest->user_id,
+        ]);
+
+        $approvedRequest->update(['status' => 'completed']);
+
+        return back()->with('success', 'Pet marked as adopted and ownership transferred.');
     }
 
     // Mark pet as claimed
-    public function markAsClaimed(Pet $pet)
+    public function markAsClaimed(Request $request, Pet $pet)
     {
         if (!Auth::user()->isAdmin()) abort(403);
-        $pet->update(['status' => 'claimed']);
-        return back()->with('success', 'Pet marked as claimed.');
+        $petRequestId = $request->input('pet_request_id');
+
+        if ($petRequestId) {
+            $approvedRequest = PetRequest::where('id', $petRequestId)
+                ->where('requestable_type', Pet::class)
+                ->where('requestable_id', $pet->id)
+                ->where('type', 'claim')
+                ->where('status', 'approved')
+                ->first();
+        } else {
+            $approvedRequest = $pet->requests()
+                ->where('type', 'claim')
+                ->where('status', 'approved')
+                ->first();
+        }
+
+        if (!$approvedRequest) {
+            return back()->with('error', 'No approved claim request found for this pet.');
+        }
+
+        $pet->update([
+            'status' => 'claimed',
+            'user_id' => $approvedRequest->user_id
+        ]);
+
+        $approvedRequest->update(['status' => 'completed']);
+
+        return back()->with('success', 'Pet claimed and ownership transferred to claimant.');
     }
 }
