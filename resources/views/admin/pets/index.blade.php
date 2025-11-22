@@ -10,9 +10,6 @@
             'All Pets' => null, // Link with no status filter
             'Adoptable' => 'adoptable',
             'Impounded' => 'impounded',
-            'Claimed' => 'claimed',
-            'Adopted' => 'adopted',
-            'Unclaimed/Unadopted' => 'unclaimed',
         ];
 
         // Define a readable title using universally supported if/elseif logic
@@ -22,14 +19,6 @@
                 $pageTitle = 'Impounded Pets';
             } elseif ($currentStatus === 'adoptable') {
                 $pageTitle = 'Adoptable Pets';
-            } elseif ($currentStatus === 'adopted') {
-                $pageTitle = 'Adopted Pets';
-            } elseif ($currentStatus === 'claimed') {
-                $pageTitle = 'Claimed Pets';
-            } elseif ($currentStatus === 'unclaimed') {
-                $pageTitle = 'Unclaimed/Unadopted Pets';
-            } elseif ($currentStatus === 'unadopted') {
-                $pageTitle = 'Unclaimed/Unadopted Pets';
             }
         }
     @endphp
@@ -117,29 +106,7 @@
                                 <td class="px-6 py-4 text-sm font-medium whitespace-nowrap">
                                     <a href="{{ route('admin.pets.show', $pet) }}" class="mr-4 text-indigo-600 hover:text-indigo-900">View</a>
                                     <a href="{{ route('admin.pets.edit', $pet) }}" class="mr-4 text-indigo-600 hover:text-indigo-900">Edit</a>
-                                    @php
-                                        $hasApproved = $pet->requests()->where('status', 'approved')->exists();
-                                    @endphp
-                                    @if($pet->status === 'impounded')
-                                        @if($hasApproved)
-                                            <form action="{{ route('admin.pets.mark-claimed', $pet) }}" method="POST" class="inline mr-2">
-                                                @csrf
-                                                <button type="submit" class="text-green-600 hover:text-green-900" onclick="return confirm('Mark this pet as claimed?')">Mark Claimed</button>
-                                            </form>
-                                        @else
-                                            <button type="button" class="text-yellow-600 hover:text-yellow-900 mr-2" onclick="showNoRequesterModal('{{ $pet->display_code }}')">Mark Claimed</button>
-                                        @endif
-                                    @elseif($pet->status === 'adoptable')
-                                        @if($hasApproved)
-                                            <form action="{{ route('admin.pets.mark-adopted', $pet) }}" method="POST" class="inline mr-2">
-                                                @csrf
-                                                <button type="submit" class="text-green-600 hover:text-green-900" onclick="return confirm('Mark this pet as adopted?')">Mark Adopted</button>
-                                            </form>
-                                        @else
-                                            <button type="button" class="text-yellow-600 hover:text-yellow-900 mr-2" onclick="showNoRequesterModal('{{ $pet->display_code }}')">Mark Adopted</button>
-                                        @endif
-                                    @endif
-                                    <form action="{{ route('admin.pets.destroy', $pet) }}" method="POST" class="inline ml-4">
+                                    <form action="{{ route('admin.pets.destroy', $pet) }}" method="POST" class="inline">
                                         @csrf @method('DELETE')
                                         <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Delete this pet?')">Delete</button>
                                     </form>
@@ -156,36 +123,3 @@
     </div>
 </div>
 @endsection
-
-    @push('scripts')
-    <script>
-        function showNoRequesterModal(code) {
-            var modal = document.getElementById('noRequesterModal');
-            var petCodeSpan = document.getElementById('noRequesterPetCode');
-            petCodeSpan.textContent = code;
-            modal.classList.remove('hidden');
-        }
-
-        function closeNoRequesterModal() {
-            var modal = document.getElementById('noRequesterModal');
-            modal.classList.add('hidden');
-        }
-    </script>
-    @endpush
-
-    <!-- No-requester Modal -->
-    <div id="noRequesterModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
-        <div class="fixed inset-0 bg-black opacity-50" onclick="closeNoRequesterModal()"></div>
-        <div class="bg-white rounded-lg shadow-lg max-w-lg w-full mx-4 z-10">
-            <div class="px-6 py-4 border-b">
-                <h3 class="text-lg font-semibold">No Approved Requester</h3>
-            </div>
-            <div class="p-6">
-                <p class="mb-4">There is no approved requester for pet <strong id="noRequesterPetCode"></strong>. You must approve a claim or adoption request before marking the pet as adopted or claimed.</p>
-                <div class="flex justify-end space-x-3">
-                    <button class="px-4 py-2 bg-gray-200 rounded" onclick="closeNoRequesterModal()">Close</button>
-                    <a href="{{ route('admin.requests.index') }}" class="px-4 py-2 bg-blue-600 text-white rounded">Go to Requests</a>
-                </div>
-            </div>
-        </div>
-    </div>

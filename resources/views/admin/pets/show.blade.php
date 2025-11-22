@@ -125,6 +125,28 @@
                                                 $additionalData = is_array($approvedRequest->additional_data) ? $approvedRequest->additional_data : json_decode($approvedRequest->additional_data, true);
                                             @endphp
 
+                                            {{-- Action buttons for approved request --}}
+                                            <div class="mb-4 flex gap-2">
+                                                @if($approvedRequest->type === 'claim')
+                                                    <form method="POST" action="{{ route('admin.requests.finalize', $approvedRequest) }}" class="inline">
+                                                        @csrf
+                                                        <button type="submit" class="px-3 py-1 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700" onclick="return confirm('Mark pet as CLAIMED?')">
+                                                            ✅ Mark as Claimed
+                                                        </button>
+                                                    </form>
+                                                @elseif($approvedRequest->type === 'adopt')
+                                                    <form method="POST" action="{{ route('admin.requests.finalize', $approvedRequest) }}" class="inline">
+                                                        @csrf
+                                                        <button type="submit" class="px-3 py-1 text-sm font-medium text-white bg-green-600 rounded hover:bg-green-700" onclick="return confirm('Mark pet as ADOPTED?')">
+                                                            🏠 Mark as Adopted
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                                <a href="{{ route('admin.requests.show', $approvedRequest) }}" class="px-3 py-1 text-sm font-medium text-indigo-600 hover:text-indigo-900">
+                                                    View Details
+                                                </a>
+                                            </div>
+
                                             <div class="grid grid-cols-2 gap-4 mb-4">
                                                 <div>
                                                     <p class="text-xs font-medium text-gray-600">Name</p>
@@ -176,23 +198,42 @@
 
                             <!-- Pending Requests -->
                             @if($pendingRequests->count() > 0)
-                                <div class="mb-6">
+                                <div class="mb-6 overflow-x-auto">
                                     <h3 class="text-lg font-semibold text-yellow-900 mb-4">⏳ Pending Requests ({{ $pendingRequests->count() }})</h3>
-                                    <div class="space-y-3">
-                                        @foreach($pendingRequests as $req)
-                                            <div class="p-4 bg-yellow-50 border border-yellow-300 rounded-lg">
-                                                <div class="flex items-center justify-between">
-                                                    <div>
-                                                        <p class="font-semibold text-gray-900">{{ $req->user->name }}</p>
-                                                        <p class="text-sm text-gray-600">{{ ucfirst($req->type) }} Request - {{ $req->created_at->format('M d, Y') }}</p>
-                                                    </div>
-                                                    <a href="{{ route('admin.requests.show', $req) }}" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700">
-                                                        Review
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
+                                    <table class="w-full text-sm">
+                                        <thead>
+                                            <tr class="border-b border-yellow-300">
+                                                <th class="px-3 py-2 text-left font-medium text-gray-700">Requester</th>
+                                                <th class="px-3 py-2 text-left font-medium text-gray-700">Type</th>
+                                                <th class="px-3 py-2 text-left font-medium text-gray-700">Date</th>
+                                                <th class="px-3 py-2 text-center font-medium text-gray-700">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-yellow-200">
+                                            @foreach($pendingRequests as $req)
+                                                <tr class="bg-yellow-50 hover:bg-yellow-100">
+                                                    <td class="px-3 py-2 font-semibold text-gray-900">{{ $req->user->name }}</td>
+                                                    <td class="px-3 py-2">
+                                                        <span class="px-2 py-1 text-xs font-semibold rounded {{ $req->type === 'adopt' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
+                                                            {{ ucfirst($req->type) }}
+                                                        </span>
+                                                    </td>
+                                                    <td class="px-3 py-2 text-gray-600">{{ $req->created_at->format('M d, Y') }}</td>
+                                                    <td class="px-3 py-2 text-center space-x-2 flex justify-center">
+                                                        <a href="{{ route('admin.requests.show', $req) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">View</a>
+                                                        <form method="POST" action="{{ route('admin.requests.approve', $req) }}" class="inline">
+                                                            @csrf
+                                                            <button type="submit" class="text-green-600 hover:text-green-900 font-medium" onclick="return confirm('Approve this request?')">Approve</button>
+                                                        </form>
+                                                        <form method="POST" action="{{ route('admin.requests.deny', $req) }}" class="inline">
+                                                            @csrf
+                                                            <button type="submit" class="text-red-600 hover:text-red-900 font-medium" onclick="return confirm('Deny this request?')">Deny</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
                                 </div>
                             @endif
 

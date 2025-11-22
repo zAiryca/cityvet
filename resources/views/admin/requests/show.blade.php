@@ -160,11 +160,38 @@
                 </div>
             @endif
 
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap items-center gap-3">
+                @if($request->status === 'pending')
+                    <!-- Approve Button -->
+                    <form action="{{ route('admin.requests.approve', $request) }}" method="POST" class="inline">
+                        @csrf
+                        <input type="hidden" name="redirect_to_pet" value="1">
+                        <button type="submit" class="px-6 py-2 text-white bg-green-600 rounded hover:bg-green-700 font-semibold">
+                            ✓ Approve Request
+                        </button>
+                    </form>
 
+                    <!-- Deny Button -->
+                    <form action="{{ route('admin.requests.deny', $request) }}" method="POST" class="inline">
+                        @csrf
+                        <input type="hidden" name="redirect_to_pet" value="1">
+                        <button type="submit" class="px-6 py-2 text-white bg-red-600 rounded hover:bg-red-700 font-semibold" onclick="return confirm('Are you sure you want to deny this request?');">
+                            ✗ Deny Request
+                        </button>
+                    </form>
+                @else
+                    <span class="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-200 rounded">
+                        Status: {{ ucfirst($request->status) }}
+                    </span>
+                @endif
 
-
-            <div class="flex space-x-4">
-                <a href="{{ route('admin.requests.index') }}" class="px-4 py-2 text-white bg-gray-600 rounded hover:bg-gray-700">Back to List</a>
+                <!-- Back Buttons -->
+                @if(request()->referrer && str_contains(request()->referrer, 'admin/pets'))
+                    <a href="{{ url()->previous() }}" class="px-4 py-2 text-gray-700 bg-gray-300 rounded hover:bg-gray-400">← Back to Pet</a>
+                @else
+                    <a href="{{ route('admin.requests.index') }}" class="px-4 py-2 text-gray-700 bg-gray-300 rounded hover:bg-gray-400">← Back to Requests</a>
+                @endif
             </div>
         </div>
     </div>

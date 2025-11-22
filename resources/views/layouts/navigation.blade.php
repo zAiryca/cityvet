@@ -88,6 +88,11 @@
                                     My Requests
                                 </x-dropdown-link>
 
+                                {{-- Claimed or Adopted Pets --}}
+                                <x-dropdown-link :href="route('user.adopted-claimed-pets')">
+                                    Claimed or Adopted Pets
+                                </x-dropdown-link>
+
                             <!-- Authentication -->
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
@@ -158,6 +163,9 @@
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('user.requests')">
                         My Requests
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('user.adopted-claimed-pets')">
+                        Claimed or Adopted Pets
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('user.posters')">
                         My Posters

@@ -110,6 +110,14 @@ Route::middleware('setlocale')->group(function () {
             return view('user.requests', compact('requests'));
         })->name('user.requests');
 
+        // Claimed or Adopted Pets view
+        Route::get('/my-adopted-claimed-pets', function () {
+            $pets = Auth::user()->pets()->whereIn('status', ['adopted', 'claimed'])->with(['requests' => function ($q) {
+                $q->where('status', 'completed');
+            }, 'requests.user'])->paginate(10)->appends(request()->query());
+            return view('user.adopted-claimed-pets', compact('pets'));
+        })->name('user.adopted-claimed-pets');
+
         // Show individual request details
         Route::get('/my-requests/{request}', function (\App\Models\PetRequest $request) {
             if ($request->user_id !== Auth::id()) abort(403);
@@ -132,6 +140,9 @@ Route::middleware('setlocale')->group(function () {
         Route::post('/pets/{pet}/urgent', [AdminPetController::class, 'setUrgent'])->name('pets.set-urgent');
         Route::post('/pets/{pet}/mark-adopted', [AdminPetController::class, 'markAsAdopted'])->name('pets.mark-adopted');
         Route::post('/pets/{pet}/mark-claimed', [AdminPetController::class, 'markAsClaimed'])->name('pets.mark-claimed');
+
+        // Adoption & Claim History
+        Route::get('/adoption-claim-history', [AdminPetController::class, 'adoptionClaimHistory'])->name('adoption-claim-history');
 
         // Pet Registrations CRUD (Admin only) - Independent from user pet-registrations
         Route::resource('pet-registrations', \App\Http\Controllers\Admin\PetRegistrationController::class);
@@ -163,6 +174,7 @@ Route::middleware('setlocale')->group(function () {
         Route::resource('requests', PetRequestController::class)->only(['index', 'show', 'update', 'destroy']);
         Route::post('/requests/{petRequest}/approve', [PetRequestController::class, 'approve'])->name('requests.approve');
         Route::post('/requests/{petRequest}/deny', [PetRequestController::class, 'deny'])->name('requests.deny');
+        Route::post('/requests/{petRequest}/finalize', [PetRequestController::class, 'finalize'])->name('requests.finalize');
 
         // Reports
         Route::get('/reports/generate', [ReportController::class, 'generate'])->name('reports.generate');

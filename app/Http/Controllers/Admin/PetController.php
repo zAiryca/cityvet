@@ -208,4 +208,44 @@ class PetController extends Controller
 
         return back()->with('success', 'Pet claimed and ownership transferred to claimant.');
     }
+
+    // Display adoption & claim history (only pets with completed requests)
+    public function adoptionClaimHistory(Request $request)
+    {
+        if (!Auth::user()->isAdmin()) abort(403);
+
+        $status = $request->get('status');
+
+        // Base query: only pets that have at least one completed request
+        $petsQuery = Pet::whereHas('requests', function ($q) use ($request) {
+            $q->where('status', 'completed');
+            // Optional filter by type: if status param is 'adopted' or 'claimed', map to request type
+            $filter = $request->get('status');
+            if ($filter === 'adopted') {
+                $q->where('type', 'adopt');
+            } elseif ($filter === 'claimed') {
+                $q->where('type', 'claim');
+            }
+        })
+        ->with([
+            'user',
+            'requests' => function ($q) use ($request) {
+                $q->where('status', 'completed')->orderBy('updated_at', 'desc');
+                $filter = $request->get('status');
+                if ($filter === 'adopted') {
+                    $q->where('type', 'adopt');
+                } elseif ($filter === 'claimed') {
+                    $q->where('type', 'claim');
+                }
+            },
+            'requests.user',
+        ])
+        ->orderBy('updated_at', 'desc');
+
+        $pets = $petsQuery->paginate(15)->withQueryString();
+
+        return view('admin.pets.adoption-claim-history', [
+            'pets' => $pets,
+        ]);
+    }
 }
