@@ -30,62 +30,61 @@
                 </div>
             </div>
 
-            {{-- New/Revised Claim Process Section for Impounded --}}
+            {{-- Updated Claim Flow wording for Impounded pets --}}
             @if($pet->status === 'impounded')
             <div class="p-6 mb-8 border border-red-300 rounded-lg bg-red-50">
-                <h2 class="mb-4 text-2xl font-bold text-red-800">🚨 Claim Process - 3 Essential Steps</h2>
+                <h2 class="mb-4 text-2xl font-bold text-red-800">🚨 How to Claim an Impounded Pet</h2>
                 <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                     <div class="text-center">
                         <div class="flex items-center justify-center w-10 h-10 mx-auto mb-2 text-xl font-bold text-white bg-red-600 rounded-full">1</div>
-                        <p class="font-semibold text-red-700">Submit Claim Form Online</p>
-                        <p class="text-sm text-gray-600">Click 'Claim Pet' and submit the owner information form.</p>
+                        <p class="font-semibold text-red-700">Start the Claim</p>
+                        <p class="text-sm text-gray-600">Click <strong>Claim Pet</strong> and complete the online claim form with your contact and ownership details.</p>
                     </div>
                     <div class="text-center">
                         <div class="flex items-center justify-center w-10 h-10 mx-auto mb-2 text-xl font-bold text-white bg-red-600 rounded-full">2</div>
-                        <p class="font-semibold text-red-700">Verification & Fees</p>
-                        <p class="text-sm text-gray-600">Wait for the CVD team to contact you to verify ownership and inform you of the required fees/fines.</p>
+                        <p class="font-semibold text-red-700">We Verify</p>
+                        <p class="text-sm text-gray-600">Our team will review your information, contact you for verification, and advise any applicable fees or requirements.</p>
                     </div>
                     <div class="text-center">
                         <div class="flex items-center justify-center w-10 h-10 mx-auto mb-2 text-xl font-bold text-white bg-red-600 rounded-full">3</div>
-                        <p class="font-semibold text-red-700">Pet Release & Finalization</p>
-                        <p class="text-sm text-gray-600">Pay all dues and complete paperwork at the City Veterinary Department to take your pet home.</p>
+                        <p class="font-semibold text-red-700">Complete Release</p>
+                        <p class="text-sm text-gray-600">Visit the City Veterinary Department to complete paperwork, pay fees, and collect your pet once verified.</p>
                     </div>
                 </div>
                 <p class="p-3 mt-4 text-sm font-medium text-center text-red-800 bg-red-200 rounded-md">
-                     ⚠️ **Urgent:** You must claim your pet before the **Days Remaining** period ends. Failure to claim your pet within this period may result in **forfeiture of ownership**, and **you may not see the pet listed here anymore.**
-                </p>
+                    ⚠️ Please submit your claim promptly. "Days Remaining" shows how long the current holding period lasts — if the period expires the pet may be moved to the adoptable list.
                 </p>
             </div>
             @endif
 
-            {{-- Original Adoption Process Section (Kept for completeness, but only renders for adoptable) --}}
+            {{-- Updated Adoption Flow wording for Adoptable pets --}}
             @if($pet->status === 'adoptable')
             <div class="p-6 mb-8 border border-green-300 rounded-lg bg-green-50">
-                <h2 class="mb-4 text-2xl font-bold text-green-800">✅ Adoption Process - 4 Simple Steps</h2>
+                <h2 class="mb-4 text-2xl font-bold text-green-800">✅ How to Adopt This Pet</h2>
                 <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                     <div class="text-center">
                         <div class="flex items-center justify-center w-10 h-10 mx-auto mb-2 text-xl font-bold text-white bg-green-600 rounded-full">1</div>
-                        <p class="font-semibold text-green-700">Online Form Submission</p>
-                        <p class="text-sm text-gray-600">Fill out and submit the comprehensive adoption form online.</p>
+                        <p class="font-semibold text-green-700">Express Interest</p>
+                        <p class="text-sm text-gray-600">Click <strong>Adopt</strong> and complete the adoption form to express your interest.</p>
                     </div>
                     <div class="text-center">
                         <div class="flex items-center justify-center w-10 h-10 mx-auto mb-2 text-xl font-bold text-white bg-green-600 rounded-full">2</div>
-                        <p class="font-semibold text-green-700">Application Approval</p>
-                        <p class="text-sm text-gray-600">Our team reviews your application for initial qualification.</p>
+                        <p class="font-semibold text-green-700">Application Review</p>
+                        <p class="text-sm text-gray-600">Our team reviews your submission to check basic eligibility and match with the pet's needs.</p>
                     </div>
                     <div class="text-center">
                         <div class="flex items-center justify-center w-10 h-10 mx-auto mb-2 text-xl font-bold text-white bg-green-600 rounded-full">3</div>
-                        <p class="font-semibold text-green-700">Home/Interview Screening</p>
-                        <p class="text-sm text-gray-600">A screening call or visit is scheduled to confirm suitability.</p>
+                        <p class="font-semibold text-green-700">Screening/Interview</p>
+                        <p class="text-sm text-gray-600">We may schedule a short interview or home check to confirm a good fit.</p>
                     </div>
                     <div class="text-center">
                         <div class="flex items-center justify-center w-10 h-10 mx-auto mb-2 text-xl font-bold text-white bg-green-600 rounded-full">4</div>
-                        <p class="font-semibold text-green-700">Pet Pickup & Finalization</p>
-                        <p class="text-sm text-gray-600">Complete paperwork and welcome your new family member!</p>
+                        <p class="font-semibold text-green-700">Finalize Adoption</p>
+                        <p class="text-sm text-gray-600">If approved, complete adoption paperwork and arrange pickup with the department.</p>
                     </div>
                 </div>
                 <p class="p-3 mt-4 text-sm font-medium text-center text-green-800 bg-green-200 rounded-md">
-                    💡 **User Tip:** Submitting the form online is the fastest way to start the process and avoid unnecessary travel! Must submit adoption form through system. Direct pickup not available.
+                    💡 Tip: Completing the form online speeds up processing. The department will contact you about next steps if your application is shortlisted.
                 </p>
             </div>
             @endif

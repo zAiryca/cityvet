@@ -16,6 +16,10 @@ class DashboardController extends Controller
     {
         $stats = [
             'total_users' => User::count(),
+            'verified_users' => User::whereNotNull('email_verified_at')->count(),
+            'unverified_users' => User::whereNull('email_verified_at')->count(),
+            'admin_users' => User::where('role', 'admin')->count(),
+            'recent_signups' => User::orderBy('created_at', 'desc')->limit(5)->get(),
             'total_pets' => Pet::count(),
             'impounded' => Pet::where('status', 'impounded')->count(),
             'claimed' => Pet::where('status', 'claimed')->count(),
