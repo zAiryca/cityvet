@@ -10,8 +10,8 @@
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-lg font-semibold">{{ $petRegistration->pet_name }}</h3>
                     <div class="flex space-x-2">
-                        @if($petRegistration->status === 'pending' || $petRegistration->status === 'registered')
-                            @if($petRegistration->status === 'pending')
+                        @if(in_array($petRegistration->status, ['pending', 'registered', 'denied']))
+                            @if(in_array($petRegistration->status, ['pending', 'denied']))
                                 <a href="{{ route('pet-registrations.edit', $petRegistration) }}" class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700">
                                     Edit
                                 </a>
@@ -130,6 +130,12 @@
                                 <p><span class="font-medium">Last Updated:</span> {{ $petRegistration->updated_at->format('M d, Y H:i') }}</p>
                             </div>
                         </div>
+                        @if($petRegistration->status === 'denied' && $petRegistration->denial_reason)
+                            <div class="mt-4 p-4 border border-red-100 bg-red-50 rounded">
+                                <h4 class="text-sm font-semibold text-red-700">Reason for denial</h4>
+                                <p class="text-sm text-red-800 mt-2">{{ $petRegistration->denial_reason }}</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

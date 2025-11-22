@@ -110,13 +110,41 @@ Route::middleware('setlocale')->group(function () {
             return view('user.requests', compact('requests'));
         })->name('user.requests');
 
-        // Claimed or Adopted Pets view
+        // Claimed or Adopted Pets view (index)
         Route::get('/my-adopted-claimed-pets', function () {
-            $pets = Auth::user()->pets()->whereIn('status', ['adopted', 'claimed'])->with(['requests' => function ($q) {
-                $q->where('status', 'completed');
-            }, 'requests.user'])->paginate(10)->appends(request()->query());
-            return view('user.adopted-claimed-pets', compact('pets'));
+            // Show pets that are marked 'adopted' or 'claimed' by admin
+            // and that have a completed request submitted by the current user.
+            $tab = request('tab'); // optional: 'adopted' or 'claimed'
+            $query = \App\Models\Pet::query();
+
+            if (in_array($tab, ['adopted', 'claimed'])) {
+                $query->where('status', $tab);
+            } else {
+                $query->whereIn('status', ['adopted', 'claimed']);
+            }
+
+            $query->whereHas('requests', function ($q) {
+                    $q->where('user_id', Auth::id())
+                      ->where('status', 'completed')
+                      ->whereIn('type', ['adopt', 'claim']);
+                })
+                ->with(['requests' => function ($q) {
+                    // only load the completed requests for the current user
+                    $q->where('status', 'completed')->where('user_id', Auth::id());
+                }, 'requests.user']);
+
+            $pets = $query->paginate(10)->appends(request()->query());
+
+            return view('user.claimed-adopted.index', compact('pets', 'tab'));
         })->name('user.adopted-claimed-pets');
+
+        // Claimed or Adopted Pets - show individual pet details (user completed request check)
+        Route::get('/my-adopted-claimed-pets/{pet}', function (\App\Models\Pet $pet) {
+            $hasCompleted = $pet->requests()->where('user_id', Auth::id())->where('status', 'completed')->exists();
+            if (!$hasCompleted) abort(403);
+            $pet->load(['requests' => function ($q) { $q->where('status', 'completed')->where('user_id', Auth::id()); }, 'requests.user']);
+            return view('user.claimed-adopted.show', compact('pet'));
+        })->name('user.adopted-claimed-pets.show');
 
         // Show individual request details
         Route::get('/my-requests/{request}', function (\App\Models\PetRequest $request) {

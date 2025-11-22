@@ -6,6 +6,7 @@ use App\Models\Pet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class PetController extends Controller
 {
@@ -38,6 +39,15 @@ class PetController extends Controller
         $request->validate([
             'type' => 'required|in:adopt,claim',
         ]);
+        // Log incoming request for easier debugging (non-sensitive subset)
+        Log::info('PetController::request - incoming', [
+            'user_id' => Auth::id(),
+            'pet_id' => $pet->id ?? null,
+            'route_type' => $request->input('type'),
+            'has_proof_of_ownership_description' => $request->has('proof_of_ownership_description'),
+            'has_photos' => $request->hasFile('photos'),
+        ]);
+
         // Check if user already has a pending/approved request for this pet
         $existingRequest = $pet->requests()
             ->where('user_id', Auth::id())
@@ -145,6 +155,14 @@ class PetController extends Controller
             'photos' => $photoPaths,
             'additional_data' => $additionalData,
             'status' => 'pending',
+        ]);
+
+        Log::info('PetController::request - created pet_request', [
+            'pet_request_id' => $petRequest->id ?? null,
+            'user_id' => $petRequest->user_id ?? Auth::id(),
+            'pet_id' => $pet->id ?? null,
+            'type' => $petRequest->type ?? $request->type,
+            'status' => $petRequest->status ?? 'pending',
         ]);
 
         return redirect()->back()->with('success', 'Your request has been submitted successfully!');

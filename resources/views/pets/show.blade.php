@@ -494,6 +494,17 @@
                         <input type="file" name="photos[]" multiple accept="image/*, .pdf" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
                         <p class="mt-1 text-sm text-gray-500">Examples: Vet records, photo of you with the pet, barangay registration, etc.</p>
                     </div>
+
+                    <div class="mb-4 space-y-3">
+                        <label class="flex items-center">
+                            <input type="checkbox" name="certify_info" required class="mr-2">
+                            I certify that the information I provided in this claim request is true and correct.
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="agree_terms" required class="mr-2">
+                            I have read and agree to the terms and procedures for reclaiming an impounded pet.
+                        </label>
+                    </div>
                 </div>
 
                 <div class="flex justify-end space-x-3">

@@ -157,6 +157,8 @@
 
                             <form method="POST" action="{{ route('admin.pet-registrations.deny', $pet_registration) }}" class="block">
                                 @csrf
+                                <label for="denial_reason" class="block text-sm font-medium text-white mb-2">Reason for denial (optional)</label>
+                                <textarea name="denial_reason" id="denial_reason" rows="3" class="mb-3 w-full p-3 text-sm rounded-lg" placeholder="Explain why this registration is denied (optional)"></textarea>
                                 <button type="submit" class="w-full px-4 py-3 font-semibold text-white transition duration-200 bg-orange-600 rounded-lg hover:bg-orange-700"
                                         onclick="return confirm('Are you sure you want to deny this pet registration?')">
                                     ❌ Deny Registration

@@ -80,9 +80,9 @@ class PetRegistrationController extends Controller
     /**
      * Approve a pet registration (Admin only)
      */
-    public function approve(PetRegistration $pet)
+    public function approve(PetRegistration $pet_registration)
     {
-        $pet->update(['status' => 'registered']);
+        $pet_registration->update(['status' => 'registered', 'denial_reason' => null]);
 
         return back()->with('success', 'Pet registration approved successfully!');
     }
@@ -90,14 +90,21 @@ class PetRegistrationController extends Controller
     /**
      * Deny a pet registration (Admin only)
      */
-    public function deny(PetRegistration $pet)
+    public function deny(Request $request, PetRegistration $pet_registration)
     {
         // Only allow denying pending registrations
-        if ($pet->status !== 'pending') {
+        if ($pet_registration->status !== 'pending') {
             return back()->with('error', 'Only pending registrations can be denied.');
         }
 
-        $pet->update(['status' => 'denied']);
+        $request->validate([
+            'denial_reason' => 'nullable|string|max:2000',
+        ]);
+
+        $pet_registration->update([
+            'status' => 'denied',
+            'denial_reason' => $request->input('denial_reason'),
+        ]);
 
         return back()->with('success', 'Pet registration denied.');
     }
@@ -105,9 +112,9 @@ class PetRegistrationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(PetRegistration $pet)
+    public function destroy(PetRegistration $pet_registration)
     {
-        $pet->delete();
+        $pet_registration->delete();
 
         return back()->with('success', 'Pet registration deleted successfully!');
     }

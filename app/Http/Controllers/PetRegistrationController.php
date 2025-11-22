@@ -82,7 +82,10 @@ class PetRegistrationController extends Controller
      */
     public function edit(string $id)
     {
-        $petRegistration = PetRegistration::where('id', $id)->where('user_id', Auth::id())->where('status', 'pending')->firstOrFail();
+        $petRegistration = PetRegistration::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->whereIn('status', ['pending', 'denied'])
+            ->firstOrFail();
         return view('user.pet-registrations.edit', compact('petRegistration'));
     }
 
@@ -91,7 +94,10 @@ class PetRegistrationController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $petRegistration = PetRegistration::where('id', $id)->where('user_id', Auth::id())->where('status', 'pending')->firstOrFail();
+        $petRegistration = PetRegistration::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->whereIn('status', ['pending', 'denied'])
+            ->firstOrFail();
 
         $request->validate([
             'pet_name' => 'required|string|max:255',
@@ -123,6 +129,8 @@ class PetRegistrationController extends Controller
             'contact_number' => $request->contact_number,
             'address' => $request->address,
             'photo' => $photoPath,
+            // When a denied registration is edited, reset status back to pending for re-review
+            'status' => 'pending',
         ]);
 
         return redirect()->route('pet-registrations.index')->with('success', 'Pet registration updated successfully!');

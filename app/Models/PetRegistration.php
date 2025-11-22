@@ -20,6 +20,7 @@ class PetRegistration extends Model
         'description',
         'photo',
         'status',
+        'denial_reason',
     ];
 
     protected $casts = [

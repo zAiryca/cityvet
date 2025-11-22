@@ -30,6 +30,7 @@
         @php
             $pending = $petRegistrations->where('status', 'pending');
             $registered = $petRegistrations->where('status', 'registered');
+            $denied = $petRegistrations->where('status', 'denied');
         @endphp
 
         @if($pending->count() > 0)
@@ -82,6 +83,60 @@
                                                     🗑️ Delete
                                                 </button>
                                             </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        {{-- Denied Registrations --}}
+        @if($denied->count() > 0)
+            <div class="mb-8">
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                    <div class="bg-gradient-to-r from-red-600 to-pink-500 px-8 py-6">
+                        <h2 class="text-2xl font-bold text-white">⛔ Denied Registrations</h2>
+                        <p class="text-red-100 mt-1">Registrations that were denied by the admin. You can edit and resubmit.</p>
+                    </div>
+
+                    <div class="px-8 py-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            @foreach($denied as $petRegistration)
+                                <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-red-200 hover:shadow-xl transition duration-300">
+                                    @if($petRegistration->photo)
+                                        <img src="{{ asset('storage/' . $petRegistration->photo) }}" alt="{{ $petRegistration->pet_name }}" class="w-full h-48 object-cover">
+                                    @else
+                                        <div class="w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                                            <div class="text-center">
+                                                <span class="text-4xl">🐾</span>
+                                                <p class="text-gray-500 text-sm mt-2">No Photo</p>
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    <div class="p-6">
+                                        <div class="flex justify-between items-start mb-3">
+                                            <h3 class="text-xl font-bold text-gray-900">{{ $petRegistration->pet_name }}</h3>
+                                            <span class="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800 border border-red-200">Denied</span>
+                                        </div>
+
+                                        <div class="space-y-2 mb-4">
+                                            <p class="text-sm text-gray-600"><span class="font-medium">Species:</span> {{ $petRegistration->species }}</p>
+                                            <p class="text-sm text-gray-600"><span class="font-medium">Breed:</span> {{ $petRegistration->breed }}</p>
+                                            <p class="text-sm text-gray-600"><span class="font-medium">Gender:</span> {{ ucfirst($petRegistration->gender) }}</p>
+                                            <p class="text-sm text-gray-600"><span class="font-medium">Birthday:</span> {{ $petRegistration->birthday ? $petRegistration->birthday->format('M d, Y') : 'Not specified' }}</p>
+                                        </div>
+
+                                        <div class="flex space-x-2">
+                                            <a href="{{ route('pet-registrations.show', $petRegistration) }}" class="flex-1 bg-purple-600 text-white py-3 rounded-lg text-center hover:bg-purple-700 transition duration-200 font-semibold text-sm shadow-md hover:shadow-lg">
+                                                👁️ View
+                                            </a>
+                                            <a href="{{ route('pet-registrations.edit', $petRegistration) }}" class="flex-1 bg-blue-600 text-white py-3 rounded-lg text-center hover:bg-blue-700 transition duration-200 font-semibold text-sm shadow-md hover:shadow-lg">
+                                                ✏️ Edit & Resubmit
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
