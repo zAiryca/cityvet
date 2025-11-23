@@ -7,25 +7,33 @@
     <h1 class="mb-6 text-3xl font-bold">Request Details</h1>
     <div class="max-w-4xl bg-white rounded-lg shadow">
         <div class="p-6">
+            @php
+                $sidebarAdditionalData = [];
+                if ($request->additional_data) {
+                    $sidebarAdditionalData = is_array($request->additional_data) ? $request->additional_data : (json_decode($request->additional_data, true) ?? []);
+                }
+            @endphp
             <div class="grid grid-cols-1 gap-6 mb-6 md:grid-cols-2">
-                <p><strong>User:</strong> {{ $request->user->name }} ({{ $request->user->email }})</p>
+                @php
+                    $petId = $request->requestable && isset($request->requestable->display_code) ? $request->requestable->display_code : 'N/A';
+                @endphp
+                <p><strong>Pet ID:</strong> {{ $petId }}</p>
                 <p><strong>Type:</strong> {{ ucfirst($request->type) }}</p>
-                <p><strong>Status:</strong>
-                    <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $request->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : ($request->status === 'approved' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800') }}">
-                        {{ ucfirst($request->status) }}
-                    </span>
+                <p>
+                    <strong>Status:</strong>
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $request->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : ($request->status === 'approved' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800') }}">{{ ucfirst($request->status) }}</span>
                 </p>
                 <p><strong>Date:</strong> {{ $request->created_at->format('M d, Y h:i A') }}</p>
             </div>
 
             @if($request->requestable && $request->requestable_type === 'App\\Models\\Pet')
                 <div class="mb-6 text-center">
-                    <h3 class="mb-4 text-lg font-semibold">{{ $request->type === 'adopt' ? 'Adopted' : 'Impounded' }} Pet Photo</h3>
+                    <h3 class="mb-4 text-lg font-semibold">{{ $request->type === 'adopt' ? 'Adoptable' : 'Impounded' }} Pet Photo</h3>
                     <img src="{{ $request->requestable->photo ? asset('storage/' . $request->requestable->photo) : 'https://via.placeholder.com/600x400?text=' . $request->requestable->display_code }}" alt="{{ $request->requestable->display_code }}" class="object-cover w-full h-96">
                 </div>
 
                 <div class="mb-6">
-                    <h3 class="mb-4 text-lg font-semibold">{{ $request->type === 'adopt' ? 'Adopted' : 'Impounded' }} Pet Information</h3>
+                    <h3 class="mb-4 text-lg font-semibold">{{ $request->type === 'adopt' ? 'Adoptable' : 'Impounded' }} Pet Information</h3>
                     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <p><strong>Pet ID:</strong> {{ $request->requestable->display_code }}</p>
                         <p><strong>Species:</strong> {{ $request->requestable->species }}</p>
@@ -40,26 +48,13 @@
                         @if($request->requestable->adoption_reason)
                             <p><strong>Adoption Reason:</strong> {{ $request->requestable->adoption_reason }}</p>
                         @endif
-                    </div>
-                </div>
-
-                <div class="mb-6">
-                    <h3 class="mb-4 text-lg font-semibold">{{ ucfirst($request->type) }}er Information</h3>
-                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <p><strong>Name:</strong> {{ $request->user->name }}</p>
-                        <p><strong>Email:</strong> {{ $request->user->email }}</p>
-                        <p><strong>Phone:</strong> {{ $request->user->phone ?: 'Not provided' }}</p>
-                        <p><strong>Address:</strong> {{ $request->user->address ?: 'Not provided' }}</p>
-                        @if($request->additional_data)
-                            @php
-                                $additionalData = is_array($request->additional_data) ? $request->additional_data : json_decode($request->additional_data, true);
-                            @endphp
-                            @if(isset($additionalData['reason']))
-                                <p><strong>Reason:</strong> {{ $additionalData['reason'] }}</p>
-                            @endif
+                        @if($request->requestable->adoption_notes)
+                            <p><strong>Adoption Notes:</strong> {{ $request->requestable->adoption_notes }}</p>
                         @endif
                     </div>
                 </div>
+
+
             @endif
 
             @if($request->additional_data)
@@ -74,7 +69,15 @@
                             <p><strong>Address:</strong> {{ $additionalData['address'] ?? '' }}</p>
                             <p><strong>Contact:</strong> {{ $additionalData['contact_number'] ?? '' }}</p>
                             <p><strong>Email:</strong> {{ $additionalData['email'] ?? '' }}</p>
-                            <p><strong>Date of Birth:</strong> {{ isset($additionalData['date_of_birth']) ? date('M d, Y', strtotime($additionalData['date_of_birth'])) : '' }}</p>
+                            <p><strong>Date of Birth:</strong>
+                                @if(!empty($additionalData['date_of_birth']))
+                                    {{ date('M d, Y', strtotime($additionalData['date_of_birth'])) }}
+                                @elseif($request->user && $request->user->birthday)
+                                    {{ $request->user->birthday->format('M d, Y') }}
+                                @else
+                                    N/A
+                                @endif
+                            </p>
                             <p><strong>Dwelling Type:</strong> {{ ucfirst(str_replace('_', ' ', $additionalData['dwelling_type'] ?? '')) }}</p>
                             @if(isset($additionalData['landlord_permission']))
                                 <p><strong>Landlord Permission:</strong> {{ ucfirst($additionalData['landlord_permission']) }}</p>
@@ -107,8 +110,22 @@
                             <p><strong>Address:</strong> {{ $additionalData['address'] ?? '' }}</p>
                             <p><strong>Contact:</strong> {{ $additionalData['contact_number'] ?? '' }}</p>
                             <p><strong>Email:</strong> {{ $additionalData['email'] ?? '' }}</p>
-                            <p><strong>Birthday:</strong> {{ isset($additionalData['birthday']) ? date('M d, Y', strtotime($additionalData['birthday'])) : 'Not provided' }}</p>
+                            <p><strong>Birthday:</strong>
+                                @if(!empty($additionalData['date_of_birth']))
+                                    {{ date('M d, Y', strtotime($additionalData['date_of_birth'])) }}
+                                @elseif($request->user && $request->user->birthday)
+                                    {{ $request->user->birthday->format('M d, Y') }}
+                                @else
+                                    Not provided
+                                @endif
+                            </p>
                         </div>
+                        @if($request->user->id_photo)
+                            <div class="mt-4">
+                                <h4 class="mb-2 font-semibold text-md">User ID Photo</h4>
+                                <img src="{{ asset('storage/' . $request->user->id_photo) }}" alt="User ID Photo" class="object-cover w-48 h-32 border rounded-lg shadow-md">
+                            </div>
+                        @endif
                     </div>
                 @elseif($request->type === 'impound')
                     <div class="mb-6">
@@ -167,7 +184,7 @@
                     <form action="{{ route('admin.requests.approve', $request) }}" method="POST" class="inline">
                         @csrf
                         <input type="hidden" name="redirect_to_pet" value="1">
-                        <button type="submit" class="px-6 py-2 text-white bg-green-600 rounded hover:bg-green-700 font-semibold">
+                        <button type="submit" class="px-6 py-2 font-semibold text-white bg-green-600 rounded hover:bg-green-700">
                             ✓ Approve Request
                         </button>
                     </form>
@@ -176,7 +193,7 @@
                     <form action="{{ route('admin.requests.deny', $request) }}" method="POST" class="inline">
                         @csrf
                         <input type="hidden" name="redirect_to_pet" value="1">
-                        <button type="submit" class="px-6 py-2 text-white bg-red-600 rounded hover:bg-red-700 font-semibold" onclick="return confirm('Are you sure you want to deny this request?');">
+                        <button type="submit" class="px-6 py-2 font-semibold text-white bg-red-600 rounded hover:bg-red-700" onclick="return confirm('Are you sure you want to deny this request?');">
                             ✗ Deny Request
                         </button>
                     </form>

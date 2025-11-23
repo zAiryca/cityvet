@@ -24,7 +24,10 @@
 
                     <div class="flex-1">
                         <h2 class="text-2xl font-bold text-gray-900">{{ $pet->display_code }}</h2>
-                        <p class="mt-1 text-sm text-gray-600">{{ ucfirst($pet->species) }} • {{ $pet->breed ?: 'Unknown' }}</p>
+                        @if(!empty($pet->name) && $pet->name !== $pet->display_code)
+                            <p class="mt-1 text-sm font-medium text-gray-700">{{ $pet->name }}</p>
+                        @endif
+                        <p class="mt-1 text-sm text-gray-600">{{ ucfirst($pet->species ?? 'Not specified') }} • {{ $pet->breed ?: 'Not specified' }}</p>
                         <p class="mt-3 text-sm text-gray-700">{{ $pet->description ?? 'No description available.' }}</p>
 
                         <div class="mt-4">
@@ -39,12 +42,52 @@
         <div class="grid grid-cols-1 gap-6 mt-6">
             @php
                 $owner = $pet->user;
-                // Prefer completed request that belongs to the current owner
+                // Prepare completed requests for timeline and owner display
                 $completedRequest = $pet->requests->where('status', 'completed')
                     ->when($owner, function ($col) use ($owner) { return $col->where('user_id', $owner->id); })
                     ->sortByDesc('updated_at')
                     ->first();
+
+                $latestCompleted = $pet->requests->where('status', 'completed')->sortByDesc('updated_at')->first();
+                $latestClaim = $pet->requests->where('status', 'completed')->where('type', 'claim')->sortByDesc('updated_at')->first();
+                $latestAdopt = $pet->requests->where('status', 'completed')->where('type', 'adopt')->sortByDesc('updated_at')->first();
             @endphp
+            <!-- Pet Details (match admin view) -->
+            <div class="p-6 bg-white rounded-lg shadow">
+                <h3 class="mb-3 text-lg font-semibold text-gray-900">Pet Details</h3>
+                <div class="grid grid-cols-1 gap-3 text-sm text-gray-700 md:grid-cols-2">
+                    <div>
+                        <p class="text-xs font-medium text-gray-600">Species</p>
+                        <p class="font-semibold text-gray-900">{{ ucfirst($pet->species) }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-gray-600">Breed</p>
+                        <p class="font-semibold text-gray-900">{{ $pet->breed ?: 'Not specified' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-gray-600">Gender</p>
+                        <p class="font-semibold text-gray-900">{{ $pet->gender ? ucfirst($pet->gender) : 'Not specified' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-gray-600">Estimated Age</p>
+                        <p class="font-semibold text-gray-900">{{ $pet->estimated_age ?? $pet->age ?? 'Not specified' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-gray-600">Color / Markings</p>
+                        <p class="font-semibold text-gray-900">{{ $pet->color_markings ?: 'Not specified' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-gray-600">Status</p>
+                        <p class="font-semibold text-gray-900">{{ ucfirst($pet->status) }}</p>
+                    </div>
+                </div>
+                @if($pet->description)
+                    <div class="mt-4">
+                        <p class="text-xs font-medium text-gray-600">Description</p>
+                        <p class="mt-1 text-gray-900">{{ $pet->description }}</p>
+                    </div>
+                @endif
+            </div>
 
             <!-- Timeline -->
             <div class="p-6 bg-white rounded-lg shadow">
@@ -53,11 +96,17 @@
                     @if($pet->impounded_date)
                         <div><strong>Impounded:</strong> {{ $pet->impounded_date->format('M d, Y H:i') }}</div>
                     @endif
-                    @if($pet->decision_date)
+
+                    {{-- Show Adoptable Date only when appropriate. If the pet was impounded and later directly claimed (no adoptable phase), hide adoptable date. --}}
+                    @if($pet->decision_date && !($pet->impounded_date && $pet->status === 'claimed'))
                         <div><strong>Adoptable Date:</strong> {{ $pet->decision_date->format('M d, Y H:i') }}</div>
                     @endif
-                    @if(in_array($pet->status, ['adopted','claimed']))
-                        <div><strong>Marked On:</strong> {{ $pet->updated_at->format('M d, Y H:i') }}</div>
+
+                    {{-- Show Claim/Adopt dates with preference to completed request timestamps. --}}
+                    @if($pet->status === 'claimed')
+                        <div><strong>Claimed On:</strong> {{ $latestClaim ? $latestClaim->updated_at->format('M d, Y H:i') : $pet->updated_at->format('M d, Y H:i') }}</div>
+                    @elseif($pet->status === 'adopted')
+                        <div><strong>Adopted On:</strong> {{ $latestAdopt ? $latestAdopt->updated_at->format('M d, Y H:i') : ($latestCompleted ? $latestCompleted->updated_at->format('M d, Y H:i') : $pet->updated_at->format('M d, Y H:i')) }}</div>
                     @elseif($completedRequest)
                         <div><strong>Completed On:</strong> {{ $completedRequest->updated_at->format('M d, Y H:i') }}</div>
                     @endif
@@ -65,35 +114,77 @@
                 </div>
             </div>
 
-            <!-- Owner Information (read-only) -->
+            <!-- New Owner Information (read-only) -->
             @if($owner)
+                @php
+                    // Prefer latest completed request additional_data when pet is claimed/adopted
+                    $displayOwner = [
+                        'full_name' => $owner->name,
+                        'first_name' => $owner->first_name ?? null,
+                        'last_name' => $owner->last_name ?? null,
+                        'email' => $owner->email,
+                        'contact_number' => $owner->contact_number ?? null,
+                        'street' => $owner->street ?? null,
+                        'barangay' => $owner->barangay ?? null,
+                        'city_municipality' => $owner->city_municipality ?? null,
+                        'province' => $owner->province ?? null,
+                        'zip_code' => $owner->zip_code ?? null,
+                        'birthday' => $owner->birthday ? $owner->birthday->format('Y-m-d') : null,
+                        'id_photo_path' => $owner->id_photo ?? null,
+                    ];
+
+                    if(in_array($pet->status, ['claimed','adopted']) && $completedRequest) {
+                        $ad = is_array($completedRequest->additional_data) ? $completedRequest->additional_data : json_decode($completedRequest->additional_data, true);
+                        if(!empty($ad) && is_array($ad)) {
+                            $displayOwner = array_merge($displayOwner, array_filter([
+                                'first_name' => $ad['first_name'] ?? null,
+                                'last_name' => $ad['last_name'] ?? null,
+                                'full_name' => trim(($ad['first_name'] ?? '') . ' ' . ($ad['last_name'] ?? '')) ?: ($ad['first_name'] ?? $owner->name),
+                                'email' => $ad['email'] ?? $owner->email,
+                                'contact_number' => $ad['contact_number'] ?? $owner->contact_number,
+                                'street' => $ad['street'] ?? $owner->street,
+                                'barangay' => $ad['barangay'] ?? $owner->barangay,
+                                'city_municipality' => $ad['city_municipality'] ?? $owner->city_municipality,
+                                'province' => $ad['province'] ?? $owner->province,
+                                'zip_code' => $ad['zip_code'] ?? $owner->zip_code,
+                                'birthday' => $ad['date_of_birth'] ?? $displayOwner['birthday'],
+                                'id_photo_path' => $ad['id_photo_path'] ?? $displayOwner['id_photo_path'],
+                            ]));
+                        }
+                    }
+                @endphp
+
                 <div class="p-6 bg-white rounded-lg shadow">
-                    <h3 class="mb-3 text-lg font-semibold text-gray-900">Owner Information</h3>
+                    <h3 class="mb-3 text-lg font-semibold text-gray-900">New Owner Information</h3>
                     <div class="grid grid-cols-1 gap-3 text-sm text-gray-700 md:grid-cols-2">
                         <div>
                             <p class="text-xs font-medium text-gray-600">Full Name</p>
-                            <p class="font-semibold text-gray-900">{{ $owner->name }}</p>
+                            <p class="font-semibold text-gray-900">{{ $displayOwner['full_name'] }}</p>
                         </div>
                         <div>
                             <p class="text-xs font-medium text-gray-600">Email</p>
-                            <p class="font-semibold text-gray-900">{{ $owner->email }}</p>
+                            <p class="font-semibold text-gray-900">{{ $displayOwner['email'] }}</p>
                         </div>
                         <div>
                             <p class="text-xs font-medium text-gray-600">Contact</p>
-                            <p class="font-semibold text-gray-900">{{ $owner->contact_number ?? 'Not provided' }}</p>
+                            <p class="font-semibold text-gray-900">{{ $displayOwner['contact_number'] ?? 'Not provided' }}</p>
                         </div>
                         <div>
                             <p class="text-xs font-medium text-gray-600">Complete Address</p>
                             <p class="font-semibold text-gray-900">
-                                {{ trim(($owner->street ?? '') . ' ' . ($owner->barangay ?? '') . ' ' . ($owner->city_municipality ?? '') . ' ' . ($owner->province ?? '') . ' ' . ($owner->zip_code ?? '')) ?: 'Not provided' }}
+                                {{ trim(($displayOwner['street'] ?? '') . ' ' . ($displayOwner['barangay'] ?? '') . ' ' . ($displayOwner['city_municipality'] ?? '') . ' ' . ($displayOwner['province'] ?? '') . ' ' . ($displayOwner['zip_code'] ?? '')) ?: 'Not provided' }}
                             </p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-medium text-gray-600">Birthday</p>
+                            <p class="font-semibold text-gray-900">{{ $displayOwner['birthday'] ? date('M d, Y', strtotime($displayOwner['birthday'])) : 'Not provided' }}</p>
                         </div>
                     </div>
 
-                    @if($owner->id_photo)
+                    @if(!empty($displayOwner['id_photo_path']))
                         <div class="mt-4">
                             <p class="text-xs font-medium text-gray-600">ID Photo</p>
-                            <img src="{{ asset('storage/' . $owner->id_photo) }}" alt="Owner ID" class="object-cover w-48 h-32 mt-2 border rounded shadow-sm">
+                            <img src="{{ asset('storage/' . $displayOwner['id_photo_path']) }}" alt="Owner ID" class="object-cover w-48 h-32 mt-2 border rounded shadow-sm">
                         </div>
                     @endif
                 </div>
@@ -115,6 +206,15 @@
                             <p class="mt-1 text-sm text-gray-600">Submitted by: {{ $additionalData['first_name'] ?? $request->user->name }} {{ $additionalData['last_name'] ?? '' }} • {{ $request->user->email }}</p>
                             <div class="mt-2 text-sm text-gray-700">
                                 <p><strong>Contact:</strong> {{ $additionalData['contact_number'] ?? 'N/A' }}</p>
+                                <p><strong>Birthday:</strong>
+                                    @if(!empty($additionalData['date_of_birth']))
+                                        {{ date('M d, Y', strtotime($additionalData['date_of_birth'])) }}
+                                    @elseif($request->user && $request->user->birthday)
+                                        {{ $request->user->birthday->format('M d, Y') }}
+                                    @else
+                                        N/A
+                                    @endif
+                                </p>
                                 @if($request->type === 'claim')
                                     <p class="mt-1"><strong>Proof:</strong> {{ $request->reason ?? 'N/A' }}</p>
                                 @elseif($request->type === 'adopt')

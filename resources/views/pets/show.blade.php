@@ -98,16 +98,16 @@
                             <span class="font-medium">{{ ucfirst($pet->gender) }}</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-gray-600">Age:</span>
-                            <span class="font-medium">{{ $pet->age ?? 'Unknown' }}</span>
+                            <span class="text-gray-600">Estimated Age:</span>
+                            <span class="font-medium">{{ $pet->estimated_age }}</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-600">Color/Markings:</span>
                             <span class="font-medium">{{ $pet->color_markings ?? 'Not specified' }}</span>
                         </div>
                         <div class="overflow-hidden bg-white rounded-lg shadow-sm">
-                            <div class="px-4 py-3 bg-gray-50 border border-gray-100 rounded-t">
-                                <h3 class="text-sm font-semibold text-gray-900">📅 Timeline</h3>
+                            <div class="px-4 py-3 border border-gray-100 rounded-t bg-gray-50">
+                                <h3 class="text-sm font-semibold text-gray-900">Timeline</h3>
                             </div>
                             <div class="p-4 space-y-3">
                                 @if($pet->impounded_date)
@@ -144,6 +144,36 @@
                 <div>
                     <h2 class="mb-4 text-xl font-semibold">Description</h2>
                     <p class="leading-relaxed text-gray-700">{{ $pet->description ?? 'No description available.' }}</p>
+
+                    {{-- Adoption fields shown immediately after Description for adoptable pets (hide if came from impounded) --}}
+                    @if($pet->status === 'adoptable' && !$pet->impounded_date)
+                        @php
+                            $adoptionReasonLabels = [
+                                'surrendered_by_owner' => 'Surrendered by Owner',
+                                'remained_unclaimed' => 'Remained Unclaimed',
+                                'found_by_citizen' => 'Found by Citizen',
+                            ];
+                            if (!empty($pet->adoption_reason_other)) {
+                                $adoptionLabel = $pet->adoption_reason_other;
+                            } else {
+                                $adoptionLabel = $adoptionReasonLabels[$pet->adoption_reason] ?? $pet->adoption_reason;
+                            }
+                        @endphp
+
+                        @if($pet->adoption_reason)
+                            <div class="mt-4">
+                                <p class="text-sm font-medium text-gray-600">Adoption Reason</p>
+                                <p class="font-medium text-gray-900">{{ $adoptionLabel }}</p>
+                            </div>
+                        @endif
+
+                        @if($pet->adoption_notes)
+                            <div class="mt-3">
+                                <p class="text-sm font-medium text-gray-600">Adoption Notes</p>
+                                <p class="text-gray-900">{{ $pet->adoption_notes }}</p>
+                            </div>
+                        @endif
+                    @endif
                     @if($pet->status === 'impounded')
                         <div class="p-4 mt-4 border border-red-200 rounded-lg bg-red-50">
                             <h3 class="mb-2 text-lg font-semibold text-red-800">Important Claim Notice</h3>
@@ -205,57 +235,37 @@
                     <div class="grid grid-cols-1 gap-4 mb-4 md:grid-cols-3">
                         <div>
                             <label class="block mb-1 text-sm font-medium text-gray-700">Last Name</label>
-                            <input type="text" value="{{ auth()->user()->last_name ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
+                            <input name="last_name" type="text" value="{{ auth()->user()->last_name ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
                         </div>
                         <div>
                             <label class="block mb-1 text-sm font-medium text-gray-700">First Name</label>
-                            <input type="text" value="{{ auth()->user()->first_name ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
+                            <input name="first_name" type="text" value="{{ auth()->user()->first_name ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
                         </div>
                         <div>
                             <label class="block mb-1 text-sm font-medium text-gray-700">Middle Name</label>
-                            <input type="text" value="{{ auth()->user()->middle_name ?? '' }}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
+                            <input name="middle_name" type="text" value="{{ auth()->user()->middle_name ?? '' }}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
                         </div>
                     </div>
                     <div class="mb-4">
                         <label class="block mb-1 text-sm font-medium text-gray-700">Complete Address (House No., Street, Barangay, City)</label>
-                        <input type="text" value="{{ (auth()->user()->street ?? '') . ', ' . (auth()->user()->barangay ?? '') . ', ' . (auth()->user()->city_municipality ?? '') }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
+                        <input name="address" type="text" value="{{ (auth()->user()->street ?? '') . ', ' . (auth()->user()->barangay ?? '') . ', ' . (auth()->user()->city_municipality ?? '') }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
                     </div>
                     <div class="grid grid-cols-1 gap-4 mb-4 md:grid-cols-2">
                         <div>
                             <label class="block mb-1 text-sm font-medium text-gray-700">Contact Number</label>
-                            <input type="tel" value="{{ auth()->user()->contact_number ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
+                            <input name="contact_number" type="tel" value="{{ auth()->user()->contact_number ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
                         </div>
                         <div>
                             <label class="block mb-1 text-sm font-medium text-gray-700">Email Address</label>
-                            <input type="email" value="{{ auth()->user()->email ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
+                            <input name="email" type="email" value="{{ auth()->user()->email ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
                         </div>
 
 
                 </div>
                     </div>
-                    {{-- Hidden fields to pass auto-filled data to controller --}}
-                    <input type="hidden" name="last_name" value="{{ auth()->user()->last_name ?? '' }}">
-                    <input type="hidden" name="first_name" value="{{ auth()->user()->first_name ?? '' }}">
-                    <input type="hidden" name="middle_name" value="{{ auth()->user()->middle_name ?? '' }}">
-                    <input type="hidden" name="address" value="{{ (auth()->user()->street ?? '') . ', ' . (auth()->user()->barangay ?? '') . ', ' . (auth()->user()->city_municipality ?? '') }}">
-                    <input type="hidden" name="contact_number" value="{{ auth()->user()->contact_number ?? '' }}">
-                    <input type="hidden" name="email" value="{{ auth()->user()->email ?? '' }}">
-                    <input type="hidden" name="birthday" value="{{ auth()->user()->birthday ?? '' }}">
+                    {{-- Previously hidden fields removed: visible inputs now have names so values are submitted from profile fields. --}}
 
-                    @if(auth()->user()->id_photo)
-                        <div class="mb-4">
-                            <label class="block mb-1 text-sm font-medium text-gray-700">ID Photo</label>
-                            <div class="flex items-center space-x-4">
-                                <img src="{{ asset('storage/' . auth()->user()->id_photo) }}" alt="Your ID Photo" class="object-cover w-24 h-16 border border-gray-300 rounded">
-                                <span class="text-sm text-gray-600">Your uploaded ID photo will be used for verification.</span>
-                            </div>
-                        </div>
-                        <input type="hidden" name="id_photo_path" value="{{ auth()->user()->id_photo }}">
-                    @else
-                        <div class="p-3 mb-4 border border-yellow-200 rounded bg-yellow-50">
-                            <p class="text-sm text-yellow-800"><strong>Note:</strong> You haven't uploaded an ID photo yet. Please upload one in your <a href="{{ route('profile.edit') }}" class="text-blue-600 underline hover:text-blue-800">profile settings</a> for faster verification.</p>
-                        </div>
-                    @endif
+                    {{-- ID photo block moved below Date of Birth to match impounded form layout --}}
                     {{-- <div class="mb-4">
                         <label class="block mb-1 text-sm font-medium text-gray-700">Date of Birth (MM/DD/YYYY)</label>
                         <input type="date" name="date_of_birth" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
@@ -272,6 +282,21 @@
         readonly
     >
 </div>
+
+                                    @if(auth()->user()->id_photo)
+                                        <div class="mb-4">
+                                            <label class="block mb-1 text-sm font-medium text-gray-700">ID Photo</label>
+                                            <div class="flex items-center space-x-4">
+                                                <img src="{{ asset('storage/' . auth()->user()->id_photo) }}" alt="Your ID Photo" class="object-cover w-24 h-16 border border-gray-300 rounded">
+                                                <span class="text-sm text-gray-600">Your uploaded ID photo will be used for verification.</span>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="id_photo_path" value="{{ auth()->user()->id_photo }}">
+                                    @else
+                                        <div class="p-3 mb-4 border border-yellow-200 rounded bg-yellow-50">
+                                            <p class="text-sm text-yellow-800"><strong>Note:</strong> You haven't uploaded an ID photo yet. Please upload one in your <a href="{{ route('profile.edit') }}" class="text-blue-600 underline hover:text-blue-800">profile settings</a> for faster verification.</p>
+                                        </div>
+                                    @endif
 
                 <div class="mb-8">
                     <h5 class="pb-2 mb-4 text-lg font-semibold text-gray-800 border-b">Section 2: Household Information</h5>
@@ -447,18 +472,10 @@
             <p class="mb-6 text-sm text-center text-gray-600">Please use this form to start the process of **reclaiming your impounded pet**. After submission, a staff member will contact you to verify your ownership, determine required fees/fines, and schedule the release.</p>
             <p class="mb-6 text-sm font-medium text-center text-red-600">Note: Pets not claimed within the mandatory holding period ({{ $pet->remaining_days ? (int)$pet->remaining_days : 'N/A' }} days remaining) will be placed for adoption.</p>
 
-            <form action="{{ route('pets.request', $pet) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('pets.request', $pet) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="type" value="claim">
-                <input type="hidden" name="last_name" value="{{ auth()->user()->last_name ?? '' }}">
-                <input type="hidden" name="first_name" value="{{ auth()->user()->first_name ?? '' }}">
-                <input type="hidden" name="middle_name" value="{{ auth()->user()->middle_name ?? '' }}">
-                <input type="hidden" name="address" value="{{ (auth()->user()->street ?? '') . ', ' . (auth()->user()->barangay ?? '') . ', ' . (auth()->user()->city_municipality ?? '') }}">
-                <input type="hidden" name="contact_number" value="{{ auth()->user()->contact_number ?? '' }}">
-                <input type="hidden" name="email" value="{{ auth()->user()->email ?? '' }}">
-                @if(auth()->user()->id_photo)
-                    <input type="hidden" name="id_photo_path" value="{{ auth()->user()->id_photo }}">
-                @endif
+                {{-- Visible fields below now include name attributes so values are submitted. Hidden duplicates removed. --}}
 
                 <div class="mb-8">
                     <h5 class="pb-2 mb-4 text-lg font-semibold text-gray-800 border-b">Section 1: Owner's Information</h5>
@@ -468,31 +485,50 @@
                     <div class="grid grid-cols-1 gap-4 mb-4 md:grid-cols-3">
                         <div>
                             <label class="block mb-1 text-sm font-medium text-gray-700">Last Name</label>
-                            <input type="text" value="{{ auth()->user()->last_name ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" readonly>
+                            <input name="last_name" type="text" value="{{ auth()->user()->last_name ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" readonly>
                         </div>
                         <div>
                             <label class="block mb-1 text-sm font-medium text-gray-700">First Name</label>
-                            <input type="text" value="{{ auth()->user()->first_name ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" readonly>
+                            <input name="first_name" type="text" value="{{ auth()->user()->first_name ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" readonly>
                         </div>
                         <div>
                             <label class="block mb-1 text-sm font-medium text-gray-700">Middle Name</label>
-                            <input type="text" value="{{ auth()->user()->middle_name ?? '' }}" class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" readonly>
+                            <input name="middle_name" type="text" value="{{ auth()->user()->middle_name ?? '' }}" class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" readonly>
                         </div>
                     </div>
                     <div class="mb-4">
                         <label class="block mb-1 text-sm font-medium text-gray-700">Complete Address</label>
-                        <input type="text" value="{{ (auth()->user()->street ?? '') . ', ' . (auth()->user()->barangay ?? '') . ', ' . (auth()->user()->city_municipality ?? '') }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" readonly>
+                        <input name="address" type="text" value="{{ (auth()->user()->street ?? '') . ', ' . (auth()->user()->barangay ?? '') . ', ' . (auth()->user()->city_municipality ?? '') }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" readonly>
                     </div>
                     <div class="grid grid-cols-1 gap-4 mb-4 md:grid-cols-2">
                         <div>
                             <label class="block mb-1 text-sm font-medium text-gray-700">Contact Number</label>
-                            <input type="tel" value="{{ auth()->user()->contact_number ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" readonly>
+                            <input name="contact_number" type="tel" value="{{ auth()->user()->contact_number ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" readonly>
                         </div>
                         <div>
                             <label class="block mb-1 text-sm font-medium text-gray-700">Email Address</label>
-                            <input type="email" value="{{ auth()->user()->email ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" readonly>
+                            <input name="email" type="email" value="{{ auth()->user()->email ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" readonly>
                         </div>
                     </div>
+                    <div class="mb-4">
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Date of Birth (MM/DD/YYYY)</label>
+                        <input name="date_of_birth" type="date" value="{{ auth()->user()->birthday ? auth()->user()->birthday->format('Y-m-d') : '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50" readonly>
+                    </div>
+
+                    @if(auth()->user()->id_photo)
+                        <div class="mb-4">
+                            <label class="block mb-1 text-sm font-medium text-gray-700">ID Photo</label>
+                            <div class="flex items-center space-x-4">
+                                <img src="{{ asset('storage/' . auth()->user()->id_photo) }}" alt="Your ID Photo" class="object-cover w-24 h-16 border border-gray-300 rounded">
+                                <span class="text-sm text-gray-600">Your uploaded ID photo will be used for verification.</span>
+                            </div>
+                        </div>
+                        <input type="hidden" name="id_photo_path" value="{{ auth()->user()->id_photo }}">
+                    @else
+                        <div class="p-3 mb-4 border border-yellow-200 rounded bg-yellow-50">
+                            <p class="text-sm text-yellow-800"><strong>Note:</strong> You haven't uploaded an ID photo yet. Please upload one in your <a href="{{ route('profile.edit') }}" class="text-blue-600 underline hover:text-blue-800">profile settings</a> for faster verification.</p>
+                        </div>
+                    @endif
 
                     <h5 class="pb-2 mt-6 mb-4 text-lg font-semibold text-gray-800 border-b">Section 2: Proof of Ownership</h5>
 

@@ -27,20 +27,25 @@
                     </h2>
 
                     <dl class="space-y-3">
+                        @php
+                            $petId = $request->requestable && isset($request->requestable->display_code) ? $request->requestable->display_code : 'N/A';
+                        @endphp
                         <div>
-                            <dt class="text-sm font-medium text-gray-500">Current Status</dt>
+                            <dt class="text-sm font-medium text-gray-500">Pet ID</dt>
+                            <dd class="mt-1 text-gray-900">{{ $petId }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Type</dt>
+                            <dd class="mt-1 text-gray-900">{{ ucfirst($request->type) }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Status</dt>
                             <dd class="mt-1">
-                                <span class="px-3 py-1 text-sm font-bold rounded-full
-                                    @if($request->status === 'pending') bg-yellow-100 text-yellow-800
-                                    @elseif($request->status === 'approved') bg-green-100 text-green-800
-                                    @else bg-red-100 text-red-800
-                                    @endif">
-                                    {{ ucfirst($request->status) }}
-                                </span>
+                                <span class="px-3 py-1 text-sm font-bold rounded-full @if($request->status === 'pending') bg-yellow-100 text-yellow-800 @elseif($request->status === 'approved') bg-green-100 text-green-800 @else bg-red-100 text-red-800 @endif">{{ ucfirst($request->status) }}</span>
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-sm font-medium text-gray-500">Submitted On</dt>
+                            <dt class="text-sm font-medium text-gray-500">Date</dt>
                             <dd class="mt-1 text-gray-900">{{ $request->created_at->format('M d, Y h:i A') }}</dd>
                         </div>
                     </dl>
@@ -184,14 +189,21 @@
                             <dt class="font-medium text-gray-500">Address</dt>
                             <dd class="mt-1 text-gray-900">{{ $additionalData['address'] ?? 'N/A' }}</dd>
                         </div>
+                        <div>
+                            <dt class="font-medium text-gray-500">Birthday</dt>
+                            <dd class="mt-1 text-gray-900">
+                                @if(!empty($additionalData['date_of_birth']))
+                                    {{ date('M d, Y', strtotime($additionalData['date_of_birth'])) }}
+                                @else
+                                    N/A
+                                @endif
+                            </dd>
+                        </div>
 
                         @if($request->type === 'adopt')
                             <h4 class="pt-4 mt-4 text-lg font-semibold text-gray-700 border-t col-span-full">Household & Pet History</h4>
 
-                            <div>
-                                <dt class="font-medium text-gray-500">Date of Birth</dt>
-                                <dd class="mt-1 text-gray-900">{{ isset($additionalData['date_of_birth']) ? date('M d, Y', strtotime($additionalData['date_of_birth'])) : 'N/A' }}</dd>
-                            </div>
+
                             <div>
                                 <dt class="font-medium text-gray-500">Dwelling Type</dt>
                                 <dd class="mt-1 text-gray-900">{{ ucfirst(str_replace('_', ' ', $additionalData['dwelling_type'] ?? 'N/A')) }}</dd>

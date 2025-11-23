@@ -125,6 +125,10 @@
                             <p class="text-lg font-medium text-gray-900">{{ $pet_registration->user->contact_number ?? 'N/A' }}</p>
                         </div>
                         <div>
+                            <label class="block text-sm font-semibold text-gray-600">Birthday</label>
+                            <p class="text-lg font-medium text-gray-900">{{ $pet_registration->user->birthday ? $pet_registration->user->birthday->format('M d, Y') : 'N/A' }}</p>
+                        </div>
+                        <div>
                             <label class="block text-sm font-semibold text-gray-600">Complete Address</label>
                             <p class="p-3 text-sm text-gray-700 rounded-lg bg-gray-50">
                                 {{ ($pet_registration->user->street ?? '') . ', ' . ($pet_registration->user->barangay ?? '') . ', ' . ($pet_registration->user->city_municipality ?? '') }}

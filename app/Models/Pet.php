@@ -11,6 +11,7 @@ class Pet extends Model
     protected $fillable = [
         'user_id', 'species', 'breed', 'estimated_age_years', 'estimated_age_months', 'gender', 'color_markings',
         'description', 'photo', 'status', 'impounded_date', 'caught_location', 'decision_date',
+        'adoption_reason', 'adoption_reason_other', 'adoption_notes',
         // 'registration_status',
     ];
 
@@ -65,10 +66,34 @@ class Pet extends Model
     // Helper: Calculate remaining days (for impounded and adoptable)
     public function getRemainingDaysAttribute()
     {
-        $startDate = $this->impounded_date ?: $this->decision_date ?: $this->created_at;
-        $daysPassed = now()->diffInDays($startDate);
-        $holdingPeriod = $this->status === 'adoptable' ? 4 : 3;  // 3 days for impounded, 4 days for adoptable
-        return max(0, $holdingPeriod - $daysPassed);
+        // Determine the appropriate start date depending on current status:
+        // - If currently impounded: use impounded_date or created_at
+        // - If adoptable: prefer decision_date (when it became adoptable), otherwise fallback to impounded_date or created_at
+        // - Otherwise: no meaningful remaining days
+        $now = now()->startOfDay();
+
+        if ($this->status === 'impounded') {
+            $start = $this->impounded_date ? $this->impounded_date->startOfDay() : $this->created_at->startOfDay();
+            $holdingPeriod = 3; // 3 days for impounded
+        } elseif ($this->status === 'adoptable') {
+            if ($this->decision_date) {
+                $start = $this->decision_date->startOfDay();
+            } elseif ($this->impounded_date) {
+                $start = $this->impounded_date->startOfDay();
+            } else {
+                $start = $this->created_at->startOfDay();
+            }
+            $holdingPeriod = 4; // 4 days for adoptable
+        } else {
+            return null;
+        }
+
+        $target = $start->copy()->addDays($holdingPeriod)->startOfDay();
+
+        // diffInDays with $absolute = false will return a signed int (positive if target in future)
+        $remaining = $now->diffInDays($target, false);
+
+        return max(0, (int) $remaining);
     }
 
     // Helper: Generate IMP/ADO code

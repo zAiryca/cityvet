@@ -197,18 +197,33 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Adoption Reason</label>
+                            @php
+                                $keyToLabel = [
+                                    'surrendered_by_owner' => 'Owner Relocation/Moving',
+                                    'remained_unclaimed' => 'Remained Unclaimed',
+                                    'found_by_citizen' => 'Found by Citizen',
+                                    'other' => 'Other',
+                                ];
+                                $current = $pet->adoption_reason;
+                                if ($current === 'other' && !empty($pet->adoption_reason_other)) {
+                                    $currentLabel = $pet->adoption_reason_other;
+                                } else {
+                                    $currentLabel = $keyToLabel[$current] ?? $current;
+                                }
+                                $selectedValue = old('adoption_reason', $currentLabel);
+                            @endphp
                             <select name="adoption_reason" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('adoption_reason') border-red-500 @enderror">
                                 <option value="">Select Reason</option>
-                                <option value="Owner Relocation/Moving" {{ old('adoption_reason', $pet->adoption_reason) === 'Owner Relocation/Moving' ? 'selected' : '' }}>Owner Relocation/Moving</option>
-                                <option value="Owner Illness/Death" {{ old('adoption_reason', $pet->adoption_reason) === 'Owner Illness/Death' ? 'selected' : '' }}>Owner Illness/Death</option>
-                                <option value="Financial Hardship" {{ old('adoption_reason', $pet->adoption_reason) === 'Financial Hardship' ? 'selected' : '' }}>Financial Hardship</option>
-                                <option value="Landlord/Housing Restriction" {{ old('adoption_reason', $pet->adoption_reason) === 'Landlord/Housing Restriction' ? 'selected' : '' }}>Landlord/Housing Restriction</option>
-                                <option value="Lifestyle/Schedule Change" {{ old('adoption_reason', $pet->adoption_reason) === 'Lifestyle/Schedule Change' ? 'selected' : '' }}>Lifestyle/Schedule Change</option>
-                                <option value="Incompatibility with Existing Pets" {{ old('adoption_reason', $pet->adoption_reason) === 'Incompatibility with Existing Pets' ? 'selected' : '' }}>Incompatibility with Existing Pets</option>
-                                <option value="Incompatibility with Children" {{ old('adoption_reason', $pet->adoption_reason) === 'Incompatibility with Children' ? 'selected' : '' }}>Incompatibility with Children</option>
-                                <option value="Household Allergies" {{ old('adoption_reason', $pet->adoption_reason) === 'Household Allergies' ? 'selected' : '' }}>Household Allergies</option>
-                                <option value="Needs More Space/Exercise" {{ old('adoption_reason', $pet->adoption_reason) === 'Needs More Space/Exercise' ? 'selected' : '' }}>Needs More Space/Exercise</option>
-                                <option value="Behavioral Issues" {{ old('adoption_reason', $pet->adoption_reason) === 'Behavioral Issues' ? 'selected' : '' }}>Behavioral Issues (Requires Detail in Notes)</option>
+                                <option value="Owner Relocation/Moving" {{ $selectedValue === 'Owner Relocation/Moving' ? 'selected' : '' }}>Owner Relocation/Moving</option>
+                                <option value="Owner Illness/Death" {{ $selectedValue === 'Owner Illness/Death' ? 'selected' : '' }}>Owner Illness/Death</option>
+                                <option value="Financial Hardship" {{ $selectedValue === 'Financial Hardship' ? 'selected' : '' }}>Financial Hardship</option>
+                                <option value="Landlord/Housing Restriction" {{ $selectedValue === 'Landlord/Housing Restriction' ? 'selected' : '' }}>Landlord/Housing Restriction</option>
+                                <option value="Lifestyle/Schedule Change" {{ $selectedValue === 'Lifestyle/Schedule Change' ? 'selected' : '' }}>Lifestyle/Schedule Change</option>
+                                <option value="Incompatibility with Existing Pets" {{ $selectedValue === 'Incompatibility with Existing Pets' ? 'selected' : '' }}>Incompatibility with Existing Pets</option>
+                                <option value="Incompatibility with Children" {{ $selectedValue === 'Incompatibility with Children' ? 'selected' : '' }}>Incompatibility with Children</option>
+                                <option value="Household Allergies" {{ $selectedValue === 'Household Allergies' ? 'selected' : '' }}>Household Allergies</option>
+                                <option value="Needs More Space/Exercise" {{ $selectedValue === 'Needs More Space/Exercise' ? 'selected' : '' }}>Needs More Space/Exercise</option>
+                                <option value="Behavioral Issues" {{ $selectedValue === 'Behavioral Issues' ? 'selected' : '' }}>Behavioral Issues (Requires Detail in Notes)</option>
                             </select>
                             @error('adoption_reason') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
                         </div>

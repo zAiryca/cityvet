@@ -59,7 +59,7 @@
                                 <p class="text-lg font-semibold text-gray-900">{{ ucfirst($pet->gender) }}</p>
                             </div>
                             <div>
-                                <p class="text-sm font-medium text-gray-600">Age</p>
+                                <p class="text-sm font-medium text-gray-600">Estimated Age</p>
                                 <p class="text-lg font-semibold text-gray-900">{{ $pet->estimated_age }}</p>
                             </div>
                             <div>
@@ -83,10 +83,37 @@
                                 <p class="mt-2 text-gray-900">{{ $pet->description }}</p>
                             </div>
                         @endif
+
+                        {{-- Adoption meta visible for adoptable pets that were not previously impounded --}}
+                        @if($pet->status === 'adoptable' && !$pet->impounded_date)
+                            @php
+                                    $adoptionReasonLabels = [
+                                        'surrendered_by_owner' => 'Surrendered by Owner',
+                                        'remained_unclaimed' => 'Remained Unclaimed',
+                                        'found_by_citizen' => 'Found by Citizen',
+                                    ];
+                                    if (!empty($pet->adoption_reason_other)) {
+                                        $adoptionLabel = $pet->adoption_reason_other;
+                                    } else {
+                                        $adoptionLabel = $adoptionReasonLabels[$pet->adoption_reason] ?? $pet->adoption_reason;
+                                    }
+                            @endphp
+
+                            <div class="p-4 mt-6 rounded-lg bg-green-50">
+                                <p class="text-sm font-medium text-gray-600">Adoption Information</p>
+                                @if($pet->adoption_reason)
+                                    <p class="mt-2"><strong>Adoption Reason:</strong> {{ $adoptionLabel }}</p>
+                                @endif
+                                @if($pet->adoption_notes)
+                                    <p class="mt-2"><strong>Adoption Notes:</strong> {{ $pet->adoption_notes }}</p>
+                                @endif
+                            </div>
+                        @endif
                     </div>
                 </div>
 
                 <!-- Requests Timeline Card -->
+                @if(!in_array($pet->status, ['claimed','adopted']))
                 <div class="overflow-hidden bg-white rounded-lg shadow-md">
                     <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
                         <h2 class="text-xl font-bold text-gray-900">📊 Claim/Adoption Requests</h2>
@@ -254,6 +281,7 @@
                         @endif
                     </div>
                 </div>
+                @endif
             </div>
 
             <!-- Sidebar: Quick Actions -->
@@ -321,9 +349,11 @@
                             </div>
                         @endif
 
+                        @if(!in_array($pet->status, ['claimed','adopted']))
                         <a href="{{ route('admin.pets.edit', $pet) }}" class="block w-full px-4 py-3 font-semibold text-center text-gray-700 transition bg-white border-2 border-gray-300 rounded-lg hover:bg-gray-50">
                             ✏️ Edit Pet
                         </a>
+                        @endif
 
                         <form action="{{ route('admin.pets.destroy', $pet) }}" method="POST">
                             @csrf @method('DELETE')
@@ -335,11 +365,11 @@
                     </div>
                 </div>
 
-                <!-- Owner Information (show only after claimed/adopted) -->
+                <!-- New Owner Information (show only after claimed/adopted) -->
                 @if($pet->user && in_array($pet->status, ['claimed','adopted']))
                     <div class="overflow-hidden bg-white rounded-lg shadow-md">
                         <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-                            <h2 class="text-lg font-bold text-gray-900">👤 Owner Information</h2>
+                            <h2 class="text-lg font-bold text-gray-900">👤 New Owner Information</h2>
                         </div>
                         <div class="px-6 py-6">
                             <div class="grid grid-cols-1 gap-3 text-sm text-gray-700 md:grid-cols-2">
@@ -359,6 +389,10 @@
                                     <p class="text-xs font-medium text-gray-600">Complete Address</p>
                                     <p class="font-semibold text-gray-900">{{ trim(($pet->user->street ?? '') . ' ' . ($pet->user->barangay ?? '') . ' ' . ($pet->user->city_municipality ?? '') . ' ' . ($pet->user->province ?? '') . ' ' . ($pet->user->zip_code ?? '')) ?: 'Not provided' }}</p>
                                 </div>
+                                <div>
+                                    <p class="text-xs font-medium text-gray-600">Birthday</p>
+                                    <p class="font-semibold text-gray-900">{{ $pet->user->birthday ? $pet->user->birthday->format('M d, Y') : 'Not provided' }}</p>
+                                </div>
                             </div>
 
                             @if($pet->user->id_photo)
@@ -372,9 +406,14 @@
                 @endif
 
                 <!-- Pet Timeline -->
+                @php
+                    $latestCompleted = $pet->requests->where('status', 'completed')->sortByDesc('updated_at')->first();
+                    $latestClaim = $pet->requests->where('status', 'completed')->where('type', 'claim')->sortByDesc('updated_at')->first();
+                    $latestAdopt = $pet->requests->where('status', 'completed')->where('type', 'adopt')->sortByDesc('updated_at')->first();
+                @endphp
                 <div class="overflow-hidden bg-white rounded-lg shadow-md">
                     <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-                        <h2 class="text-lg font-bold text-gray-900">📅 Timeline</h2>
+                        <h2 class="text-lg font-bold text-gray-900">Timeline</h2>
                     </div>
                     <div class="px-6 py-6 space-y-3">
                         @if($pet->impounded_date)
@@ -384,17 +423,23 @@
                             </div>
                         @endif
 
-                        @if($pet->decision_date)
+                        {{-- Show Adoptable Date only when appropriate. If the pet was impounded and later directly claimed (no adoptable phase), hide adoptable date. --}}
+                        @if($pet->decision_date && !($pet->impounded_date && $pet->status === 'claimed'))
                             <div class="flex justify-between">
                                 <p class="text-xs font-medium text-gray-600">Adoptable Date</p>
                                 <p class="font-semibold text-gray-900">{{ $pet->decision_date->format('M d, Y') }}</p>
                             </div>
                         @endif
 
-                        @if(in_array($pet->status, ['adopted','claimed']))
+                        @if($pet->status === 'claimed')
                             <div class="flex justify-between">
-                                <p class="text-xs font-medium text-gray-600">Marked On</p>
-                                <p class="font-semibold text-gray-900">{{ $pet->updated_at->format('M d, Y H:i') }}</p>
+                                <p class="text-xs font-medium text-gray-600">Claimed On</p>
+                                <p class="font-semibold text-gray-900">{{ $latestClaim ? $latestClaim->updated_at->format('M d, Y H:i') : $pet->updated_at->format('M d, Y H:i') }}</p>
+                            </div>
+                        @elseif($pet->status === 'adopted')
+                            <div class="flex justify-between">
+                                <p class="text-xs font-medium text-gray-600">Adopted On</p>
+                                <p class="font-semibold text-gray-900">{{ $latestAdopt ? $latestAdopt->updated_at->format('M d, Y H:i') : ($latestCompleted ? $latestCompleted->updated_at->format('M d, Y H:i') : $pet->updated_at->format('M d, Y H:i')) }}</p>
                             </div>
                         @elseif($completedRequest)
                             <div class="flex justify-between">

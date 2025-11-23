@@ -21,8 +21,9 @@ class ProfileUpdateRequest extends FormRequest
             'last_name' => ['required', 'string', 'max:255'],
             'gender' => ['required', 'in:male,female,other'],
             'birthday' => ['required', 'date', 'before:today'],
-            'contact_number' => ['required', 'regex:/^09\d{10}$/'],
-            'emergency_contact' => ['required', 'regex:/^09\d{09}$/'],
+                // Expect Philippine mobile numbers: 11 digits starting with 09 (e.g. 09123025471)
+                'contact_number' => ['required', 'regex:/^09\\d{9}$/'],
+                'emergency_contact' => ['required', 'regex:/^09\\d{9}$/'],
             'street' => ['required', 'string', 'max:255'],
             'barangay' => ['required', 'string', 'max:255'],
             'city_municipality' => ['required', 'string', 'max:255'],

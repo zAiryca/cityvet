@@ -103,37 +103,42 @@ class PetController extends Controller
         $additionalData = [];
         if ($request->type === 'adopt') {
             $additionalData = [
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
-                'middle_name' => $request->middle_name,
-                'address' => $request->address,
-                'contact_number' => $request->contact_number,
-                'email' => $request->email,
-                'date_of_birth' => $request->date_of_birth,
-                'dwelling_type' => $request->dwelling_type,
-                'landlord_permission' => $request->landlord_permission,
-                'fenced_property' => $request->fenced_property,
-                'adults_count' => $request->adults_count,
-                'children_count' => $request->children_count,
-                'allergies' => $request->allergies,
-                'other_pets' => $request->other_pets,
-                'other_pets_list' => $request->other_pets_list,
-                'pet_living_area' => $request->pet_living_area,
-                'certify_info' => $request->certify_info,
-                'agree_terms' => $request->agree_terms,
+                'first_name' => $request->first_name ?? Auth::user()->first_name ?? null,
+                'last_name' => $request->last_name ?? Auth::user()->last_name ?? null,
+                'middle_name' => $request->middle_name ?? Auth::user()->middle_name ?? null,
+                'address' => $request->address ?? trim((Auth::user()->street ?? '') . ', ' . (Auth::user()->barangay ?? '') . ', ' . (Auth::user()->city_municipality ?? '')),
+                'contact_number' => $request->contact_number ?? Auth::user()->contact_number ?? null,
+                'email' => $request->email ?? Auth::user()->email ?? null,
+                // Prefer explicit form value, fall back to user's profile birthday
+                'date_of_birth' => $request->date_of_birth ?? (Auth::user()->birthday ? Auth::user()->birthday->format('Y-m-d') : null),
+                'dwelling_type' => $request->dwelling_type ?? null,
+                'landlord_permission' => $request->landlord_permission ?? null,
+                'fenced_property' => $request->fenced_property ?? null,
+                'adults_count' => $request->adults_count ?? null,
+                'children_count' => $request->children_count ?? null,
+                'allergies' => $request->allergies ?? null,
+                'other_pets' => $request->other_pets ?? null,
+                'other_pets_list' => $request->other_pets_list ?? null,
+                'pet_living_area' => $request->pet_living_area ?? null,
+                'certify_info' => $request->certify_info ?? null,
+                'agree_terms' => $request->agree_terms ?? null,
+                // include user id photo path (from hidden form input or profile)
+                'id_photo_path' => $request->id_photo_path ?? Auth::user()->id_photo ?? null,
             ];
         } elseif ($request->type === 'claim') {
             $additionalData = [
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
-                'middle_name' => $request->middle_name,
-                'address' => $request->address,
-                'contact_number' => $request->contact_number,
-                'email' => $request->email,
-                // 'birthday' => Auth::user()->birthday ? Auth::user()->birthday->format('Y-m-d') : null,
-                 'date_of_birth' => $request->date_of_birth,
-                'certify_info' => $request->certify_info,
-                'agree_terms' => $request->agree_terms,
+                'first_name' => $request->first_name ?? Auth::user()->first_name ?? null,
+                'last_name' => $request->last_name ?? Auth::user()->last_name ?? null,
+                'middle_name' => $request->middle_name ?? Auth::user()->middle_name ?? null,
+                'address' => $request->address ?? trim((Auth::user()->street ?? '') . ', ' . (Auth::user()->barangay ?? '') . ', ' . (Auth::user()->city_municipality ?? '')),
+                'contact_number' => $request->contact_number ?? Auth::user()->contact_number ?? null,
+                'email' => $request->email ?? Auth::user()->email ?? null,
+                // prefer form value, otherwise use profile birthday
+                'date_of_birth' => $request->date_of_birth ?? (Auth::user()->birthday ? Auth::user()->birthday->format('Y-m-d') : null),
+                'certify_info' => $request->certify_info ?? null,
+                'agree_terms' => $request->agree_terms ?? null,
+                // include id photo path for claim verification
+                'id_photo_path' => $request->id_photo_path ?? Auth::user()->id_photo ?? null,
             ];
         }
 
@@ -145,6 +150,10 @@ class PetController extends Controller
                 $photoPaths[] = $path;
             }
         }
+
+        // Normalize additional data: ensure keys exist so stored JSON is self-contained
+        $additionalData['date_of_birth'] = $additionalData['date_of_birth'] ?? (Auth::user()->birthday ? Auth::user()->birthday->format('Y-m-d') : null);
+        $additionalData['id_photo_path'] = $additionalData['id_photo_path'] ?? (Auth::user()->id_photo ?? null);
 
         // Create the request (store arrays — the model casts will handle JSON)
         $petRequest = $pet->requests()->create([

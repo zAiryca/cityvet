@@ -62,6 +62,9 @@ class PetController extends Controller
             'impounded_date' => 'nullable|date|required_if:status,impounded',
             'caught_location' => 'nullable|string|max:255',
             'decision_date' => 'nullable|date|required_if:status,adoptable',
+            'adoption_reason' => 'nullable|string|max:255',
+            'adoption_reason_other' => 'nullable|string|max:255',
+            'adoption_notes' => 'nullable|string',
             'remaining_days' => 'nullable|integer|min:0',
             'user_id' => 'nullable|exists:users,id',  // Optional owner
         ]);
@@ -76,6 +79,35 @@ class PetController extends Controller
             $validated['photo'] = $request->file('photo')->store('pets', 'public');
         }
 
+        // Map human-readable adoption reason labels (from form) to DB enum keys
+        $labelToKey = [
+            'Owner Relocation/Moving' => 'surrendered_by_owner',
+            'Owner Illness/Death' => 'surrendered_by_owner',
+            'Financial Hardship' => 'other',
+            'Landlord/Housing Restriction' => 'other',
+            'Lifestyle/Schedule Change' => 'other',
+            'Incompatibility with Existing Pets' => 'other',
+            'Incompatibility with Children' => 'other',
+            'Household Allergies' => 'other',
+            'Needs More Space/Exercise' => 'other',
+            'Behavioral Issues' => 'other',
+        ];
+
+        if (!empty($validated['adoption_reason'])) {
+            $val = $validated['adoption_reason'];
+            if (array_key_exists($val, $labelToKey)) {
+                $mapped = $labelToKey[$val];
+                $validated['adoption_reason'] = $mapped;
+                // Always store the human-selected label so show pages can display exact choice
+                $validated['adoption_reason_other'] = $val;
+            } else {
+                // If label isn't in mapping, assume it's a human string — store under 'other'
+                $validated['adoption_reason_other'] = $val;
+                $validated['adoption_reason'] = 'other';
+            }
+        }
+
+        // Persist adoption fields (they are allowed in $validated and Pet fillable)
         Pet::create($validated);
 
         return redirect()->route('admin.pets.index')->with('success', 'Pet added.');
@@ -109,6 +141,10 @@ class PetController extends Controller
             'photo' => 'nullable|image|max:10240',
             'status' => 'required|in:impounded,adoptable,adopted,claimed,unclaimed,unadopted',
             'impounded_date' => 'nullable|date|required_if:status,impounded',
+            'decision_date' => 'nullable|date|required_if:status,adoptable',
+            'adoption_reason' => 'nullable|string|max:255',
+            'adoption_reason_other' => 'nullable|string|max:255',
+            'adoption_notes' => 'nullable|string',
             'caught_location' => 'nullable|string|max:255',
             'remaining_days' => 'nullable|integer|min:0',
             'user_id' => 'nullable|exists:users,id',
@@ -126,6 +162,34 @@ class PetController extends Controller
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($pet->photo);
             }
             $validated['photo'] = $request->file('photo')->store('pets', 'public');
+        }
+
+        // Map human-readable adoption reason labels (from form) to DB enum keys
+        $labelToKey = [
+            'Owner Relocation/Moving' => 'surrendered_by_owner',
+            'Owner Illness/Death' => 'surrendered_by_owner',
+            'Financial Hardship' => 'other',
+            'Landlord/Housing Restriction' => 'other',
+            'Lifestyle/Schedule Change' => 'other',
+            'Incompatibility with Existing Pets' => 'other',
+            'Incompatibility with Children' => 'other',
+            'Household Allergies' => 'other',
+            'Needs More Space/Exercise' => 'other',
+            'Behavioral Issues' => 'other',
+        ];
+
+        if (!empty($validated['adoption_reason'])) {
+            $val = $validated['adoption_reason'];
+            if (array_key_exists($val, $labelToKey)) {
+                $mapped = $labelToKey[$val];
+                $validated['adoption_reason'] = $mapped;
+                // Always keep the human-selected label so show pages display the exact choice
+                $validated['adoption_reason_other'] = $val;
+            } else {
+                // Not in mapping: store as 'other' and keep human label
+                $validated['adoption_reason_other'] = $val;
+                $validated['adoption_reason'] = 'other';
+            }
         }
 
         $pet->update($validated);

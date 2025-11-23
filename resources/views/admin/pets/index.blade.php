@@ -91,7 +91,26 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                    {{ $pet->impounded_date ? $pet->impounded_date->format('M d, Y') : ($pet->adoptable_date ? $pet->adoptable_date->format('M d, Y') : 'N/A') }}
+                                    @php
+                                        $impounded = $pet->impounded_date;
+                                        $adoptable = $pet->decision_date ?? $pet->adoptable_date ?? null;
+                                    @endphp
+
+                                    @if($pet->status === 'impounded')
+                                        {{ $impounded ? $impounded->format('M d, Y') : 'N/A' }}
+                                    @elseif($pet->status === 'adoptable')
+                                        {{ $adoptable ? $adoptable->format('M d, Y') : ($impounded ? $impounded->format('M d, Y') : 'N/A') }}
+                                    @else
+                                        @if($impounded && $adoptable)
+                                            {{ $impounded->format('M d, Y') }} → {{ $adoptable->format('M d, Y') }}
+                                        @elseif($impounded)
+                                            {{ $impounded->format('M d, Y') }}
+                                        @elseif($adoptable)
+                                            {{ $adoptable->format('M d, Y') }}
+                                        @else
+                                            N/A
+                                        @endif
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 text-sm font-medium whitespace-nowrap">
                                     <a href="{{ route('admin.pets.show', $pet) }}" class="mr-4 text-indigo-600 hover:text-indigo-900">View</a>

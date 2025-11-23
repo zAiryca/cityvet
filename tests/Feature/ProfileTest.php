@@ -66,8 +66,8 @@ class ProfileTest extends TestCase
                 'last_name' => $user->last_name,
                 'gender' => $user->gender ?? 'male',
                 'birthday' => $user->birthday ?? '1990-01-01',
-                'contact_number' => $user->contact_number ?? '091234567890',  // FIXED: 12 digits
-                'emergency_contact' => $user->emergency_contact ?? '099876543210',  // FIXED: 12 digits
+                'contact_number' => $user->contact_number ?? '09123456789',
+                'emergency_contact' => $user->emergency_contact ?? '09987654321',
                 'email' => $user->email,
                 'street' => $user->street ?? '123 Main Street',
                 'barangay' => $user->barangay ?? 'Barangay 1',

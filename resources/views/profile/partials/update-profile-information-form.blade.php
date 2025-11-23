@@ -54,13 +54,13 @@
 
         <div>
             <x-input-label for="contact_number" :value="__('Contact Number')" />
-            <x-text-input id="contact_number" name="contact_number" type="text" class="block w-full mt-1" :value="old('contact_number', $user->contact_number)" required autocomplete="tel" />
+            <x-text-input id="contact_number" name="contact_number" type="tel" class="block w-full mt-1" :value="old('contact_number', $user->contact_number)" required autocomplete="tel" maxlength="11" pattern="09[0-9]{9}" placeholder="09123456789" />
             <x-input-error class="mt-2" :messages="$errors->get('contact_number')" />
         </div>
 
         <div>
             <x-input-label for="emergency_contact" :value="__('Emergency Contact Number')" />
-            <x-text-input id="emergency_contact" name="emergency_contact" type="text" class="block w-full mt-1" :value="old('emergency_contact', $user->emergency_contact)" autocomplete="tel" />
+            <x-text-input id="emergency_contact" name="emergency_contact" type="tel" class="block w-full mt-1" :value="old('emergency_contact', $user->emergency_contact)" autocomplete="tel" maxlength="11" pattern="09[0-9]{9}" placeholder="09123456789" />
             <x-input-error class="mt-2" :messages="$errors->get('emergency_contact')" />
         </div>
 
