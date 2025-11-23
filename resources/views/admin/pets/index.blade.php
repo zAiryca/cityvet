@@ -57,7 +57,7 @@
                         <tr>
                             <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">#</th>
                             <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">ID</th>
-                            <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Photo</th>
+                            <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Photo / Name</th>
                             <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Species/Breed</th>
                             <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Status</th>
                             <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Impounded/Adopt Date</th>
@@ -75,8 +75,8 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
-                                        <img src="{{ $pet->photo ? asset('storage/' . $pet->photo) : 'https://via.placeholder.com/40?text=' . substr($pet->display_code, -2) }}" alt="{{ $pet->pet_name }}" class="w-10 h-10 mr-4 rounded-full">
-                                        <span class="font-medium">{{ $pet->pet_name }}</span>
+                                        <img src="{{ $pet->photo ? asset('storage/' . $pet->photo) : 'https://via.placeholder.com/40?text=' . substr($pet->display_code, -2) }}" alt="{{ $pet->name }}" class="w-10 h-10 mr-4 rounded-full">
+                                        <span class="font-medium">{{ $pet->name }}</span>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">{{ $pet->species }} / {{ $pet->breed }}</td>

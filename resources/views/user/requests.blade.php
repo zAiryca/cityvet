@@ -12,16 +12,16 @@
         <div class="border-b border-gray-200">
             <nav class="flex px-6 -mb-px space-x-8" aria-label="Tabs">
                 <a href="{{ route('user.requests', array_merge(request()->query(), ['status' => ''])) }}" class="tab-link whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm {{ !request('status') ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
-                    All ({{ $requests->total() }})
+                    All
                 </a>
                 <a href="{{ route('user.requests', array_merge(request()->query(), ['status' => 'pending'])) }}" class="tab-link whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm {{ request('status') === 'pending' ? 'border-yellow-500 text-yellow-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
-                    Pending ({{ $requests->where('status', 'pending')->count() }})
+                    Pending
                 </a>
                 <a href="{{ route('user.requests', array_merge(request()->query(), ['status' => 'approved'])) }}" class="tab-link whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm {{ request('status') === 'approved' ? 'border-green-500 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
-                    Approved ({{ $requests->where('status', 'approved')->count() }})
+                    Approved
                 </a>
                 <a href="{{ route('user.requests', array_merge(request()->query(), ['status' => 'denied'])) }}" class="tab-link whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm {{ request('status') === 'denied' ? 'border-red-500 text-red-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
-                    Denied ({{ $requests->where('status', 'denied')->count() }})
+                    Denied
                 </a>
             </nav>
         </div>
@@ -49,7 +49,8 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Code / Title</th>
+                        <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">#</th>
+                        <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Code Name</th>
                         <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Photo</th>
                         <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Species / Breed</th>
                         <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Request Status</th>
@@ -59,13 +60,16 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    @foreach($requests as $request)
+                    @foreach($requests as $index => $request)
                         @php $item = $request->requestable; @endphp
                         <tr>
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
+                                {{ $requests->firstItem() + $index }}
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm font-medium text-gray-900">
                                     @if($item && $request->requestable_type === 'App\\Models\\Pet')
-                                        {{ $item->display_code }} — {{ $item->name }}
+                                        {{ $item->display_code }}
                                     @elseif($item && $request->requestable_type === 'App\\Models\\Announcement')
                                         {{ Str::limit($item->title, 40) }}
                                     @else

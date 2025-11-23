@@ -213,6 +213,7 @@ Route::middleware('setlocale')->group(function () {
 
         // Reports
         Route::get('/reports/generate', [ReportController::class, 'generate'])->name('reports.generate');
+        Route::post('/reports/export', [ReportController::class, 'export'])->name('reports.export');
 
         // Users management
         Route::resource('users', UserController::class)->only(['index', 'show', 'edit', 'update', 'destroy']);

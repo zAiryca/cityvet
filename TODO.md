@@ -60,3 +60,12 @@ desihning phase
 generate report - statistics optional 
 
 then user account
+
+
+
+may claimed adopted sa unlcaimed unadopted
+
+
+request imppounded to show id_photo
+
+timeline ng impounded and adoptable 
