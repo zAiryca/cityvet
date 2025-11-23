@@ -105,26 +105,38 @@
                             <span class="text-gray-600">Color/Markings:</span>
                             <span class="font-medium">{{ $pet->color_markings ?? 'Not specified' }}</span>
                         </div>
-                        @if($pet->status === 'impounded')
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Impounded Date:</span>
-                                <span class="font-medium">{{ $pet->impounded_date ? $pet->impounded_date->format('M d, Y') : 'N/A' }}</span>
+                        <div class="overflow-hidden bg-white rounded-lg shadow-sm">
+                            <div class="px-4 py-3 bg-gray-50 border border-gray-100 rounded-t">
+                                <h3 class="text-sm font-semibold text-gray-900">📅 Timeline</h3>
                             </div>
-                        @elseif($pet->status === 'adoptable')
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Adoptable Date:</span>
-                                <span class="font-medium">{{ $pet->created_at->format('M d, Y') }}</span>
+                            <div class="p-4 space-y-3">
+                                @if($pet->impounded_date)
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Impounded</span>
+                                        <span class="font-medium">{{ $pet->impounded_date->format('M d, Y') }}</span>
+                                    </div>
+                                @endif
+
+                                @if($pet->decision_date)
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Adoptable Date</span>
+                                        <span class="font-medium">{{ $pet->decision_date->format('M d, Y') }}</span>
+                                    </div>
+                                @endif
+
+                                @if($pet->remaining_days !== null)
+                                    @php $remainingDays = max(0, (int) floor($pet->remaining_days)); @endphp
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Days remaining</span>
+                                        <span class="font-medium {{ $remainingDays <= 1 ? 'text-red-600 font-bold' : 'text-orange-600' }}">{{ $remainingDays }} day{{ $remainingDays !== 1 ? 's' : '' }}</span>
+                                    </div>
+                                @endif
+
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Last Updated</span>
+                                    <span class="font-medium">{{ $pet->updated_at->format('M d, Y H:i') }}</span>
+                                </div>
                             </div>
-                        @endif
-                        @if($pet->remaining_days !== null)
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Days Remaining to Claim:</span>
-                            <span class="font-medium {{ (int)$pet->remaining_days <= 1 ? 'text-red-600 font-bold' : 'text-orange-600' }}">{{ (int)$pet->remaining_days }} day{{ (int)$pet->remaining_days !== 1 ? 's' : '' }}</span>
-                        </div>
-                        @endif
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Date Added:</span>
-                            <span class="font-medium">{{ $pet->created_at->format('M d, Y') }}</span>
                         </div>
                     </div>
                 </div>

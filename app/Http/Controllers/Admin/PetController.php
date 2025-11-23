@@ -23,9 +23,14 @@ class PetController extends Controller
             },
             'requests.user',
         ]);
-        $petsQuery->when($status, function ($query, $status) {
-            return $query->where('status', $status);
-        });
+        // If a specific status is requested, filter by it. Otherwise, for
+        // the "All Pets" tab we show only the public-facing statuses
+        // that should be visible to users: 'impounded' and 'adoptable'.
+        if ($status) {
+            $petsQuery->where('status', $status);
+        } else {
+            $petsQuery->whereIn('status', ['impounded', 'adoptable']);
+        }
         $pets = $petsQuery->paginate(10);
 
         return view('admin.pets.index', [

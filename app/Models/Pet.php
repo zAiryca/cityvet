@@ -35,6 +35,30 @@ class Pet extends Model
     return $this->morphMany(\App\Models\PetRequest::class, 'requestable');
 }
 
+    /**
+     * Ensure pet_name is set to the display code when appropriate.
+     * - After creation we can derive a stable `display_code` (PET####) because id exists.
+     * - If `pet_name` is empty or still carries the old ADO/IMP prefix, replace it.
+     */
+    protected static function booted()
+    {
+        static::created(function ($pet) {
+            $display = $pet->display_code ?? null;
+            if ($display) {
+                $currentName = $pet->name ?? '';
+                if (trim($currentName) === '' || preg_match('/^(ADO|IMP)/', $currentName)) {
+                    $pet->name = $display;
+                    // Use saveQuietly to avoid firing observers unnecessarily (Laravel 9+)
+                    if (method_exists($pet, 'saveQuietly')) {
+                        $pet->saveQuietly();
+                    } else {
+                        $pet->save();
+                    }
+                }
+            }
+        });
+    }
+
 
 
 
@@ -50,8 +74,12 @@ class Pet extends Model
     // Helper: Generate IMP/ADO code
     public function getDisplayCodeAttribute()
     {
-        $prefix = $this->status === 'impounded' ? 'IMP' : 'ADO';
-        return $prefix . str_pad($this->id, 4, '0', STR_PAD_LEFT);
+        // Use simple PET + zero-padded id to replace previous ADO/IMP prefixes.
+        if (!$this->id) {
+            return 'PET0000';
+        }
+
+        return 'PET' . str_pad($this->id, 4, '0', STR_PAD_LEFT);
     }
 
     // Helper: Get formatted estimated age

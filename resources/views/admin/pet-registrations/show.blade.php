@@ -37,6 +37,13 @@
 
                 </div>
             </div>
+
+            @if($pet_registration->status === 'denied' && $pet_registration->denial_reason)
+                <div class="px-8 py-4 border-t border-red-100 bg-red-50">
+                    <h4 class="text-sm font-semibold text-red-700">Denial reason</h4>
+                    <p class="mt-2 text-sm text-red-800">{{ $pet_registration->denial_reason }}</p>
+                </div>
+            @endif
         </div>
 
         <!-- Main Content -->
@@ -157,8 +164,8 @@
 
                             <form method="POST" action="{{ route('admin.pet-registrations.deny', $pet_registration) }}" class="block">
                                 @csrf
-                                <label for="denial_reason" class="block text-sm font-medium text-white mb-2">Reason for denial (optional)</label>
-                                <textarea name="denial_reason" id="denial_reason" rows="3" class="mb-3 w-full p-3 text-sm rounded-lg" placeholder="Explain why this registration is denied (optional)"></textarea>
+                                <label for="denial_reason" class="block mb-2 text-sm font-medium text-white">Reason for denial (optional)</label>
+                                <textarea name="denial_reason" id="denial_reason" rows="3" class="w-full p-3 mb-3 text-sm rounded-lg" placeholder="Explain why this registration is denied (optional)"></textarea>
                                 <button type="submit" class="w-full px-4 py-3 font-semibold text-white transition duration-200 bg-orange-600 rounded-lg hover:bg-orange-700"
                                         onclick="return confirm('Are you sure you want to deny this pet registration?')">
                                     ❌ Deny Registration

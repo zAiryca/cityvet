@@ -143,7 +143,7 @@ class PetRequestController extends Controller
                 'status' => $finalStatus,
             ]);
 
-            // Update request status to completed (do this after pet update succeeds)
+            // Update request status to completed (use `updated_at` for timestamp tracking)
             $petRequest->update(['status' => 'completed']);
 
             // Notify requester

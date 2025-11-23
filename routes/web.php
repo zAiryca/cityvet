@@ -110,6 +110,13 @@ Route::middleware('setlocale')->group(function () {
             return view('user.requests', compact('requests'));
         })->name('user.requests');
 
+        // Allow user to cancel their own request
+        Route::delete('/my-requests/{request}', function (\App\Models\PetRequest $request) {
+            if ($request->user_id !== Auth::id()) abort(403);
+            $request->delete();
+            return redirect()->route('user.requests')->with('success', 'Request cancelled.');
+        })->name('user.requests.destroy');
+
         // Claimed or Adopted Pets view (index)
         Route::get('/my-adopted-claimed-pets', function () {
             // Show pets that are marked 'adopted' or 'claimed' by admin

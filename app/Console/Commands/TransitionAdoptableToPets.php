@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Pet;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class TransitionAdoptableToPets extends Command
 {
@@ -27,13 +28,19 @@ class TransitionAdoptableToPets extends Command
     public function handle()
     {
         // Find all adoptable pets that have been adoptable for 4+ days
+        // Use date-only comparison to avoid time-of-day mismatches
+        $cutDate = now()->subDays(4)->toDateString();
         $petsToTransition = Pet::where('status', 'adoptable')
             ->whereNotNull('decision_date')
-            ->where('decision_date', '<=', now()->subDays(4))
+            ->whereDate('decision_date', '<=', $cutDate)
             ->get();
+
+        $this->line('Found ' . $petsToTransition->count() . " adoptable pets meeting decision_date <= {$cutDate}");
 
         $count = 0;
         foreach ($petsToTransition as $pet) {
+            $this->line("Considering pet {$pet->id}: decision_date={$pet->decision_date}");
+            Log::info('TransitionAdoptableToPets considering', ['pet_id' => $pet->id, 'decision_date' => (string)$pet->decision_date]);
             $pet->update([
                 'status' => 'unadopted'
             ]);

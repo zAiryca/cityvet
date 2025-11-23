@@ -55,25 +55,28 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
+                            <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">#</th>
                             <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">ID</th>
-                            <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Name</th>
+                            <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Photo</th>
                             <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Species/Breed</th>
                             <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Status</th>
-                               <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Approved Requester</th>
                             <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Impounded/Adopt Date</th>
                             <th class="px-6 py-3 text-xs font-medium text-left text-gray-500 uppercase">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($pets as $pet)
+                        @foreach($pets as $index => $pet)
                             <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">{{ ($pets->firstItem() ?? 0) + $index }}</div>
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900">{{ $pet->display_code }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
-                                        <img src="{{ $pet->photo ? asset('storage/' . $pet->photo) : 'https://via.placeholder.com/40?text=' . substr($pet->display_code, 0, 1) }}" alt="{{ $pet->display_code }}" class="w-10 h-10 mr-4 rounded-full">
-                                        <span class="font-medium">{{ $pet->display_code }}</span>
+                                        <img src="{{ $pet->photo ? asset('storage/' . $pet->photo) : 'https://via.placeholder.com/40?text=' . substr($pet->display_code, -2) }}" alt="{{ $pet->pet_name }}" class="w-10 h-10 mr-4 rounded-full">
+                                        <span class="font-medium">{{ $pet->pet_name }}</span>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">{{ $pet->species }} / {{ $pet->breed }}</td>
@@ -87,19 +90,6 @@
                                         {{ ucfirst($pet->status) }}
                                     </span>
                                 </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        @php
-                                            $approvedReq = $pet->requests->first();
-                                        @endphp
-                                        @if($approvedReq)
-                                            <a href="{{ route('admin.requests.show', $approvedReq) }}" class="text-sm text-indigo-600 hover:underline">
-                                                {{ $approvedReq->user->first_name ?? 'Requester' }} {{ $approvedReq->user->last_name ?? '' }}
-                                                <span class="text-gray-400 text-xs">({{ ucfirst($approvedReq->type) }})</span>
-                                            </a>
-                                        @else
-                                            <span class="text-sm text-gray-500">—</span>
-                                        @endif
-                                    </td>
                                 <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                                     {{ $pet->impounded_date ? $pet->impounded_date->format('M d, Y') : ($pet->adoptable_date ? $pet->adoptable_date->format('M d, Y') : 'N/A') }}
                                 </td>

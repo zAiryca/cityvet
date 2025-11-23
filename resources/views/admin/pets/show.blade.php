@@ -38,10 +38,10 @@
 
         <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
             <!-- Main Content Area -->
-            <div class="lg:col-span-2 space-y-8">
+            <div class="space-y-8 lg:col-span-2">
                 <!-- Pet Details Card -->
                 <div class="overflow-hidden bg-white rounded-lg shadow-md">
-                    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
                         <h2 class="text-xl font-bold text-gray-900">📋 Pet Information</h2>
                     </div>
                     <div class="px-6 py-6">
@@ -78,9 +78,9 @@
                             </div>
                         </div>
                         @if($pet->description)
-                            <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                            <div class="p-4 mt-6 rounded-lg bg-gray-50">
                                 <p class="text-sm font-medium text-gray-600">Description</p>
-                                <p class="text-gray-900 mt-2">{{ $pet->description }}</p>
+                                <p class="mt-2 text-gray-900">{{ $pet->description }}</p>
                             </div>
                         @endif
                     </div>
@@ -88,7 +88,7 @@
 
                 <!-- Requests Timeline Card -->
                 <div class="overflow-hidden bg-white rounded-lg shadow-md">
-                    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
                         <h2 class="text-xl font-bold text-gray-900">📊 Claim/Adoption Requests</h2>
                     </div>
                     <div class="px-6 py-6">
@@ -100,7 +100,7 @@
                         @endphp
 
                         @if($allRequests->isEmpty())
-                            <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                            <div class="p-4 border border-yellow-200 rounded-lg bg-yellow-50">
                                 <p class="text-yellow-800">ℹ️ No requests yet for this pet.</p>
                             </div>
                         @else
@@ -108,10 +108,10 @@
                             @if($approvedRequests->count() > 0)
                                 <div class="mb-6 space-y-4">
                                     @foreach($approvedRequests as $approvedRequest)
-                                        <div class="p-6 bg-green-50 border-2 border-green-500 rounded-lg">
-                                            <div class="flex items-center mb-4 justify-between">
+                                        <div class="p-6 border-2 border-green-500 rounded-lg bg-green-50">
+                                            <div class="flex items-center justify-between mb-4">
                                                 <div class="flex items-center">
-                                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-green-500 text-white">
+                                                    <span class="inline-flex items-center px-3 py-1 text-sm font-bold text-white bg-green-500 rounded-full">
                                                         ✅ APPROVED
                                                     </span>
                                                     <span class="ml-3 text-sm text-gray-600">
@@ -126,7 +126,7 @@
                                             @endphp
 
                                             {{-- Action buttons for approved request --}}
-                                            <div class="mb-4 flex gap-2">
+                                            <div class="flex gap-2 mb-4">
                                                 @if($approvedRequest->type === 'claim')
                                                     <form method="POST" action="{{ route('admin.requests.finalize', $approvedRequest) }}" class="inline">
                                                         @csrf
@@ -170,8 +170,8 @@
                                             </div>
 
                                             @if($approvedRequest->type === 'adopt' && isset($additionalData['dwelling_type']))
-                                                <div class="p-3 bg-white rounded border border-green-200">
-                                                    <p class="text-xs font-medium text-gray-600 mb-2">Adoption Details</p>
+                                                <div class="p-3 bg-white border border-green-200 rounded">
+                                                    <p class="mb-2 text-xs font-medium text-gray-600">Adoption Details</p>
                                                     <div class="grid grid-cols-2 gap-2 text-sm">
                                                         <div><span class="font-medium">Dwelling:</span> {{ ucfirst(str_replace('_', ' ', $additionalData['dwelling_type'])) }}</div>
                                                         <div><span class="font-medium">Fenced Property:</span> {{ ucfirst($additionalData['fenced_property']) }}</div>
@@ -185,8 +185,8 @@
                                                 </div>
                                             @elseif($approvedRequest->type === 'claim')
                                                 @if($approvedRequest->reason)
-                                                    <div class="p-3 bg-white rounded border border-green-200">
-                                                        <p class="text-xs font-medium text-gray-600 mb-2">Claim Details</p>
+                                                    <div class="p-3 bg-white border border-green-200 rounded">
+                                                        <p class="mb-2 text-xs font-medium text-gray-600">Claim Details</p>
                                                         <p class="text-sm text-gray-900">{{ $approvedRequest->reason }}</p>
                                                     </div>
                                                 @endif
@@ -199,14 +199,14 @@
                             <!-- Pending Requests -->
                             @if($pendingRequests->count() > 0)
                                 <div class="mb-6 overflow-x-auto">
-                                    <h3 class="text-lg font-semibold text-yellow-900 mb-4">⏳ Pending Requests ({{ $pendingRequests->count() }})</h3>
+                                    <h3 class="mb-4 text-lg font-semibold text-yellow-900">⏳ Pending Requests ({{ $pendingRequests->count() }})</h3>
                                     <table class="w-full text-sm">
                                         <thead>
                                             <tr class="border-b border-yellow-300">
-                                                <th class="px-3 py-2 text-left font-medium text-gray-700">Requester</th>
-                                                <th class="px-3 py-2 text-left font-medium text-gray-700">Type</th>
-                                                <th class="px-3 py-2 text-left font-medium text-gray-700">Date</th>
-                                                <th class="px-3 py-2 text-center font-medium text-gray-700">Actions</th>
+                                                <th class="px-3 py-2 font-medium text-left text-gray-700">Requester</th>
+                                                <th class="px-3 py-2 font-medium text-left text-gray-700">Type</th>
+                                                <th class="px-3 py-2 font-medium text-left text-gray-700">Date</th>
+                                                <th class="px-3 py-2 font-medium text-center text-gray-700">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody class="divide-y divide-yellow-200">
@@ -219,15 +219,15 @@
                                                         </span>
                                                     </td>
                                                     <td class="px-3 py-2 text-gray-600">{{ $req->created_at->format('M d, Y') }}</td>
-                                                    <td class="px-3 py-2 text-center space-x-2 flex justify-center">
-                                                        <a href="{{ route('admin.requests.show', $req) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">View</a>
+                                                    <td class="flex justify-center px-3 py-2 space-x-2 text-center">
+                                                        <a href="{{ route('admin.requests.show', $req) }}" class="font-medium text-indigo-600 hover:text-indigo-900">View</a>
                                                         <form method="POST" action="{{ route('admin.requests.approve', $req) }}" class="inline">
                                                             @csrf
-                                                            <button type="submit" class="text-green-600 hover:text-green-900 font-medium" onclick="return confirm('Approve this request?')">Approve</button>
+                                                            <button type="submit" class="font-medium text-green-600 hover:text-green-900" onclick="return confirm('Approve this request?')">Approve</button>
                                                         </form>
                                                         <form method="POST" action="{{ route('admin.requests.deny', $req) }}" class="inline">
                                                             @csrf
-                                                            <button type="submit" class="text-red-600 hover:text-red-900 font-medium" onclick="return confirm('Deny this request?')">Deny</button>
+                                                            <button type="submit" class="font-medium text-red-600 hover:text-red-900" onclick="return confirm('Deny this request?')">Deny</button>
                                                         </form>
                                                     </td>
                                                 </tr>
@@ -240,10 +240,10 @@
                             <!-- Denied Requests -->
                             @if($deniedRequests->count() > 0)
                                 <div>
-                                    <h3 class="text-lg font-semibold text-red-900 mb-4">❌ Denied Requests ({{ $deniedRequests->count() }})</h3>
+                                    <h3 class="mb-4 text-lg font-semibold text-red-900">❌ Denied Requests ({{ $deniedRequests->count() }})</h3>
                                     <div class="space-y-2">
                                         @foreach($deniedRequests as $req)
-                                            <div class="p-3 bg-red-50 border border-red-200 rounded text-sm">
+                                            <div class="p-3 text-sm border border-red-200 rounded bg-red-50">
                                                 <p class="font-semibold text-gray-900">{{ $req->user->name }}</p>
                                                 <p class="text-gray-600">{{ ucfirst($req->type) }} Request - {{ $req->created_at->format('M d, Y') }}</p>
                                             </div>
@@ -260,10 +260,15 @@
             <div class="space-y-6">
                 <!-- Action Buttons -->
                 <div class="overflow-hidden bg-white rounded-lg shadow-md">
-                    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
                         <h2 class="text-lg font-bold text-gray-900">⚡ Actions</h2>
                     </div>
                     <div class="px-6 py-6 space-y-3">
+                        @php
+                            $completedRequest = $pet->requests->where('status', 'completed')->sortByDesc(function($r){
+                                return $r->updated_at ? $r->updated_at->timestamp : 0;
+                            })->first();
+                        @endphp
                         @php
                             $approvedRequests = $pet->requests->where('status', 'approved');
                         @endphp
@@ -275,7 +280,7 @@
                                     <form action="{{ route('admin.pets.mark-claimed', $pet) }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="pet_request_id" value="{{ $approvedRequest->id }}">
-                                        <button type="submit" class="w-full px-4 py-3 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
+                                        <button type="submit" class="w-full px-4 py-3 font-semibold text-white transition bg-blue-600 rounded-lg hover:bg-blue-700"
                                                 onclick="return confirm('Mark this pet as CLAIMED and transfer ownership to {{ $approvedRequest->user->name }}?')">
                                             ✅ Mark as Claimed
                                         </button>
@@ -284,7 +289,7 @@
                                     <form action="{{ route('admin.pets.mark-adopted', $pet) }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="pet_request_id" value="{{ $approvedRequest->id }}">
-                                        <button type="submit" class="w-full px-4 py-3 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 transition"
+                                        <button type="submit" class="w-full px-4 py-3 font-semibold text-white transition bg-green-600 rounded-lg hover:bg-green-700"
                                                 onclick="return confirm('Mark this pet as ADOPTED and transfer ownership to {{ $approvedRequest->user->name }}?')">
                                             🏠 Mark as Adopted
                                         </button>
@@ -301,7 +306,8 @@
                                                 <option value="{{ $req->id }}">{{ $req->user->name }} — {{ ucfirst($req->type) }} (submitted {{ $req->updated_at->diffForHumans() }})</option>
                                             @endforeach
                                         </select>
-                                        <button type="submit" class="w-full px-4 py-3 font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition"
+
+                                        <button type="submit" class="w-full px-4 py-3 font-semibold text-white transition bg-indigo-600 rounded-lg hover:bg-indigo-700"
                                                 onclick="return confirm('Finalize selected approved requester and transfer ownership?')">
                                             ✅ Finalize Selected Requester
                                         </button>
@@ -309,18 +315,19 @@
                                 </div>
                             @endif
                         @elseif(in_array($pet->status, ['impounded', 'adoptable']))
-                            <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        @elseif(in_array($pet->status, ['impounded', 'adoptable']))
+                            <div class="p-4 border border-yellow-200 rounded-lg bg-yellow-50">
                                 <p class="text-sm text-yellow-800">⚠️ No approved request yet. Admin approval required before marking pet as adopted/claimed.</p>
                             </div>
                         @endif
 
-                        <a href="{{ route('admin.pets.edit', $pet) }}" class="w-full px-4 py-3 font-semibold text-center text-gray-700 bg-white border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition block">
+                        <a href="{{ route('admin.pets.edit', $pet) }}" class="block w-full px-4 py-3 font-semibold text-center text-gray-700 transition bg-white border-2 border-gray-300 rounded-lg hover:bg-gray-50">
                             ✏️ Edit Pet
                         </a>
 
                         <form action="{{ route('admin.pets.destroy', $pet) }}" method="POST">
                             @csrf @method('DELETE')
-                            <button type="submit" class="w-full px-4 py-3 font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 transition"
+                            <button type="submit" class="w-full px-4 py-3 font-semibold text-white transition bg-red-600 rounded-lg hover:bg-red-700"
                                     onclick="return confirm('Delete this pet? This action cannot be undone.')">
                                 🗑️ Delete Pet
                             </button>
@@ -328,30 +335,83 @@
                     </div>
                 </div>
 
+                <!-- Owner Information (show only after claimed/adopted) -->
+                @if($pet->user && in_array($pet->status, ['claimed','adopted']))
+                    <div class="overflow-hidden bg-white rounded-lg shadow-md">
+                        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                            <h2 class="text-lg font-bold text-gray-900">👤 Owner Information</h2>
+                        </div>
+                        <div class="px-6 py-6">
+                            <div class="grid grid-cols-1 gap-3 text-sm text-gray-700 md:grid-cols-2">
+                                <div>
+                                    <p class="text-xs font-medium text-gray-600">Full Name</p>
+                                    <p class="font-semibold text-gray-900">{{ $pet->user->name }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-medium text-gray-600">Email</p>
+                                    <p class="font-semibold text-gray-900">{{ $pet->user->email }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-medium text-gray-600">Contact</p>
+                                    <p class="font-semibold text-gray-900">{{ $pet->user->contact_number ?? 'Not provided' }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-medium text-gray-600">Complete Address</p>
+                                    <p class="font-semibold text-gray-900">{{ trim(($pet->user->street ?? '') . ' ' . ($pet->user->barangay ?? '') . ' ' . ($pet->user->city_municipality ?? '') . ' ' . ($pet->user->province ?? '') . ' ' . ($pet->user->zip_code ?? '')) ?: 'Not provided' }}</p>
+                                </div>
+                            </div>
+
+                            @if($pet->user->id_photo)
+                                <div class="mt-4">
+                                    <p class="text-xs font-medium text-gray-600">ID Photo</p>
+                                    <img src="{{ asset('storage/' . $pet->user->id_photo) }}" alt="Owner ID" class="object-cover w-48 h-32 mt-2 border rounded shadow-sm">
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endif
+
                 <!-- Pet Timeline -->
                 <div class="overflow-hidden bg-white rounded-lg shadow-md">
-                    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
                         <h2 class="text-lg font-bold text-gray-900">📅 Timeline</h2>
                     </div>
                     <div class="px-6 py-6 space-y-3">
-                        <div>
-                            <p class="text-xs font-medium text-gray-600">Created</p>
-                            <p class="font-semibold text-gray-900">{{ $pet->created_at->format('M d, Y H:i') }}</p>
-                        </div>
                         @if($pet->impounded_date)
-                            <div>
+                            <div class="flex justify-between">
                                 <p class="text-xs font-medium text-gray-600">Impounded</p>
                                 <p class="font-semibold text-gray-900">{{ $pet->impounded_date->format('M d, Y') }}</p>
-                                <p class="text-sm text-gray-600">Days: {{ $pet->impounded_date->diffInDays(now()) }}</p>
                             </div>
                         @endif
+
                         @if($pet->decision_date)
-                            <div>
-                                <p class="text-xs font-medium text-gray-600">Decision Date</p>
+                            <div class="flex justify-between">
+                                <p class="text-xs font-medium text-gray-600">Adoptable Date</p>
                                 <p class="font-semibold text-gray-900">{{ $pet->decision_date->format('M d, Y') }}</p>
                             </div>
                         @endif
-                        <div>
+
+                        @if(in_array($pet->status, ['adopted','claimed']))
+                            <div class="flex justify-between">
+                                <p class="text-xs font-medium text-gray-600">Marked On</p>
+                                <p class="font-semibold text-gray-900">{{ $pet->updated_at->format('M d, Y H:i') }}</p>
+                            </div>
+                        @elseif($completedRequest)
+                            <div class="flex justify-between">
+                                <p class="text-xs font-medium text-gray-600">Completed On</p>
+                                <p class="font-semibold text-gray-900">{{ $completedRequest->updated_at->format('M d, Y H:i') }}</p>
+                            </div>
+                        @endif
+
+                        @if($pet->remaining_days !== null && !in_array($pet->status, ['adopted','claimed']))
+                            @php $remainingDays = max(0, (int) floor($pet->remaining_days)); @endphp
+                            <div class="flex justify-between">
+                                <p class="text-xs font-medium text-gray-600">Days remaining</p>
+                                <p class="text-sm font-semibold {{ $remainingDays <= 1 ? 'text-red-600' : 'text-orange-600' }}">{{ $remainingDays }} day{{ $remainingDays !== 1 ? 's' : '' }}</p>
+                            </div>
+                        @endif
+
+                        <div class="flex justify-between">
                             <p class="text-xs font-medium text-gray-600">Last Updated</p>
                             <p class="font-semibold text-gray-900">{{ $pet->updated_at->format('M d, Y H:i') }}</p>
                         </div>

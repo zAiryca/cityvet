@@ -6,20 +6,28 @@
 <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-6xl mx-auto">
         <!-- Header -->
+        @php $tab = request('tab'); @endphp
+
         <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
             <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6">
                 <h1 class="text-3xl font-bold text-white">🐾 My Pets</h1>
                 <p class="text-blue-100 mt-2">Manage your pet registrations and pre-registrations</p>
             </div>
 
-            <div class="px-8 py-6 bg-gray-50">
-                <div class="flex justify-between items-center">
-                    <div class="flex space-x-3">
+            <div class="px-8 py-4 bg-gray-50">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <nav class="bg-white rounded-md shadow-sm p-1 flex items-center space-x-1">
+                            <a href="{{ route('pet-registrations.index') }}" class="px-4 py-2 text-sm rounded-md {{ empty($tab) ? 'bg-blue-50 text-blue-700 shadow-sm' : 'text-gray-600 hover:bg-gray-50' }}">All</a>
+                            <a href="{{ route('pet-registrations.index', ['tab' => 'pending']) }}" class="px-4 py-2 text-sm rounded-md {{ ($tab === 'pending') ? 'bg-blue-50 text-blue-700 shadow-sm' : 'text-gray-600 hover:bg-gray-50' }}">Pre-Registered</a>
+                            <a href="{{ route('pet-registrations.index', ['tab' => 'registered']) }}" class="px-4 py-2 text-sm rounded-md {{ ($tab === 'registered') ? 'bg-blue-50 text-blue-700 shadow-sm' : 'text-gray-600 hover:bg-gray-50' }}">Registered</a>
+                            <a href="{{ route('pet-registrations.index', ['tab' => 'denied']) }}" class="px-4 py-2 text-sm rounded-md {{ ($tab === 'denied') ? 'bg-blue-50 text-blue-700 shadow-sm' : 'text-gray-600 hover:bg-gray-50' }}">Denied</a>
+                        </nav>
+                    </div>
+
+                    <div>
                         <a href="{{ route('pet-registrations.create') }}" class="bg-purple-600 text-white px-6 py-3 rounded-xl hover:bg-purple-700 transition duration-200 font-semibold shadow-lg hover:shadow-xl">
                             🚀 Pre-Register New Pet
-                        </a>
-                        <a href="{{ route('pet-registrations.index') }}" class="bg-gray-600 text-white px-6 py-3 rounded-xl hover:bg-gray-700 transition duration-200 font-semibold shadow-lg hover:shadow-xl">
-                            🔄 Refresh
                         </a>
                     </div>
                 </div>
@@ -33,7 +41,7 @@
             $denied = $petRegistrations->where('status', 'denied');
         @endphp
 
-        @if($pending->count() > 0)
+        @if((empty($tab) || $tab === 'pending') && $pending->count() > 0)
             <div class="mb-8">
                 <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
                     <div class="bg-gradient-to-r from-yellow-500 to-orange-500 px-8 py-6">
@@ -68,6 +76,13 @@
                                             <p class="text-sm text-gray-600"><span class="font-medium">Gender:</span> {{ ucfirst($petRegistration->gender) }}</p>
                                             <p class="text-sm text-gray-600"><span class="font-medium">Birthday:</span> {{ $petRegistration->birthday ? $petRegistration->birthday->format('M d, Y') : 'Not specified' }}</p>
                                         </div>
+
+                                        @if($petRegistration->denial_reason)
+                                            <div class="mb-3 p-3 bg-red-50 border border-red-100 rounded">
+                                                <h4 class="text-sm font-semibold text-red-700">Admin reason</h4>
+                                                <p class="text-sm text-red-800 mt-1">{{ $petRegistration->denial_reason }}</p>
+                                            </div>
+                                        @endif
 
                                         <div class="flex space-x-2">
                                             <a href="{{ route('pet-registrations.show', $petRegistration) }}" class="flex-1 bg-purple-600 text-white py-3 rounded-lg text-center hover:bg-purple-700 transition duration-200 font-semibold text-sm shadow-md hover:shadow-lg">
@@ -147,7 +162,7 @@
             </div>
         @endif
 
-    @if($registered->count() > 0)
+    @if((empty($tab) || $tab === 'registered') && $registered->count() > 0)
         <div class="mb-8">
             <h2 class="text-2xl font-semibold mb-4">Registered Pets</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -188,7 +203,7 @@
         </div>
     @endif
 
-    @if($pending->count() == 0 && $registered->count() == 0)
+    @if((empty($tab) || $tab === 'pending') && $pending->count() == 0 && (empty($tab) || $tab === 'registered') && $registered->count() == 0 && (empty($tab) || $tab === 'denied') && $denied->count() == 0)
         <div class="bg-white p-6 rounded-lg shadow text-center">
             <p class="text-gray-500 mb-4">You haven't registered any pets yet.</p>
             <a href="{{ route('pet-registrations.create') }}" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">Pre-Register Your First Pet</a>

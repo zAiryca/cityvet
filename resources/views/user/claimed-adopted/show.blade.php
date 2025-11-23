@@ -3,13 +3,13 @@
 @section('title', '| Pet Details')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen px-4 py-12 bg-gradient-to-br from-blue-50 to-indigo-100 sm:px-6 lg:px-8">
     <div class="max-w-4xl mx-auto">
         <div class="mb-6">
             <a href="{{ route('user.adopted-claimed-pets') }}" class="text-sm text-indigo-600 hover:underline">← Back to Claimed & Adopted Pets</a>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div class="overflow-hidden bg-white shadow-xl rounded-2xl">
             <div class="px-6 py-6">
                 <div class="flex items-start space-x-6">
                     <div class="w-48">
@@ -36,12 +36,76 @@
             </div>
         </div>
 
+        <div class="grid grid-cols-1 gap-6 mt-6">
+            @php
+                $owner = $pet->user;
+                // Prefer completed request that belongs to the current owner
+                $completedRequest = $pet->requests->where('status', 'completed')
+                    ->when($owner, function ($col) use ($owner) { return $col->where('user_id', $owner->id); })
+                    ->sortByDesc('updated_at')
+                    ->first();
+            @endphp
+
+            <!-- Timeline -->
+            <div class="p-6 bg-white rounded-lg shadow">
+                <h3 class="mb-3 text-lg font-semibold text-gray-900">Timeline</h3>
+                <div class="grid grid-cols-1 gap-2 text-sm text-gray-700">
+                    @if($pet->impounded_date)
+                        <div><strong>Impounded:</strong> {{ $pet->impounded_date->format('M d, Y H:i') }}</div>
+                    @endif
+                    @if($pet->decision_date)
+                        <div><strong>Adoptable Date:</strong> {{ $pet->decision_date->format('M d, Y H:i') }}</div>
+                    @endif
+                    @if(in_array($pet->status, ['adopted','claimed']))
+                        <div><strong>Marked On:</strong> {{ $pet->updated_at->format('M d, Y H:i') }}</div>
+                    @elseif($completedRequest)
+                        <div><strong>Completed On:</strong> {{ $completedRequest->updated_at->format('M d, Y H:i') }}</div>
+                    @endif
+                    <div><strong>Last Updated:</strong> {{ $pet->updated_at->format('M d, Y H:i') }}</div>
+                </div>
+            </div>
+
+            <!-- Owner Information (read-only) -->
+            @if($owner)
+                <div class="p-6 bg-white rounded-lg shadow">
+                    <h3 class="mb-3 text-lg font-semibold text-gray-900">Owner Information</h3>
+                    <div class="grid grid-cols-1 gap-3 text-sm text-gray-700 md:grid-cols-2">
+                        <div>
+                            <p class="text-xs font-medium text-gray-600">Full Name</p>
+                            <p class="font-semibold text-gray-900">{{ $owner->name }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-medium text-gray-600">Email</p>
+                            <p class="font-semibold text-gray-900">{{ $owner->email }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-medium text-gray-600">Contact</p>
+                            <p class="font-semibold text-gray-900">{{ $owner->contact_number ?? 'Not provided' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-medium text-gray-600">Complete Address</p>
+                            <p class="font-semibold text-gray-900">
+                                {{ trim(($owner->street ?? '') . ' ' . ($owner->barangay ?? '') . ' ' . ($owner->city_municipality ?? '') . ' ' . ($owner->province ?? '') . ' ' . ($owner->zip_code ?? '')) ?: 'Not provided' }}
+                            </p>
+                        </div>
+                    </div>
+
+                    @if($owner->id_photo)
+                        <div class="mt-4">
+                            <p class="text-xs font-medium text-gray-600">ID Photo</p>
+                            <img src="{{ asset('storage/' . $owner->id_photo) }}" alt="Owner ID" class="object-cover w-48 h-32 mt-2 border rounded shadow-sm">
+                        </div>
+                    @endif
+                </div>
+            @endif
+        </div>
+
         <div class="mt-6">
             <h3 class="mb-3 text-lg font-semibold text-gray-900">Associated Completed Requests</h3>
             @if($pet->requests && $pet->requests->count() > 0)
                 <div class="space-y-3">
                     @foreach($pet->requests as $request)
-                        <div class="p-4 border rounded bg-white">
+                        <div class="p-4 bg-white border rounded">
                             @php
                                 $additionalData = is_array($request->additional_data)
                                     ? $request->additional_data
@@ -60,10 +124,10 @@
 
                             @if($request->photos && count($request->photos) > 0)
                                 <div class="mt-3">
-                                    <p class="text-sm text-gray-700 font-semibold">Uploaded files:</p>
-                                    <div class="flex flex-wrap mt-2 gap-2">
+                                    <p class="text-sm font-semibold text-gray-700">Uploaded files:</p>
+                                    <div class="flex flex-wrap gap-2 mt-2">
                                         @foreach($request->photos as $ph)
-                                            <a href="{{ asset('storage/' . $ph) }}" target="_blank" class="px-3 py-1 text-sm text-indigo-600 bg-indigo-50 rounded">View</a>
+                                            <a href="{{ asset('storage/' . $ph) }}" target="_blank" class="px-3 py-1 text-sm text-indigo-600 rounded bg-indigo-50">View</a>
                                         @endforeach
                                     </div>
                                 </div>

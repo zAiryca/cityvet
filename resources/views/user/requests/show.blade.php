@@ -3,103 +3,270 @@
 @section('title', '| Request Details')
 
 @section('content')
-<div class="max-w-7xl mx-auto py-6 px-4">
-    <h1 class="text-3xl font-bold mb-6">Request Details</h1>
-    <div class="bg-white rounded-lg shadow max-w-4xl">
-        <div class="p-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <p><strong>Type:</strong> {{ ucfirst($request->type) }}</p>
-                @if($request->requestable)
-                    @if($request->requestable_type === 'App\\Models\\Pet')
-                        <p><strong>Pet:</strong> <a href="{{ route('pets.show', $request->requestable) }}" class="text-blue-600 hover:underline">{{ $request->requestable->display_code }}</a> ({{ $request->requestable->species }})</p>
-                    @elseif($request->requestable_type === 'App\\Models\\Event')
-                        <p><strong>Event:</strong> {{ $request->requestable->title }} on {{ $request->requestable->event_date->format('M d, Y') }}</p>
+<div class="py-10 mx-auto max-w-7xl sm:px-6 lg:px-8">
+
+    <div class="flex items-center justify-between pb-4 mb-8 border-b border-gray-200">
+        <h1 class="text-4xl font-extrabold tracking-tight text-gray-900">
+            {{ ucfirst($request->type) }} Request Details
+        </h1>
+        <a href="{{ route('user.requests') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 transition duration-150 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"></path></svg>
+            Back to My Requests
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+
+        <div class="space-y-6 lg:col-span-1">
+
+            <div class="overflow-hidden bg-white border border-gray-100 shadow-lg rounded-xl">
+                <div class="p-6">
+                    <h2 class="flex items-center mb-4 text-xl font-semibold text-gray-900">
+                        <svg class="w-6 h-6 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.001 12.001 0 0012 21a12.001 12.001 0 008.618-3.04z"></path></svg>
+                        Request Status
+                    </h2>
+
+                    <dl class="space-y-3">
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Current Status</dt>
+                            <dd class="mt-1">
+                                <span class="px-3 py-1 text-sm font-bold rounded-full
+                                    @if($request->status === 'pending') bg-yellow-100 text-yellow-800
+                                    @elseif($request->status === 'approved') bg-green-100 text-green-800
+                                    @else bg-red-100 text-red-800
+                                    @endif">
+                                    {{ ucfirst($request->status) }}
+                                </span>
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Submitted On</dt>
+                            <dd class="mt-1 text-gray-900">{{ $request->created_at->format('M d, Y h:i A') }}</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+            @if($request->status === 'pending')
+            <div class="p-6 border border-red-200 shadow-md bg-red-50 rounded-xl">
+                <h3 class="mb-3 text-lg font-semibold text-red-800">Manage Request</h3>
+                <form action="{{ route('user.requests.destroy', $request) }}" method="POST" onsubmit="return confirm('WARNING: Are you sure you want to cancel this request? This action cannot be reversed.');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="inline-flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-white transition duration-150 bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        Cancel Request
+                    </button>
+                </form>
+            </div>
+            @endif
+
+            @if($request->admin_notes)
+            <div class="p-6 border-l-4 border-indigo-500 shadow-lg bg-indigo-50 rounded-xl">
+                <h3 class="flex items-center mb-2 text-lg font-semibold text-indigo-800">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h10m-9 4h6m-9-4L7 4m0 0h6m-6 0h6"></path></svg>
+                    Shelter/Admin Feedback
+                </h3>
+                <p class="text-sm italic text-indigo-700 whitespace-pre-wrap">{{ $request->admin_notes }}</p>
+            </div>
+            @endif
+
+        </div>
+
+        <div class="space-y-8 lg:col-span-2">
+
+            @if($request->requestable)
+                @php
+                    $item = $request->requestable;
+                    $item_type = $request->requestable_type;
+                @endphp
+                @php
+                    // Use the model-provided display code (now PET####)
+                    $displayCode = $item->display_code ?? null;
+                @endphp
+                <div class="p-6 overflow-hidden bg-white border border-gray-100 shadow-lg rounded-xl sm:p-8">
+                    <h2 class="pb-3 mb-6 text-2xl font-bold text-gray-900 border-b">
+                        @if($item_type === 'App\\Models\\Pet')
+                            Associated Pet
+                        @elseif($item_type === 'App\\Models\\Event')
+                            Associated Event
+                        @endif
+                    </h2>
+
+                    @if($item_type === 'App\\Models\\Pet')
+                        <div class="flex items-start space-x-6">
+                            <div class="flex-shrink-0">
+                                @if(isset($item->photo) && $item->photo)
+                                    <img src="{{ asset('storage/' . $item->photo) }}" alt="{{ $displayCode ?? $item->name }}" class="object-cover w-32 h-32 rounded-lg shadow-md">
+                                @else
+                                    <div class="flex items-center justify-center w-32 h-32 text-gray-500 bg-gray-100 rounded-lg">No Photo</div>
+                                @endif
+                            </div>
+                            <div class="grid grid-cols-2 text-sm text-gray-700 gap-x-6 gap-y-3">
+                                <p><strong class="block text-gray-500">ID Code:</strong> {{ $displayCode ?? 'N/A' }}</p>
+                                <p><strong class="block text-gray-500">Name:</strong> {{ $item->name ?? 'N/A' }}</p>
+                                <p><strong class="block text-gray-500">Species:</strong> {{ ($item->species ?? '-') }} </p>
+                                <p><strong class="block text-gray-500">Breed:</strong> {{ ($item->breed ?? '-') }}</p>
+                                <div class="col-span-2">
+                                    <a href="{{ route('pets.show', $item) }}" class="flex items-center font-medium text-indigo-600 hover:underline">
+                                        View Pet Profile
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    @elseif($item_type === 'App\\Models\\Event')
+                        <dl class="grid grid-cols-1 text-sm text-gray-700 md:grid-cols-2 gap-x-6 gap-y-4">
+                            <div>
+                                <dt class="font-medium text-gray-500">Event Title</dt>
+                                <dd class="mt-1 text-gray-900">{{ $item->title }}</dd>
+                            </div>
+                            <div>
+                                <dt class="font-medium text-gray-500">Event Date</dt>
+                                <dd class="mt-1 text-gray-900">{{ $item->event_date->format('F j, Y') }}</dd>
+                            </div>
+                        </dl>
                     @endif
-                @endif
-                <p><strong>Status:</strong>
-                    <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $request->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : ($request->status === 'approved' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800') }}">
-                        {{ ucfirst($request->status) }}
-                    </span>
-                </p>
-                <p><strong>Date:</strong> {{ $request->created_at->format('M d, Y h:i A') }}</p>
+                </div>
+            @endif
+
+            <div class="p-6 overflow-hidden bg-white border border-gray-100 shadow-lg rounded-xl sm:p-8">
+                <h2 class="pb-3 mb-6 text-2xl font-bold text-gray-900 border-b">
+                    Request Rationale
+                </h2>
+                <div class="space-y-6">
+                    <div>
+                        <dt class="text-lg font-medium text-gray-700">Reason for Request</dt>
+                        <dd class="p-4 mt-2 text-gray-700 whitespace-pre-wrap rounded-lg bg-gray-50">{{ $request->reason ?? 'N/A' }}</dd>
+                    </div>
+                    {{-- Removed redundant Contact Info field --}}
+                    {{--
+                    <div>
+                        <dt class="text-lg font-medium text-gray-700">Preferred Contact Information</dt>
+                        <dd class="p-4 mt-2 text-gray-700 rounded-lg bg-gray-50">{{ $request->contact_info ?? 'N/A' }}</dd>
+                    </div>
+                    --}}
+                </div>
             </div>
 
             @if($request->additional_data)
                 @php
-                    $additionalData = json_decode($request->additional_data, true);
+                    // Process additional_data safely
+                    if (is_string($request->additional_data)) {
+                        $additionalData = json_decode($request->additional_data, true) ?? [];
+                    } elseif (is_array($request->additional_data)) {
+                        $additionalData = $request->additional_data;
+                    } else {
+                        $additionalData = (array) $request->additional_data;
+                    }
                 @endphp
-                @if($request->type === 'adopt')
-                    <div class="mb-6">
-                        <h3 class="text-lg font-semibold mb-4">Adopter Information</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <p><strong>Name:</strong> {{ $additionalData['first_name'] ?? '' }} {{ $additionalData['middle_name'] ?? '' }} {{ $additionalData['last_name'] ?? '' }}</p>
-                            <p><strong>Address:</strong> {{ $additionalData['address'] ?? '' }}</p>
-                            <p><strong>Contact:</strong> {{ $additionalData['contact_number'] ?? '' }}</p>
-                            <p><strong>Email:</strong> {{ $additionalData['email'] ?? '' }}</p>
-                           <p><strong>Date of Birth:</strong> {{ isset($additionalData['date_of_birth']) ? date('M d, Y', strtotime($additionalData['date_of_birth'])) : '' }}</p>
-                            <p><strong>Dwelling Type:</strong> {{ ucfirst(str_replace('_', ' ', $additionalData['dwelling_type'] ?? '')) }}</p>
+
+                <div class="p-6 overflow-hidden bg-white border border-gray-100 shadow-lg rounded-xl sm:p-8">
+                    <h2 class="pb-3 mb-6 text-2xl font-bold text-gray-900 border-b">
+                        {{ $request->type === 'adopt' ? 'Adoption Application Details' : 'Claimant Information' }}
+                    </h2>
+
+                    <dl class="grid grid-cols-1 text-sm text-gray-700 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
+
+                        <div>
+                            <dt class="font-medium text-gray-500">Full Name</dt>
+                            <dd class="mt-1 text-gray-900">{{ $additionalData['first_name'] ?? '' }} {{ $additionalData['middle_name'] ?? '' }} {{ $additionalData['last_name'] ?? '' }}</dd>
+                        </div>
+                        <div>
+                            <dt class="font-medium text-gray-500">Contact Number</dt>
+                            <dd class="mt-1 text-gray-900">{{ $additionalData['contact_number'] ?? 'N/A' }}</dd>
+                        </div>
+                        <div>
+                            <dt class="font-medium text-gray-500">Email</dt>
+                            <dd class="mt-1 text-gray-900">{{ $additionalData['email'] ?? 'N/A' }}</dd>
+                        </div>
+                        <div class="col-span-full">
+                            <dt class="font-medium text-gray-500">Address</dt>
+                            <dd class="mt-1 text-gray-900">{{ $additionalData['address'] ?? 'N/A' }}</dd>
+                        </div>
+
+                        @if($request->type === 'adopt')
+                            <h4 class="pt-4 mt-4 text-lg font-semibold text-gray-700 border-t col-span-full">Household & Pet History</h4>
+
+                            <div>
+                                <dt class="font-medium text-gray-500">Date of Birth</dt>
+                                <dd class="mt-1 text-gray-900">{{ isset($additionalData['date_of_birth']) ? date('M d, Y', strtotime($additionalData['date_of_birth'])) : 'N/A' }}</dd>
+                            </div>
+                            <div>
+                                <dt class="font-medium text-gray-500">Dwelling Type</dt>
+                                <dd class="mt-1 text-gray-900">{{ ucfirst(str_replace('_', ' ', $additionalData['dwelling_type'] ?? 'N/A')) }}</dd>
+                            </div>
+                            <div>
+                                <dt class="font-medium text-gray-500">Fenced Property</dt>
+                                <dd class="mt-1 text-gray-900">{{ ucfirst($additionalData['fenced_property'] ?? 'N/A') }}</dd>
+                            </div>
                             @if(isset($additionalData['landlord_permission']))
-                                <p><strong>Landlord Permission:</strong> {{ ucfirst($additionalData['landlord_permission']) }}</p>
+                                <div>
+                                    <dt class="font-medium text-gray-500">Landlord Permission</dt>
+                                    <dd class="mt-1 text-gray-900">{{ ucfirst($additionalData['landlord_permission']) }}</dd>
+                                </div>
                             @endif
-                            <p><strong>Fenced Property:</strong> {{ ucfirst($additionalData['fenced_property'] ?? '') }}</p>
-                            <p><strong>Adults in Home:</strong> {{ $additionalData['adults_count'] ?? '' }}</p>
-                            <p><strong>Children in Home:</strong> {{ $additionalData['children_count'] ?? '' }}</p>
-                            <p><strong>Allergies:</strong> {{ ucfirst($additionalData['allergies'] ?? '') }}</p>
-                            <p><strong>Other Pets:</strong> {{ ucfirst($additionalData['other_pets'] ?? '') }}</p>
+                            <div>
+                                <dt class="font-medium text-gray-500">Adults in Home</dt>
+                                <dd class="mt-1 text-gray-900">{{ $additionalData['adults_count'] ?? 'N/A' }}</dd>
+                            </div>
+                            <div>
+                                <dt class="font-medium text-gray-500">Children in Home</dt>
+                                <dd class="mt-1 text-gray-900">{{ $additionalData['children_count'] ?? 'N/A' }}</dd>
+                            </div>
+                            <div>
+                                <dt class="font-medium text-gray-500">Allergies</dt>
+                                <dd class="mt-1 text-gray-900">{{ ucfirst($additionalData['allergies'] ?? 'N/A') }}</dd>
+                            </div>
+                            <div>
+                                <dt class="font-medium text-gray-500">Other Pets</dt>
+                                <dd class="mt-1 text-gray-900">{{ ucfirst($additionalData['other_pets'] ?? 'N/A') }}</dd>
+                            </div>
+                            <div>
+                                <dt class="font-medium text-gray-500">Pet Living Area</dt>
+                                <dd class="mt-1 text-gray-900">{{ ucfirst($additionalData['pet_living_area'] ?? 'N/A') }}</dd>
+                            </div>
                             @if(isset($additionalData['other_pets_list']))
-                                <p><strong>Other Pets List:</strong> {{ $additionalData['other_pets_list'] }}</p>
+                                <div class="col-span-full">
+                                    <dt class="font-medium text-gray-500">Other Pets List/Details</dt>
+                                    <dd class="p-3 mt-1 text-gray-900 whitespace-pre-wrap rounded-lg bg-gray-50">{{ $additionalData['other_pets_list'] }}</dd>
+                                </div>
                             @endif
-                            <p><strong>Pet Living Area:</strong> {{ ucfirst($additionalData['pet_living_area'] ?? '') }}</p>
-                        </div>
-                        <div class="mt-4">
-                            <p><strong>Reason for Adoption:</strong> {{ $additionalData['reason'] ?? '' }}</p>
-                        </div>
-                    </div>
-                @elseif($request->type === 'claim')
-                    <div class="mb-6">
-                        <h3 class="text-lg font-semibold mb-4">Claimant Information</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <p><strong>Name:</strong> {{ $additionalData['first_name'] ?? '' }} {{ $additionalData['middle_name'] ?? '' }} {{ $additionalData['last_name'] ?? '' }}</p>
-                            <p><strong>Address:</strong> {{ $additionalData['address'] ?? '' }}</p>
-                            <p><strong>Contact:</strong> {{ $additionalData['contact_number'] ?? '' }}</p>
-                            <p><strong>Email:</strong> {{ $additionalData['email'] ?? '' }}</p>
-                        </div>
-                    </div>
-                @endif
+                        @endif
+                    </dl>
+                </div>
             @endif
 
-            <p class="mb-6"><strong>Reason:</strong> {{ $request->reason }}</p>
-            <p class="mb-6"><strong>Contact Info:</strong> {{ $request->contact_info }}</p>
-
-            <!-- Display Photos -->
             @if($request->photos)
                 @php
-                    $photos = json_decode($request->photos, true);
+                    // Process photos safely
+                    if (is_string($request->photos)) {
+                        $photos = json_decode($request->photos, true) ?? [];
+                    } elseif (is_array($request->photos)) {
+                        $photos = $request->photos;
+                    } else {
+                        $photos = (array) $request->photos;
+                    }
                 @endphp
                 @if(is_array($photos) && count($photos) > 0)
-                    <div class="mb-6">
-                        <h3 class="text-lg font-semibold mb-4">Uploaded Photos</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="p-6 overflow-hidden bg-white border border-gray-100 shadow-lg rounded-xl sm:p-8">
+                        <h2 class="pb-3 mb-6 text-2xl font-bold text-gray-900 border-b">
+                            Uploaded Photos (Context)
+                        </h2>
+                        <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
                             @foreach($photos as $photo)
-                                <div class="relative">
-                                    <img src="{{ asset('storage/' . $photo) }}" alt="Request Photo" class="w-full h-48 object-cover rounded-lg shadow-md">
-                                </div>
+                                <a href="{{ asset('storage/' . $photo) }}" target="_blank" rel="noopener noreferrer" class="relative block overflow-hidden transition duration-300 rounded-lg shadow-md group hover:shadow-xl">
+                                    <img src="{{ asset('storage/' . $photo) }}" alt="Request Photo" class="object-cover w-full h-32 transition duration-500 sm:h-40 group-hover:scale-105">
+                                    <div class="absolute inset-0 flex items-center justify-center transition duration-300 bg-black opacity-0 bg-opacity-30 group-hover:opacity-100">
+                                        <span class="text-white text-xs font-semibold p-1.5 bg-black bg-opacity-60 rounded">View</span>
+                                    </div>
+                                </a>
                             @endforeach
                         </div>
                     </div>
                 @endif
             @endif
 
-            @if($request->admin_notes)
-                <div class="mb-6">
-                    <h3 class="text-lg font-semibold mb-4">Admin Notes</h3>
-                    <p class="text-gray-700 bg-gray-100 p-4 rounded">{{ $request->admin_notes }}</p>
-                </div>
-            @endif
-
-            <div class="flex space-x-4">
-                <a href="{{ route('user.requests') }}" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Back to My Requests</a>
-            </div>
         </div>
     </div>
 </div>
