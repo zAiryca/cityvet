@@ -7,6 +7,6 @@
     <h1 class="mb-6 text-3xl font-bold">Adoptable Pets</h1>
     <p class="mb-6">Find your new best friend! These pets are ready for adoption.</p>
 
-    @livewire('pet-search-filter')
+    @livewire('adoptable-pet-search-filter')
 </div>
 @endsection

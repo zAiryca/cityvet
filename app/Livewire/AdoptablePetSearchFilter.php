@@ -4,20 +4,17 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\Poster;
+use App\Models\Pet;
 
-class PosterSearchFilter extends Component
+class AdoptablePetSearchFilter extends Component
 {
     use WithPagination;
 
-    public $search = '';
-    public $type = '';
     public $species = '';
     public $breed = '';
     public $gender = '';
     public $selectedColors = [];
-    public $date_from = '';
-    public $date_to = '';
+    public $search = '';
 
     public $breeds = [
         'Canine' => [
@@ -50,25 +47,14 @@ class PosterSearchFilter extends Component
 
     public function render()
     {
-        $query = Poster::where('approved', true)->where('status', 'active');
+        $query = Pet::where('status', 'adoptable');
 
-        // Apply filters - search across all relevant fields
         if ($this->search) {
             $query->where(function($q) {
-                $q->where('pet_name', 'like', '%' . $this->search . '%')
-                  ->orWhere('species', 'like', '%' . $this->search . '%')
-                  ->orWhere('breed', 'like', '%' . $this->search . '%')
-                  ->orWhere('gender', 'like', '%' . $this->search . '%')
-                  ->orWhere('color_markings', 'like', '%' . $this->search . '%')
-                  ->orWhere(function($subQ) {
-                      $subQ->where('type', 'found')
-                           ->whereRaw("CONCAT('FND', LPAD(id, 4, '0')) LIKE ?", ['%' . $this->search . '%']);
-                  });
+                $q->where('name', 'like', '%' . $this->search . '%')
+                  ->orWhere('description', 'like', '%' . $this->search . '%')
+                  ->orWhere('display_code', 'like', '%' . $this->search . '%');
             });
-        }
-
-        if ($this->type) {
-            $query->where('type', $this->type);
         }
 
         if ($this->species) {
@@ -89,40 +75,31 @@ class PosterSearchFilter extends Component
             }
         }
 
-        if ($this->date_from) {
-            $query->where('date_lost_found', '>=', $this->date_from);
-        }
+        $pets = $query->paginate(12);
 
-        if ($this->date_to) {
-            $query->where('date_lost_found', '<=', $this->date_to);
-        }
-
-        $posters = $query->latest()->paginate(12);
-
-        return view('livewire.poster-search-filter', compact('posters'));
+        return view('livewire.adoptable-pet-search-filter', [
+            'pets' => $pets,
+            'breeds' => $this->breeds,
+            'colors' => $this->colors,
+        ]);
     }
 
     public function updated($property)
     {
-        // If species changes, reset breed
         if ($property === 'species') {
             $this->breed = '';
         }
 
-        // Reset pagination when filters change
         $this->resetPage();
     }
 
     public function clearFilters()
     {
-        $this->search = '';
-        $this->type = '';
         $this->species = '';
         $this->breed = '';
         $this->gender = '';
         $this->selectedColors = [];
-        $this->date_from = '';
-        $this->date_to = '';
+        $this->search = '';
         $this->resetPage();
     }
 }

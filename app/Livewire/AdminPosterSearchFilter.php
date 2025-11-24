@@ -95,11 +95,9 @@ class AdminPosterSearchFilter extends Component
         }
 
         if (!empty($this->selectedColors)) {
-            $query->where(function($q) {
-                foreach ($this->selectedColors as $color) {
-                    $q->orWhere('color_markings', 'like', '%' . $color . '%');
-                }
-            });
+            foreach ($this->selectedColors as $color) {
+                $query->where('color_markings', 'like', '%' . $color . '%');
+            }
         }
 
         if ($this->date_from) {

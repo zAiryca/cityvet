@@ -7,6 +7,6 @@
     <h1 class="text-3xl font-bold mb-6">Impounded Pets</h1>
     <p class="mb-6">Help reunite pets with their owners. These pets are waiting to be claimed.</p>
 
-    @livewire('pet-search-filter')
+    @livewire('impounded-pet-search-filter')
 </div>
 @endsection

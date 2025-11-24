@@ -16,29 +16,29 @@
 
             <!-- Type -->
             <div>
-                <label class="block mb-1 text-xs font-semibold text-gray-700">{{ __('messages.Type') }}</label>
+                <label class="block mb-1 text-xs font-semibold text-gray-700">{{ __('Type') }}</label>
                 <select wire:model.live="type" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
-                    <option value="">{{ __('messages.All') }}</option>
-                    <option value="lost">{{ __('messages.Lost') }}</option>
-                    <option value="found">{{ __('messages.Found') }}</option>
+                    <option value="">{{ __('All') }}</option>
+                    <option value="lost">{{ __('Lost') }}</option>
+                    <option value="found">{{ __('Found') }}</option>
                 </select>
             </div>
 
             <!-- Species -->
             <div>
-                <label class="block mb-1 text-xs font-semibold text-gray-700">{{ __('messages.Species') }}</label>
+                <label class="block mb-1 text-xs font-semibold text-gray-700">{{ __('Species') }}</label>
                 <select wire:model.live="species" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
-                    <option value="">{{ __('messages.All') }}</option>
-                    <option value="Canine">{{ __('messages.Canine') }}</option>
-                    <option value="Feline">{{ __('messages.Feline') }}</option>
+                    <option value="">{{ __('All Species') }}</option>
+                    <option value="Canine">{{ __('Canine') }}</option>
+                    <option value="Feline">{{ __('Feline') }}</option>
                 </select>
             </div>
 
             <!-- Breed -->
             <div>
-                <label class="block mb-1 text-xs font-semibold text-gray-700">{{ __('messages.Breed') }}</label>
+                <label class="block mb-1 text-xs font-semibold text-gray-700">{{ __('Breed') }}</label>
                 <select wire:model.live="breed" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
-                    <option value="">{{ __('messages.All') }}</option>
+                    <option value="">{{ __('All Breeds') }}</option>
                     @if($species && isset($breeds[$species]))
                         @foreach($breeds[$species] as $breedOption)
                             <option value="{{ $breedOption }}">{{ $breedOption }}</option>
@@ -49,12 +49,12 @@
 
             <!-- Gender -->
             <div>
-                <label class="block mb-1 text-xs font-semibold text-gray-700">{{ __('messages.Gender') }}</label>
+                <label class="block mb-1 text-xs font-semibold text-gray-700">{{ __('Gender') }}</label>
                 <select wire:model.live="gender" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
-                    <option value="">{{ __('messages.All') }}</option>
-                    <option value="male">{{ __('messages.Male') }}</option>
-                    <option value="female">{{ __('messages.Female') }}</option>
-                    <option value="unknown">{{ __('messages.Unknown') }}</option>
+                    <option value="">{{ __('All Genders') }}</option>
+                    <option value="male">{{ __('Male') }}</option>
+                    <option value="female">{{ __('Female') }}</option>
+                    <option value="unknown">{{ __('Unknown') }}</option>
                 </select>
             </div>
         </div>
@@ -63,7 +63,7 @@
         <div class="grid grid-cols-1 gap-2 mb-3 md:grid-cols-2 lg:grid-cols-6">
             <!-- Color (4 columns) -->
             <div class="lg:col-span-4">
-                <label class="block mb-1 text-xs font-semibold text-gray-700">{{ __('messages.Color') }}</label>
+                <label class="block mb-1 text-xs font-semibold text-gray-700">{{ __('Color') }}</label>
                 <div class="grid grid-cols-4 gap-1">
                     @foreach($colors as $colorOption)
                         <label class="flex items-center cursor-pointer text-xs">
