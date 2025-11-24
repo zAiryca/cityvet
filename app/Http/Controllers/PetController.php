@@ -174,6 +174,6 @@ class PetController extends Controller
             'status' => $petRequest->status ?? 'pending',
         ]);
 
-        return redirect()->back()->with('success', 'Your request has been submitted successfully!');
+        return redirect()->route('user.requests', ['status' => 'pending'])->with('success', 'Your request has been submitted successfully!');
     }
 }

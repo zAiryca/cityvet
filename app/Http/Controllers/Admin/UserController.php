@@ -15,10 +15,29 @@ class UserController extends Controller
         // Security Check
         if (!auth()->user()->isAdmin()) abort(403);
 
-        // 💡 FIX APPLIED: Removed 'adoptedPets' and 'claimedPets' from withCount()
-        $users = User::withCount(['requests'])->paginate(10);
+        $filter = request('filter', 'all');
+        $search = request('search', ''); // 'first_name', 'middle_name', 'last_name', or empty
+        $query = User::query();
 
-        return view('admin.users.index', compact('users'));
+        // Apply filter based on verification status
+        if ($filter === 'verified') {
+            $query->whereNotNull('email_verified_at');
+        } elseif ($filter === 'not_verified') {
+            $query->whereNull('email_verified_at');
+        }
+
+        // Apply search filter - filter by specific name field
+        if ($search === 'first_name') {
+            $query->orderBy('first_name', 'asc');
+        } elseif ($search === 'middle_name') {
+            $query->orderBy('middle_name', 'asc');
+        } elseif ($search === 'last_name') {
+            $query->orderBy('last_name', 'asc');
+        }
+
+        $users = $query->paginate(10)->appends(request()->query());
+
+        return view('admin.users.index', compact('users', 'filter', 'search'));
     }
 
     public function show(User $user)
@@ -26,8 +45,13 @@ class UserController extends Controller
         // Security Check
         if (!auth()->user()->isAdmin()) abort(403);
 
-        // 💡 FIX APPLIED: Removed 'adoptedPets' and 'claimedPets' from load()
-        $user->load(['posters', 'requests.requestable']);
+        // Load all required relationships for admin profile view
+        $user->load([
+            'petRegistrations',  // Pet registrations
+            'requests',          // All requests (adoption, claims, etc.)
+            'posters',           // Lost & found posters
+            'pets'               // Pets (for adopted/claimed status)
+        ]);
 
         return view('admin.users.show', compact('user'));
     }

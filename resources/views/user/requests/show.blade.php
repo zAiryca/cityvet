@@ -44,6 +44,12 @@
                                 <span class="px-3 py-1 text-sm font-bold rounded-full @if($request->status === 'pending') bg-yellow-100 text-yellow-800 @elseif($request->status === 'approved') bg-green-100 text-green-800 @else bg-red-100 text-red-800 @endif">{{ ucfirst($request->status) }}</span>
                             </dd>
                         </div>
+                        @if($request->status === 'denied' && $request->denial_reason)
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Denial Reason</dt>
+                            <dd class="mt-1 text-sm italic text-gray-700">{{ $request->denial_reason }}</dd>
+                        </div>
+                        @endif
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Date</dt>
                             <dd class="mt-1 text-gray-900">{{ $request->created_at->format('M d, Y h:i A') }}</dd>
@@ -120,8 +126,8 @@
                                 </div>
                             </div>
                             @if($item->medical_notes)
-                                <div class="p-4 rounded-lg bg-blue-50 border border-blue-200">
-                                    <p><strong class="block text-gray-700 mb-1">Medical Information:</strong></p>
+                                <div class="p-4 border border-blue-200 rounded-lg bg-blue-50">
+                                    <p><strong class="block mb-1 text-gray-700">Medical Information:</strong></p>
                                     <p class="text-sm text-gray-700 whitespace-pre-wrap">{{ $item->medical_notes }}</p>
                                 </div>
                             @endif

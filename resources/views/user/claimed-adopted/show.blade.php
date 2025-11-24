@@ -184,7 +184,35 @@
                     @if(!empty($displayOwner['id_photo_path']))
                         <div class="mt-4">
                             <p class="text-xs font-medium text-gray-600">ID Photo</p>
-                            <img src="{{ asset('storage/' . $displayOwner['id_photo_path']) }}" alt="Owner ID" class="object-cover w-48 h-32 mt-2 border rounded shadow-sm">
+                            <div onclick="document.getElementById('claimedAdoptedIdPhotoModal').classList.remove('hidden')"
+                                 class="flex flex-col items-center justify-center w-48 h-32 transition duration-150 ease-in-out bg-black border-2 border-gray-400 rounded-lg cursor-pointer hover:bg-gray-900 mt-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.75 4h2.5a2 2 0 011.664.89l.812 1.22a2 2 0 001.664.89H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </div>
+
+                            <!-- Modal for Full Size ID Photo -->
+                            <div id="claimedAdoptedIdPhotoModal"
+                                 class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 transition-opacity duration-300 bg-black bg-opacity-80"
+                                 onclick="if(event.target.id === 'claimedAdoptedIdPhotoModal') this.classList.add('hidden')">
+                                <div class="relative max-w-3xl overflow-hidden bg-white rounded-lg shadow-2xl">
+                                    <div class="sticky top-0 z-10 flex items-center justify-between p-3 bg-white border-b border-gray-200">
+                                        <h3 class="text-xl font-semibold text-gray-800">Owner ID Photo</h3>
+                                        <button onclick="document.getElementById('claimedAdoptedIdPhotoModal').classList.add('hidden')"
+                                                class="p-2 text-gray-500 transition duration-150 rounded-full hover:bg-gray-100 hover:text-gray-700 focus:outline-none">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="p-6 max-h-[80vh] overflow-y-auto">
+                                        <img src="{{ asset('storage/' . $displayOwner['id_photo_path']) }}"
+                                             alt="Full Size ID Photo"
+                                             class="w-full h-auto rounded-lg shadow-md">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     @endif
                 </div>

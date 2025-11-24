@@ -29,6 +29,11 @@ class PetRequestController extends Controller
             $petsQuery->whereIn('status', ['adoptable', 'impounded']);
         }
 
+        // For denied requests, only show pets with 'denied' status
+        if ($requestStatus === 'denied') {
+            $petsQuery->where('status', 'denied');
+        }
+
         $petsQuery = $petsQuery->with([
 
             'requests' => function ($q) use ($requestStatus, $type) {
@@ -145,6 +150,24 @@ class PetRequestController extends Controller
 
             // Update request status to completed (use `updated_at` for timestamp tracking)
             $petRequest->update(['status' => 'completed']);
+
+            // Auto-deny all OTHER pending/approved requests for this pet with reason
+            $otherRequests = PetRequest::where('requestable_id', $pet->id)
+                ->where('id', '!=', $petRequest->id)
+                ->whereIn('status', ['pending', 'approved'])
+                ->get();
+
+            foreach ($otherRequests as $otherRequest) {
+                $otherRequest->update([
+                    'status' => 'denied',
+                    'denial_reason' => 'Other applicant was chosen'
+                ]);
+
+                // Notify user that their request was denied
+                if ($otherRequest->user) {
+                    $otherRequest->user->notify(new \App\Notifications\RequestStatusNotification($otherRequest, 'denied'));
+                }
+            }
 
             // Notify requester
             if ($petRequest->user) {
