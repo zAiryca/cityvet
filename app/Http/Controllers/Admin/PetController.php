@@ -287,7 +287,7 @@ class PetController extends Controller
             ->where('requestable_type', Pet::class)
             ->where('id', '!=', $approvedRequest->id)
             ->where('status', '!=', 'completed')
-            ->update(['status' => 'denied']);
+            ->update(['status' => 'denied', 'denial_reason' => 'Other applicant was chosen']);
 
         return back()->with('success', 'Pet claimed and ownership transferred to claimant. Other requests have been automatically denied.');
     }

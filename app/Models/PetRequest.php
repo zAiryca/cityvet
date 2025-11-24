@@ -10,7 +10,7 @@ class PetRequest extends Model
 
     protected $fillable = [
         'user_id', 'type', 'status', 'reason', 'contact_info',
-        'requestable_id', 'requestable_type', 'admin_notes', 'photos', 'additional_data'
+        'requestable_id', 'requestable_type', 'admin_notes', 'photos', 'additional_data', 'denial_reason'
     ];
 
     // 💡 RECOMMENDATION: Add casts for automatic JSON handling
