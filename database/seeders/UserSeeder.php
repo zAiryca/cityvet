@@ -10,34 +10,36 @@ class UserSeeder extends Seeder
 {
     public function run()
     {
-        // Admin
+        // Admin - Verified
         User::create([
             'first_name' => 'Admin',
             'middle_name' => null,
             'last_name' => 'CityVet',
-            'contact_number' => null,
-            'street' => null,
-            'barangay' => null,
-            'city_municipality' => null,
-            'province' => null,
-            'email' => 'findfurever87@gmail.com',
-            'password' => Hash::make('Capstone2'),
+            'contact_number' => '09123456789',
+            'street' => 'CityVet Clinic',
+            'barangay' => 'Barangay 1',
+            'city_municipality' => 'City',
+            'province' => 'Province',
+            'email' => 'acp.cityvet@gmail.com',
+            'password' => Hash::make('Accvet234'),
             'role' => 'admin',
+            'email_verified_at' => now(),
         ]);
 
-        // User
+        // Regular User
         User::create([
             'first_name' => 'Erricca',
             'middle_name' => null,
             'last_name' => 'Morales',
-            'contact_number' => null,
-            'street' => null,
-            'barangay' => null,
-            'city_municipality' => null,
-            'province' => null,
+            'contact_number' => '09170000000',
+            'street' => '456 Oak Ave',
+            'barangay' => 'Barangay 2',
+            'city_municipality' => 'Sample City',
+            'province' => 'Sample Province',
             'email' => 'morales.erricca17@gmail.com',
             'password' => Hash::make('Capstone2'),
             'role' => 'user',
+            'email_verified_at' => now(),
         ]);
 
         // Additional User
@@ -53,6 +55,23 @@ class UserSeeder extends Seeder
             'email' => 'jane@example.com',
             'password' => Hash::make('Capstone2'),
             'role' => 'user',
+            'email_verified_at' => now(),
+        ]);
+
+        // Additional test user
+        User::create([
+            'first_name' => 'John',
+            'middle_name' => 'Paul',
+            'last_name' => 'O\'Brien',
+            'contact_number' => '09987654321',
+            'street' => '789 Pine Road',
+            'barangay' => 'Barangay 3',
+            'city_municipality' => 'Test City',
+            'province' => 'Test Province',
+            'email' => 'test@example.com',
+            'password' => Hash::make('TestPass123'),
+            'role' => 'user',
+            'email_verified_at' => now(),
         ]);
     }
 }
