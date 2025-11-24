@@ -38,10 +38,6 @@
                             <option value="">Select Status</option>
                             <option value="impounded" {{ old('status', $pet->status) === 'impounded' ? 'selected' : '' }}>Impounded</option>
                             <option value="adoptable" {{ old('status', $pet->status) === 'adoptable' ? 'selected' : '' }}>Adoptable</option>
-                            <option value="adopted" {{ old('status', $pet->status) === 'adopted' ? 'selected' : '' }}>Adopted</option>
-                            <option value="claimed" {{ old('status', $pet->status) === 'claimed' ? 'selected' : '' }}>Claimed</option>
-                            <option value="unclaimed" {{ old('status', $pet->status) === 'unclaimed' ? 'selected' : '' }}>Unclaimed</option>
-                            <option value="unadopted" {{ old('status', $pet->status) === 'unadopted' ? 'selected' : '' }}>Unadopted</option>
                         </select>
                         @error('status') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
                     </div>
@@ -162,10 +158,6 @@
                             <label class="inline-flex items-center p-2 text-sm font-medium text-gray-700 transition duration-150 rounded-lg bg-gray-50 hover:bg-indigo-50">
                                 <input type="checkbox" name="color_markings[]" value="Cream" {{ in_array('Cream', old('color_markings', explode(',', $pet->color_markings))) ? 'checked' : '' }} class="w-4 h-4 mr-2 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
                                 <span>Cream</span>
-                            </label>
-                            <label class="inline-flex items-center p-2 text-sm font-medium text-gray-700 transition duration-150 rounded-lg bg-gray-50 hover:bg-indigo-50">
-                                <input type="checkbox" name="color_markings[]" value="Red" {{ in_array('Red', old('color_markings', explode(',', $pet->color_markings))) ? 'checked' : '' }} class="w-4 h-4 mr-2 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                                <span>Red</span>
                             </label>
                             <label class="inline-flex items-center p-2 text-sm font-medium text-gray-700 transition duration-150 rounded-lg bg-gray-50 hover:bg-indigo-50">
                                 <input type="checkbox" name="color_markings[]" value="Tabby" {{ in_array('Tabby', old('color_markings', explode(',', $pet->color_markings))) ? 'checked' : '' }} class="w-4 h-4 mr-2 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">

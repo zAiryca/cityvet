@@ -99,26 +99,32 @@
                     </h2>
 
                     @if($item_type === 'App\\Models\\Pet')
-                        <div class="flex items-start space-x-6">
-                            <div class="flex-shrink-0">
-                                @if(isset($item->photo) && $item->photo)
-                                    <img src="{{ asset('storage/' . $item->photo) }}" alt="{{ $displayCode ?? $item->name }}" class="object-cover w-32 h-32 rounded-lg shadow-md">
-                                @else
-                                    <div class="flex items-center justify-center w-32 h-32 text-gray-500 bg-gray-100 rounded-lg">No Photo</div>
-                                @endif
-                            </div>
-                            <div class="grid grid-cols-2 text-sm text-gray-700 gap-x-6 gap-y-3">
-                                <p><strong class="block text-gray-500">ID Code:</strong> {{ $displayCode ?? 'N/A' }}</p>
-                                <p><strong class="block text-gray-500">Name:</strong> {{ $item->name ?? 'N/A' }}</p>
-                                <p><strong class="block text-gray-500">Species:</strong> {{ ($item->species ?? '-') }} </p>
-                                <p><strong class="block text-gray-500">Breed:</strong> {{ ($item->breed ?? '-') }}</p>
-                                <div class="col-span-2">
-                                    <a href="{{ route('pets.show', $item) }}" class="flex items-center font-medium text-indigo-600 hover:underline">
-                                        View Pet Profile
-                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                                    </a>
+                        <div class="flex flex-col space-y-6">
+                            <div class="flex items-start space-x-6">
+                                <div class="flex-shrink-0">
+                                    @if(isset($item->photo) && $item->photo)
+                                        <img src="{{ asset('storage/' . $item->photo) }}" alt="{{ $displayCode ?? $item->name }}" class="object-cover w-40 h-40 rounded-lg shadow-md">
+                                    @else
+                                        <div class="flex items-center justify-center w-40 h-40 text-gray-500 bg-gray-100 rounded-lg">No Photo</div>
+                                    @endif
+                                </div>
+                                <div class="grid grid-cols-2 text-sm text-gray-700 gap-x-6 gap-y-3">
+                                    <p><strong class="block text-gray-500">ID Code:</strong> {{ $displayCode ?? 'N/A' }}</p>
+                                    <p><strong class="block text-gray-500">Name:</strong> {{ $item->name ?? 'N/A' }}</p>
+                                    <p><strong class="block text-gray-500">Species:</strong> {{ ($item->species ?? '-') }} </p>
+                                    <p><strong class="block text-gray-500">Breed:</strong> {{ ($item->breed ?? '-') }}</p>
+                                    <p><strong class="block text-gray-500">Age:</strong> {{ ($item->age ?? 'N/A') }}</p>
+                                    <p><strong class="block text-gray-500">Color:</strong> {{ ($item->color ?? 'N/A') }}</p>
+                                    <p><strong class="block text-gray-500">Weight:</strong> {{ ($item->weight ?? 'N/A') }} kg</p>
+                                    <p><strong class="block text-gray-500">Status:</strong> {{ ucfirst($item->status ?? 'N/A') }}</p>
                                 </div>
                             </div>
+                            @if($item->medical_notes)
+                                <div class="p-4 rounded-lg bg-blue-50 border border-blue-200">
+                                    <p><strong class="block text-gray-700 mb-1">Medical Information:</strong></p>
+                                    <p class="text-sm text-gray-700 whitespace-pre-wrap">{{ $item->medical_notes }}</p>
+                                </div>
+                            @endif
                         </div>
                     @elseif($item_type === 'App\\Models\\Event')
                         <dl class="grid grid-cols-1 text-sm text-gray-700 md:grid-cols-2 gap-x-6 gap-y-4">
@@ -137,21 +143,9 @@
 
             <div class="p-6 overflow-hidden bg-white border border-gray-100 shadow-lg rounded-xl sm:p-8">
                 <h2 class="pb-3 mb-6 text-2xl font-bold text-gray-900 border-b">
-                    Request Rationale
+                    Reason for Request
                 </h2>
-                <div class="space-y-6">
-                    <div>
-                        <dt class="text-lg font-medium text-gray-700">Reason for Request</dt>
-                        <dd class="p-4 mt-2 text-gray-700 whitespace-pre-wrap rounded-lg bg-gray-50">{{ $request->reason ?? 'N/A' }}</dd>
-                    </div>
-                    {{-- Removed redundant Contact Info field --}}
-                    {{--
-                    <div>
-                        <dt class="text-lg font-medium text-gray-700">Preferred Contact Information</dt>
-                        <dd class="p-4 mt-2 text-gray-700 rounded-lg bg-gray-50">{{ $request->contact_info ?? 'N/A' }}</dd>
-                    </div>
-                    --}}
-                </div>
+                <dd class="p-4 text-gray-700 whitespace-pre-wrap rounded-lg bg-gray-50">{{ $request->reason ?? 'N/A' }}</dd>
             </div>
 
             @if($request->additional_data)
@@ -263,7 +257,7 @@
                 @if(is_array($photos) && count($photos) > 0)
                     <div class="p-6 overflow-hidden bg-white border border-gray-100 shadow-lg rounded-xl sm:p-8">
                         <h2 class="pb-3 mb-6 text-2xl font-bold text-gray-900 border-b">
-                            Uploaded Photos (Context)
+                            Supporting Details/Proof
                         </h2>
                         <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
                             @foreach($photos as $photo)

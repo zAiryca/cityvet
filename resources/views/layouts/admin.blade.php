@@ -53,7 +53,42 @@
                         @yield('header')
                     </div>
 
-                    <div class="hidden sm:flex sm:items-center sm:ms-6">
+                    <div class="hidden space-x-4 sm:flex sm:items-center sm:ms-6">
+                        @php
+                            $adminUsers = \App\Models\User::orderBy('last_name')->get();
+                        @endphp
+
+                        {{-- Users dropdown: shows a scrollable list of users with key profile fields --}}
+                        <x-dropdown align="right" width="72">
+                            <x-slot name="trigger">
+                                <button class="inline-flex items-center px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out bg-white border border-transparent rounded-md hover:text-gray-700 focus:outline-none">
+                                    <div class="mr-2 font-semibold">Users</div>
+                                    <div class="text-xs text-gray-400">({{ $adminUsers->count() }})</div>
+                                </button>
+                            </x-slot>
+                            <x-slot name="content">
+                                <div class="px-3 py-2">
+                                    <p class="text-sm font-medium text-gray-700">All Users</p>
+                                </div>
+                                <div class="overflow-y-auto max-h-64">
+                                    @foreach($adminUsers as $u)
+                                        <div class="px-4 py-3 border-t border-gray-100 hover:bg-gray-50">
+                                            <p class="text-sm font-semibold text-gray-900">{{ $u->name }}</p>
+                                            <p class="text-xs text-gray-600">{{ $u->email }}</p>
+                                            <div class="mt-1 text-xs text-gray-700">
+                                                <div>Contact: {{ $u->contact_number ?? 'N/A' }}</div>
+                                                <div>Address: {{ trim(($u->street ?? '') . ' ' . ($u->barangay ?? '') . ' ' . ($u->city_municipality ?? '') ) ?: 'N/A' }}</div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <div class="px-3 py-2">
+                                    <a href="{{ route('admin.users.index') }}" class="block text-sm font-medium text-indigo-600 hover:underline">Manage users</a>
+                                </div>
+                            </x-slot>
+                        </x-dropdown>
+
+                        {{-- Account dropdown --}}
                         <x-dropdown align="right" width="48">
                             <x-slot name="trigger">
                                 <button class="inline-flex items-center px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out bg-white border border-transparent rounded-md hover:text-gray-700 focus:outline-none">

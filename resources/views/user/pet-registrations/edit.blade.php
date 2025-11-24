@@ -168,7 +168,7 @@
                     <label class="block mb-3 text-sm font-medium text-gray-700">Color/Markings (Select all that apply)</label>
                     <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
                         @php
-                            $colors = ['Black', 'White', 'Brown', 'Gray', 'Orange', 'Cream', 'Red', 'Tabby'];
+                            $colors = ['Black', 'White', 'Brown', 'Gray', 'Orange', 'Cream', 'Tabby'];
                             $old_colors = old('color_markings', is_array($petRegistration->color_markings) ? $petRegistration->color_markings : []);
                         @endphp
 

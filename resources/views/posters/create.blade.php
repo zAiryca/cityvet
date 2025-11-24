@@ -16,20 +16,15 @@
         <div class="space-y-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700">Type</label>
-                <div class="mt-2 space-y-2">
-                    <label class="flex items-center">
-                        <input type="radio" name="type" value="lost" {{ old('type') === 'lost' ? 'checked' : '' }} class="mr-2" required>
-                        Lost Pet
-                    </label>
-                    <label class="flex items-center">
-                        <input type="radio" name="type" value="found" {{ old('type') === 'found' ? 'checked' : '' }} class="mr-2" required>
-                        Found Pet
-                    </label>
-                </div>
+                <select name="type" id="type-select" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('type') border-red-500 @enderror">
+                    <option value="">Select Type</option>
+                    <option value="lost" {{ old('type') === 'lost' ? 'selected' : '' }}>Lost Pet</option>
+                    <option value="found" {{ old('type') === 'found' ? 'selected' : '' }}>Found Pet</option>
+                </select>
                 @error('type') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
             </div>
 
-            <div id="pet_name_field" style="{{ old('type') === 'found' ? 'display: none;' : '' }}">
+            <div id="pet-name-field" style="{{ old('type') === 'found' ? 'display: none;' : 'block' }};">
                 <label class="block text-sm font-medium text-gray-700">Pet Name</label>
                 <input type="text" name="pet_name" value="{{ old('pet_name') }}" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('pet_name') border-red-500 @enderror" {{ old('type') === 'lost' ? 'required' : '' }}>
                 @error('pet_name') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
@@ -90,7 +85,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Colors/Markings</label>
-                    <div class="grid grid-cols-2 gap-2 mt-2">
+                    <div class="grid grid-cols-2 gap-2 mt-2 md:grid-cols-4">
                         @php $selectedColors = old('color_markings', []); @endphp
                         <label class="inline-flex items-center">
                             <input type="checkbox" name="color_markings[]" value="Black" {{ in_array('Black', $selectedColors) ? 'checked' : '' }} class="text-purple-600 border-gray-300 rounded shadow-sm focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50">
@@ -115,10 +110,6 @@
                         <label class="inline-flex items-center">
                             <input type="checkbox" name="color_markings[]" value="Cream" {{ in_array('Cream', $selectedColors) ? 'checked' : '' }} class="text-purple-600 border-gray-300 rounded shadow-sm focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50">
                             <span class="ml-2 text-sm">Cream</span>
-                        </label>
-                        <label class="inline-flex items-center">
-                            <input type="checkbox" name="color_markings[]" value="Red" {{ in_array('Red', $selectedColors) ? 'checked' : '' }} class="text-purple-600 border-gray-300 rounded shadow-sm focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50">
-                            <span class="ml-2 text-sm">Red</span>
                         </label>
                         <label class="inline-flex items-center">
                             <input type="checkbox" name="color_markings[]" value="Tabby" {{ in_array('Tabby', $selectedColors) ? 'checked' : '' }} class="text-purple-600 border-gray-300 rounded shadow-sm focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50">
@@ -185,29 +176,33 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const typeRadios = document.querySelectorAll('input[name="type"]');
-            const petNameField = document.getElementById('pet_name_field');
+            const typeSelect = document.getElementById('type-select');
+            const petNameField = document.getElementById('pet-name-field');
             const speciesSelect = document.getElementById('species');
             const breedSelect = document.getElementById('breed');
 
-            // Handle type change
-            typeRadios.forEach(radio => {
-                radio.addEventListener('change', function() {
-                    if (this.value === 'found') {
-                        petNameField.style.display = 'none';
-                        document.getElementById('last_seen_field').style.display = 'none';
-                        document.getElementById('found_at_field').style.display = 'block';
-                        document.getElementById('location-label').textContent = 'Found At';
-                        document.getElementById('reward-field').style.display = 'none';
-                    } else {
-                        petNameField.style.display = 'block';
-                        document.getElementById('last_seen_field').style.display = 'block';
-                        document.getElementById('found_at_field').style.display = 'none';
-                        document.getElementById('location-label').textContent = 'Last Seen At';
-                        document.getElementById('reward-field').style.display = 'block';
-                    }
-                });
-            });
+            function toggleFields() {
+                const selectedType = typeSelect.value;
+                if (selectedType === 'found') {
+                    petNameField.style.display = 'none';
+                    petNameField.querySelector('input').removeAttribute('required');
+                    document.getElementById('last_seen_field').style.display = 'none';
+                    document.getElementById('found_at_field').style.display = 'block';
+                    document.getElementById('location-label').textContent = 'Found At';
+                    document.getElementById('reward-field').style.display = 'none';
+                } else if (selectedType === 'lost') {
+                    petNameField.style.display = 'block';
+                    petNameField.querySelector('input').setAttribute('required', 'required');
+                    document.getElementById('last_seen_field').style.display = 'block';
+                    document.getElementById('found_at_field').style.display = 'none';
+                    document.getElementById('location-label').textContent = 'Last Seen At';
+                    document.getElementById('reward-field').style.display = 'block';
+                }
+            }
+
+            typeSelect.addEventListener('change', toggleFields);
+            // Initialize on page load
+            toggleFields();
 
             // Handle species change
             speciesSelect.addEventListener('change', function() {

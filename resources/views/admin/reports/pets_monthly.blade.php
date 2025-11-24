@@ -99,7 +99,7 @@
     {{-- Impounded pets table (when requested) --}}
     @if(in_array($scope, ['impounded', 'all']) )
         @if(!empty($impoundedPets) && $impoundedPets->count())
-            <h2>Impounded Pets (records added this month)</h2>
+            <h2>Impounded Pets</h2>
             <table>
                 <thead>
                     <tr>

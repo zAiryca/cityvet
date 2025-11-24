@@ -32,6 +32,12 @@
                         @endif
 
                         <div class="p-4">
+                            <div class="flex items-center mb-2">
+                                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full text-white text-xs font-bold {{ $poster->type === 'lost' ? 'bg-red-500' : 'bg-green-500' }}">
+                                    ●
+                                </span>
+                                <span class="ml-2 text-sm font-semibold {{ $poster->type === 'lost' ? 'text-red-600' : 'text-green-600' }}">{{ ucfirst($poster->type) }}</span>
+                            </div>
                             @if($poster->type === 'lost')
                                 @if($poster->pet_name)
                                     <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ $poster->pet_name }}</h3>
@@ -41,7 +47,7 @@
                             @else
                                 <h3 class="text-lg font-semibold text-gray-900 mb-1">FND{{ str_pad($poster->id, 4, '0', STR_PAD_LEFT) }}</h3>
                             @endif
-                            <p class="text-sm text-gray-600 mb-1">{{ ucfirst($poster->type) }} - {{ $poster->species }}</p>
+                            <p class="text-sm text-gray-600 mb-1">{{ $poster->species }}
                             <p class="text-sm text-gray-600 mb-1">{{ $poster->breed }}</p>
                             <p class="text-sm text-gray-600 mb-1">{{ ucfirst($poster->gender) }}</p>
                             <p class="text-sm text-gray-500 mb-1">{{ $poster->date_lost_found->format('M d, Y') }}</p>

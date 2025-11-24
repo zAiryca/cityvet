@@ -35,8 +35,9 @@ Route::middleware('guest')->group(function () {
         ->name('password.store');
 });
 
-// Verification notice available to guests (after registration)
+// Verification notice: require authentication to avoid calling methods on null
 Route::get('verify-email', EmailVerificationPromptController::class)
+    ->middleware('auth')
     ->name('verification.notice');
 
 Route::middleware('auth')->group(function () {

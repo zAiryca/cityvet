@@ -43,7 +43,7 @@ class PetSearchFilter extends Component
         ]
     ];
 
-    public $colors = ['Black', 'White', 'Brown', 'Gray', 'Orange', 'Cream', 'Red', 'Tabby'];
+    public $colors = ['Black', 'White', 'Brown', 'Gray', 'Orange', 'Cream', 'Tabby'];
 
     public function render()
     {
@@ -94,7 +94,11 @@ class PetSearchFilter extends Component
 
         $pets = $query->paginate(12);
 
-        return view('livewire.pet-search-filter', compact('pets'));
+        return view('livewire.pet-search-filter', [
+            'pets' => $pets,
+            'breeds' => $this->breeds,
+            'colors' => $this->colors,
+        ]);
     }
 
     public function updated($property)

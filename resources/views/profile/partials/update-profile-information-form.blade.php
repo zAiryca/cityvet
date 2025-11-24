@@ -13,7 +13,7 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="mt-6 space-y-4">
+    <form id="profile-update-form" method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="mt-6 space-y-4">
         @csrf
         @method('patch')
 
@@ -136,7 +136,7 @@
         </div>
 
         <div class="flex items-center gap-4 mt-6">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
+            <x-primary-button id="profile-save-btn">{{ __('Save') }}</x-primary-button>
 
             @if (session('status') === 'profile-updated')
                 <p
@@ -153,6 +153,19 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Handle profile update form confirmation
+        const profileForm = document.getElementById('profile-update-form');
+        const profileSaveBtn = document.getElementById('profile-save-btn');
+
+        if (profileForm && profileSaveBtn) {
+            profileSaveBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                const confirmSave = confirm('Are you sure you want to save these profile changes?');
+                if (confirmSave) {
+                    profileForm.submit();
+                }
+            });
+        }
         const citySelect = document.getElementById('city_municipality');
         const barangaySelect = document.getElementById('barangay');
         const barangayData = {
@@ -165,7 +178,9 @@
         function updateBarangayDropdown(selectedCity) {
             barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
             if (selectedCity && barangayData[selectedCity]) {
-                barangayData[selectedCity].forEach(barangay => {
+                // Sort barangays alphabetically A to Z
+                const sortedBarangays = barangayData[selectedCity].sort();
+                sortedBarangays.forEach(barangay => {
                     const option = document.createElement('option');
                     option.value = barangay;
                     option.textContent = barangay;

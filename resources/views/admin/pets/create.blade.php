@@ -129,37 +129,33 @@
                     <div>
                         <label class="block mb-3 text-sm font-medium text-gray-700">Color Markings</label>
                         <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" name="color_markings[]" value="Black" {{ in_array('Black', old('color_markings', [])) ? 'checked' : '' }} class="text-indigo-600 border-gray-300 rounded shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                                <span class="ml-2 text-sm text-gray-700">Black</span>
+                            <label class="inline-flex items-center p-2 text-sm font-medium text-gray-700 transition duration-150 rounded-lg bg-gray-50 hover:bg-indigo-50">
+                                <input type="checkbox" name="color_markings[]" value="Black" {{ in_array('Black', old('color_markings', [])) ? 'checked' : '' }} class="w-4 h-4 mr-2 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                <span>Black</span>
                             </label>
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" name="color_markings[]" value="White" {{ in_array('White', old('color_markings', [])) ? 'checked' : '' }} class="text-indigo-600 border-gray-300 rounded shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                                <span class="ml-2 text-sm text-gray-700">White</span>
+                            <label class="inline-flex items-center p-2 text-sm font-medium text-gray-700 transition duration-150 rounded-lg bg-gray-50 hover:bg-indigo-50">
+                                <input type="checkbox" name="color_markings[]" value="White" {{ in_array('White', old('color_markings', [])) ? 'checked' : '' }} class="w-4 h-4 mr-2 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                <span>White</span>
                             </label>
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" name="color_markings[]" value="Brown" {{ in_array('Brown', old('color_markings', [])) ? 'checked' : '' }} class="text-indigo-600 border-gray-300 rounded shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                                <span class="ml-2 text-sm text-gray-700">Brown</span>
+                            <label class="inline-flex items-center p-2 text-sm font-medium text-gray-700 transition duration-150 rounded-lg bg-gray-50 hover:bg-indigo-50">
+                                <input type="checkbox" name="color_markings[]" value="Brown" {{ in_array('Brown', old('color_markings', [])) ? 'checked' : '' }} class="w-4 h-4 mr-2 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                <span>Brown</span>
                             </label>
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" name="color_markings[]" value="Gray" {{ in_array('Gray', old('color_markings', [])) ? 'checked' : '' }} class="text-indigo-600 border-gray-300 rounded shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                                <span class="ml-2 text-sm text-gray-700">Gray</span>
+                            <label class="inline-flex items-center p-2 text-sm font-medium text-gray-700 transition duration-150 rounded-lg bg-gray-50 hover:bg-indigo-50">
+                                <input type="checkbox" name="color_markings[]" value="Gray" {{ in_array('Gray', old('color_markings', [])) ? 'checked' : '' }} class="w-4 h-4 mr-2 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                <span>Gray</span>
                             </label>
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" name="color_markings[]" value="Orange" {{ in_array('Orange', old('color_markings', [])) ? 'checked' : '' }} class="text-indigo-600 border-gray-300 rounded shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                                <span class="ml-2 text-sm text-gray-700">Orange</span>
+                            <label class="inline-flex items-center p-2 text-sm font-medium text-gray-700 transition duration-150 rounded-lg bg-gray-50 hover:bg-indigo-50">
+                                <input type="checkbox" name="color_markings[]" value="Orange" {{ in_array('Orange', old('color_markings', [])) ? 'checked' : '' }} class="w-4 h-4 mr-2 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                <span>Orange</span>
                             </label>
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" name="color_markings[]" value="Cream" {{ in_array('Cream', old('color_markings', [])) ? 'checked' : '' }} class="text-indigo-600 border-gray-300 rounded shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                                <span class="ml-2 text-sm text-gray-700">Cream</span>
+                            <label class="inline-flex items-center p-2 text-sm font-medium text-gray-700 transition duration-150 rounded-lg bg-gray-50 hover:bg-indigo-50">
+                                <input type="checkbox" name="color_markings[]" value="Cream" {{ in_array('Cream', old('color_markings', [])) ? 'checked' : '' }} class="w-4 h-4 mr-2 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                <span>Cream</span>
                             </label>
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" name="color_markings[]" value="Red" {{ in_array('Red', old('color_markings', [])) ? 'checked' : '' }} class="text-indigo-600 border-gray-300 rounded shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                                <span class="ml-2 text-sm text-gray-700">Red</span>
-                            </label>
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" name="color_markings[]" value="Tabby" {{ in_array('Tabby', old('color_markings', [])) ? 'checked' : '' }} class="text-indigo-600 border-gray-300 rounded shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                                <span class="ml-2 text-sm text-gray-700">Tabby</span>
+                            <label class="inline-flex items-center p-2 text-sm font-medium text-gray-700 transition duration-150 rounded-lg bg-gray-50 hover:bg-indigo-50">
+                                <input type="checkbox" name="color_markings[]" value="Tabby" {{ in_array('Tabby', old('color_markings', [])) ? 'checked' : '' }} class="w-4 h-4 mr-2 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                <span>Tabby</span>
                             </label>
                         </div>
                         @error('color_markings') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
@@ -211,9 +207,13 @@
                 <input type="file" name="photo" accept="image/*" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('photo') border-red-500 @enderror">
                 @error('photo') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
             </div>
-            <div class="flex justify-end space-x-4">
-                <a href="{{ route('admin.pets.index') }}" class="px-4 py-2 text-gray-700 border border-gray-300 rounded-md">Cancel</a>
-                <button type="submit" class="px-6 py-2 text-white bg-green-600 rounded-md hover:bg-green-700">Add Pet</button>
+            <div class="flex items-center justify-between px-6 py-4 sm:px-10 bg-gray-50 rounded-b-xl">
+                <a href="{{ route('admin.pets.index') }}" class="inline-flex justify-center px-6 py-2 text-sm font-medium text-gray-700 transition duration-150 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100">
+                    Cancel
+                </a>
+                <button type="submit" class="inline-flex justify-center px-8 py-3 text-base font-medium text-white transition duration-150 bg-indigo-600 border border-transparent rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Add Pet
+                </button>
             </div>
         </div>
     </form>

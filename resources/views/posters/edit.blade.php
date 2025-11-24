@@ -146,10 +146,6 @@
                         <span class="ml-2 text-sm">Cream</span>
                     </label>
                     <label class="inline-flex items-center">
-                        <input type="checkbox" name="color_markings[]" value="Red" {{ in_array('Red', $selectedColors) ? 'checked' : '' }} class="text-purple-600 border-gray-300 rounded shadow-sm focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50">
-                        <span class="ml-2 text-sm">Red</span>
-                    </label>
-                    <label class="inline-flex items-center">
                         <input type="checkbox" name="color_markings[]" value="Tabby" {{ in_array('Tabby', $selectedColors) ? 'checked' : '' }} class="text-purple-600 border-gray-300 rounded shadow-sm focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50">
                         <span class="ml-2 text-sm">Tabby</span>
                     </label>

@@ -6,12 +6,12 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Poster;
 
-class PosterSearchFilter extends Component
+class AdminPosterSearchFilter extends Component
 {
     use WithPagination;
 
     public $search = '';
-    public $type = '';
+    public $tab = 'all';
     public $species = '';
     public $breed = '';
     public $gender = '';
@@ -48,11 +48,26 @@ class PosterSearchFilter extends Component
 
     public $colors = ['Black', 'White', 'Brown', 'Gray', 'Orange', 'Cream', 'Tabby'];
 
+    public function mount()
+    {
+        $this->tab = request('tab', 'all');
+    }
+
     public function render()
     {
-        $query = Poster::where('approved', true)->where('status', 'active');
+        $query = Poster::query();
 
-        // Apply filters - search across all relevant fields
+        // Apply tab-based filters
+        if ($this->tab === 'lost') {
+            $query->where('type', 'lost')->where('status', 'active');
+        } elseif ($this->tab === 'found') {
+            $query->where('type', 'found')->where('status', 'active');
+        } elseif ($this->tab === 'reunited') {
+            $query->where('status', 'reunited');
+        }
+        // For 'all' tab, no type/status filtering
+
+        // Apply search filters - search across all relevant fields
         if ($this->search) {
             $query->where(function($q) {
                 $q->where('pet_name', 'like', '%' . $this->search . '%')
@@ -60,15 +75,11 @@ class PosterSearchFilter extends Component
                   ->orWhere('breed', 'like', '%' . $this->search . '%')
                   ->orWhere('gender', 'like', '%' . $this->search . '%')
                   ->orWhere('color_markings', 'like', '%' . $this->search . '%')
+                  ->orWhere('user_id', 'like', '%' . $this->search . '%')
                   ->orWhere(function($subQ) {
-                      $subQ->where('type', 'found')
-                           ->whereRaw("CONCAT('FND', LPAD(id, 4, '0')) LIKE ?", ['%' . $this->search . '%']);
+                      $subQ->whereRaw("CONCAT('FND', LPAD(id, 4, '0')) LIKE ?", ['%' . $this->search . '%']);
                   });
             });
-        }
-
-        if ($this->type) {
-            $query->where('type', $this->type);
         }
 
         if ($this->species) {
@@ -99,26 +110,14 @@ class PosterSearchFilter extends Component
             $query->where('date_lost_found', '<=', $this->date_to);
         }
 
-        $posters = $query->latest()->paginate(12);
+        $posters = $query->latest()->paginate(15);
 
-        return view('livewire.poster-search-filter', compact('posters'));
-    }
-
-    public function updated($property)
-    {
-        // If species changes, reset breed
-        if ($property === 'species') {
-            $this->breed = '';
-        }
-
-        // Reset pagination when filters change
-        $this->resetPage();
+        return view('livewire.admin-poster-search-filter', compact('posters'));
     }
 
     public function clearFilters()
     {
         $this->search = '';
-        $this->type = '';
         $this->species = '';
         $this->breed = '';
         $this->gender = '';

@@ -2,175 +2,99 @@
 
     <!-- Search and Filter Form -->
 
-    <div class="p-4 mb-6 bg-white rounded-lg shadow">
+    <div class="p-6 mb-6 bg-white rounded-lg shadow-sm border border-gray-200">
 
-        <div class="grid grid-cols-1 gap-4 md:grid-cols-4 lg:grid-cols-8">
+        <!-- First Row: Search, Type, Species, Breed, Gender -->
+        <div class="grid grid-cols-1 gap-2 mb-3 md:grid-cols-2 lg:grid-cols-5">
 
             <!-- Search -->
             <div>
-                <label class="block mb-1 text-sm font-medium text-gray-700">{{ __('Search ') }}</label>
-                <input type="text" wire:model.live="search" placeholder="{{ __('Name or FND Code') }}..."
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                <label class="block mb-1 text-xs font-semibold text-gray-700">{{ __('Search') }}</label>
+                <input type="text" wire:model.live="search" placeholder="{{ __('Any field') }}..."
+                       class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
             </div>
-
-
 
             <!-- Type -->
-
             <div>
-
-                <label class="block mb-1 text-sm font-medium text-gray-700">{{ __('messages.Type') }}</label>
-
-                <select wire:model.live="type" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
-
-                    <option value="">{{ __('messages.All Types') }}</option>
-
+                <label class="block mb-1 text-xs font-semibold text-gray-700">{{ __('messages.Type') }}</label>
+                <select wire:model.live="type" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                    <option value="">{{ __('messages.All') }}</option>
                     <option value="lost">{{ __('messages.Lost') }}</option>
-
                     <option value="found">{{ __('messages.Found') }}</option>
-
                 </select>
-
             </div>
-
-
 
             <!-- Species -->
-
             <div>
-
-                <label class="block mb-1 text-sm font-medium text-gray-700">{{ __('messages.Species') }}</label>
-
-                <select wire:model.live="species" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
-
-                    <option value="">{{ __('messages.Species') }}</option>
-
+                <label class="block mb-1 text-xs font-semibold text-gray-700">{{ __('messages.Species') }}</label>
+                <select wire:model.live="species" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                    <option value="">{{ __('messages.All') }}</option>
                     <option value="Canine">{{ __('messages.Canine') }}</option>
-
                     <option value="Feline">{{ __('messages.Feline') }}</option>
-
                 </select>
-
             </div>
-
-
 
             <!-- Breed -->
-
             <div>
-
-                <label class="block mb-1 text-sm font-medium text-gray-700">{{ __('messages.Breed') }}</label>
-
-                <select wire:model.live="breed" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
-
-                    <option value="">{{ __('messages.Breed') }}</option>
-
+                <label class="block mb-1 text-xs font-semibold text-gray-700">{{ __('messages.Breed') }}</label>
+                <select wire:model.live="breed" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                    <option value="">{{ __('messages.All') }}</option>
                     @if($species && isset($breeds[$species]))
-
                         @foreach($breeds[$species] as $breedOption)
-
                             <option value="{{ $breedOption }}">{{ $breedOption }}</option>
-
                         @endforeach
-
                     @endif
-
                 </select>
-
             </div>
-
-
 
             <!-- Gender -->
-
             <div>
-
-                <label class="block mb-1 text-sm font-medium text-gray-700">{{ __('messages.Gender') }}</label>
-
-                <select wire:model.live="gender" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
-
-                    <option value="">{{ __('messages.Gender') }}</option>
-
+                <label class="block mb-1 text-xs font-semibold text-gray-700">{{ __('messages.Gender') }}</label>
+                <select wire:model.live="gender" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                    <option value="">{{ __('messages.All') }}</option>
                     <option value="male">{{ __('messages.Male') }}</option>
-
                     <option value="female">{{ __('messages.Female') }}</option>
-
                     <option value="unknown">{{ __('messages.Unknown') }}</option>
-
                 </select>
-
             </div>
-
-
-
-            <!-- Color -->
-
-            <div>
-
-                <label class="block mb-1 text-sm font-medium text-gray-700">{{ __('messages.Color') }}</label>
-
-                <div class="grid grid-cols-2 gap-2">
-
-                    @foreach($colors as $colorOption)
-
-                        <label class="flex items-center">
-
-                            <input type="checkbox" wire:model.live="selectedColors" value="{{ $colorOption }}" class="mr-2">
-
-                            <span class="text-sm">{{ $colorOption }}</span>
-
-                        </label>
-
-                    @endforeach
-
-                </div>
-
-            </div>
-
-
-
-            <!-- Date From -->
-
-            <div>
-
-                <label class="block mb-1 text-sm font-medium text-gray-700">{{ __('messages.Date From') }}</label>
-
-                <input type="date" wire:model.live="date_from"
-
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
-
-            </div>
-
-
-
-            <!-- Date To -->
-
-            <div>
-
-                <label class="block mb-1 text-sm font-medium text-gray-700">{{ __('messages.Date To') }}</label>
-
-                <input type="date" wire:model.live="date_to"
-
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
-
-            </div>
-
         </div>
 
+        <!-- Second Row: Color (4 columns), Date From, Date To -->
+        <div class="grid grid-cols-1 gap-2 mb-3 md:grid-cols-2 lg:grid-cols-6">
+            <!-- Color (4 columns) -->
+            <div class="lg:col-span-4">
+                <label class="block mb-1 text-xs font-semibold text-gray-700">{{ __('messages.Color') }}</label>
+                <div class="grid grid-cols-4 gap-1">
+                    @foreach($colors as $colorOption)
+                        <label class="flex items-center cursor-pointer text-xs">
+                            <input type="checkbox" wire:model.live="selectedColors" value="{{ $colorOption }}" class="w-3 h-3 mr-1 border-gray-300 rounded focus:ring-purple-500">
+                            <span class="text-xs text-gray-700">{{ $colorOption }}</span>
+                        </label>
+                    @endforeach
+                </div>
+            </div>
 
+            <!-- Date From -->
+            <div>
+                <label class="block mb-1 text-xs font-semibold text-gray-700">{{ __('messages.Date From') }}</label>
+                <input type="date" wire:model.live="date_from"
+                       class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+            </div>
 
-        <!-- Clear Filters Button -->
+            <!-- Date To -->
+            <div>
+                <label class="block mb-1 text-xs font-semibold text-gray-700">{{ __('messages.Date To') }}</label>
+                <input type="date" wire:model.live="date_to"
+                       class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+            </div>
+        </div>
 
-        <div class="mt-4">
-
+        <!-- Fourth Row: Clear Filters Button -->
+        <div>
             <button wire:click="clearFilters"
-
-                    class="px-4 py-2 text-white transition duration-200 bg-gray-500 rounded-md hover:bg-gray-600">
-
+                    class="px-3 py-1.5 text-xs font-medium text-gray-700 transition duration-200 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200">
                 {{ __('messages.Clear All Filters') }}
-
             </button>
-
         </div>
 
     </div>
