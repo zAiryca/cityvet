@@ -1,56 +1,50 @@
 <x-guest-layout>
-    <div class="flex flex-col items-center justify-center min-h-screen px-4 py-12 bg-gradient-to-br from-orange-50 via-amber-100 to-yellow-50">
-        <div class="w-full max-w-md p-8 text-center bg-white border border-orange-100 shadow-xl rounded-2xl">
-            <!-- Password Reset Icon -->
-            <div class="flex justify-center mb-6">
-                <div class="flex items-center justify-center w-24 h-24 rounded-full shadow-lg bg-gradient-to-br from-orange-400 to-amber-500">
-                    <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5s-5 2.24-5 5v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+    <div class="min-h-screen bg-slate-900 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+        <div class="w-full max-w-md">
+            <!-- Header -->
+            <div class="mb-8 text-center">
+                <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-emerald-600 rounded-lg">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
                     </svg>
                 </div>
+                <h1 class="text-3xl font-bold text-white mb-2">Forgot Password</h1>
+                <p class="text-slate-400 text-sm">Enter your email to receive a reset link</p>
             </div>
 
-            <h1 class="mb-2 text-2xl font-bold text-gray-900">Reset Your Password</h1>
-            <p class="mb-6 text-sm text-gray-700">{{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}</p>
+            <!-- Form -->
+            <div class="bg-slate-800 rounded-lg border border-slate-700 shadow-xl p-8">
+                @if (session('status'))
+                    <div class="mb-4 p-3 bg-emerald-900/50 border border-emerald-500/50 text-emerald-200 text-sm rounded-lg">
+                        {{ session('status') }}
+                    </div>
+                @endif
 
-            <!-- Session Status -->
-            @if (session('status'))
-                <div class="mb-4 text-sm font-medium text-green-600">
-                    {{ session('status') }}
+                <form method="POST" action="{{ route('password.email') }}" class="space-y-5">
+                    @csrf
+
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-slate-300 mb-2">Email Address</label>
+                        <input id="email" name="email" type="email" required value="{{ old('email') }}"
+                               class="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent @error('email') border-red-500 @enderror"
+                               placeholder="you@example.com" autofocus>
+                        @error('email')
+                            <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <button type="submit" class="w-full px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:ring-offset-slate-900">
+                        Send Reset Link
+                    </button>
+                </form>
+
+                <div class="mt-6 pt-6 border-t border-slate-700">
+                    <p class="text-center text-slate-400 text-sm">
+                        Remember your password?
+                        <a href="{{ route('login') }}" class="text-emerald-400 hover:text-emerald-300 font-medium">Sign in</a>
+                    </p>
                 </div>
-            @endif
-
-            <form method="POST" action="{{ route('password.email') }}">
-                @csrf
-
-                <!-- Email Address -->
-                <div class="mb-6 text-left">
-                    <x-input-label for="email" :value="__('Email Address')" />
-                    <x-text-input id="email" class="block mt-2 w-full border-orange-200 focus:border-orange-500 focus:ring-orange-500 rounded-lg" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-                    <x-input-error :messages="$errors->get('email')" class="mt-2" />
-                </div>
-
-                <button type="submit" class="w-full px-4 py-2 font-semibold text-white transition-all rounded-lg shadow bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
-                    {{ __('Email Password Reset Link') }}
-                </button>
-            </form>
-
-            <div class="mt-6 text-center">
-                <p class="text-sm text-gray-600">
-                    {{ __('Remember your password?') }}
-                    <a href="{{ route('login') }}" class="font-semibold text-orange-600 hover:text-orange-700">
-                        {{ __('Sign in here') }}
-                    </a>
-                </p>
             </div>
-
-            <div class="mt-6 text-xs text-gray-500">
-                <span>Check your spam folder if you don't receive the email.</span>
-            </div>
-        </div>
-
-        <div class="mt-8 text-xs text-center text-gray-400">
-            "Every pet deserves a loving home" 🏡❤️
         </div>
     </div>
 </x-guest-layout>

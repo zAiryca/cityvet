@@ -43,14 +43,19 @@
                 </div>
             </div>
 
-            <!-- Request Information Sections -->
-            <div class="divide-y divide-gray-200">
-                @php
-                    $additionalData = null;
-                    if ($request->additional_data) {
-                        $additionalData = is_array($request->additional_data) ? $request->additional_data : json_decode($request->additional_data, true);
-                    }
-                @endphp
+                <!-- Request Information Sections -->
+                <div class="divide-y divide-gray-200">
+                    @php
+                        $additionalData = null;
+                        if ($request->additional_data) {
+                            // Ensure proper decoding - additional_data might be array or JSON string
+                            if (is_string($request->additional_data)) {
+                                $additionalData = json_decode($request->additional_data, true);
+                            } else {
+                                $additionalData = (array) $request->additional_data;
+                            }
+                        }
+                    @endphp
 
                 <!-- Pet Information Section -->
                 @if($request->requestable && $request->requestable_type === 'App\\Models\\Pet')
@@ -242,6 +247,100 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Adoption Specific Details Section -->
+                @if($request->type === 'adopt' && $additionalData)
+                <div class="px-8 py-6">
+                    <div class="flex items-center mb-4">
+                        <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                        </svg>
+                        <h3 class="text-lg font-medium text-gray-900">Adoption Application Details</h3>
+                    </div>
+
+                    <!-- Personal Information -->
+                    <div class="mb-6 space-y-4">
+                        <h4 class="font-semibold text-gray-800 text-base">Personal Information</h4>
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Date of Birth</p>
+                                <p class="text-sm text-gray-900">{{ $additionalData['date_of_birth'] ?? 'N/A' }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Housing Information -->
+                    <div class="mb-6 space-y-4">
+                        <h4 class="font-semibold text-gray-800 text-base">Housing Information</h4>
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Dwelling Type</p>
+                                <p class="text-sm text-gray-900">{{ ucfirst(str_replace('_', ' ', $additionalData['dwelling_type'] ?? '')) }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Landlord Permission</p>
+                                <p class="text-sm text-gray-900">{{ ucfirst($additionalData['landlord_permission'] ?? 'N/A') }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Fenced Property</p>
+                                <p class="text-sm text-gray-900">{{ ucfirst($additionalData['fenced_property'] ?? 'N/A') }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Pet Living Area</p>
+                                <p class="text-sm text-gray-900">{{ ucfirst(str_replace('_', ' ', $additionalData['pet_living_area'] ?? '')) }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Household Information -->
+                    <div class="mb-6 space-y-4">
+                        <h4 class="font-semibold text-gray-800 text-base">Household Information</h4>
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Number of Adults</p>
+                                <p class="text-sm text-gray-900">{{ $additionalData['adults_count'] ?? 'N/A' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Number of Children</p>
+                                <p class="text-sm text-gray-900">{{ $additionalData['children_count'] ?? 'N/A' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Allergies</p>
+                                <p class="text-sm text-gray-900">{{ ucfirst($additionalData['allergies'] ?? 'N/A') }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Other Pets</p>
+                                <p class="text-sm text-gray-900">{{ ucfirst($additionalData['other_pets'] ?? 'N/A') }}</p>
+                            </div>
+                        </div>
+                        @if($additionalData['other_pets_list'] ?? null)
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Other Pets Description</p>
+                            <p class="text-sm text-gray-900">{{ $additionalData['other_pets_list'] }}</p>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+                @endif
+
+                <!-- Claim Specific Details Section -->
+                @if($request->type === 'claim' && $additionalData)
+                <div class="px-8 py-6">
+                    <div class="flex items-center mb-4">
+                        <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m7 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <h3 class="text-lg font-medium text-gray-900">Claim Details</h3>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Proof of Ownership</p>
+                            <p class="mt-1 text-sm text-gray-900 leading-relaxed">{{ $request->reason }}</p>
+                        </div>
+                    </div>
+                </div>
+                @endif
 
                 <!-- Uploaded Photos Section -->
                 @if($request->photos)

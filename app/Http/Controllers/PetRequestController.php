@@ -73,14 +73,14 @@ class PetRequestController extends Controller
         return view('admin.requests.index', compact('pets', 'requestStatus', 'pendingCount', 'approvedCount', 'deniedCount'));
     }
 
-    public function show(PetRequest $request)
+    public function show(PetRequest $petRequest)
     {
         if (!Auth::user()->isAdmin()) abort(403);
 
-        // Eager load relationships for the view
-        $request->load(['user', 'requestable']);
+        // Explicitly reload from database to ensure all columns are loaded
+        $petRequest = PetRequest::with(['user', 'requestable'])->find($petRequest->id);
 
-        return view('admin.requests.show', compact('request'));
+        return view('admin.requests.show', ['request' => $petRequest]);
     }
 
     public function update(Request $request, PetRequest $petRequest)

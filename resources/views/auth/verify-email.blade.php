@@ -1,51 +1,50 @@
 
 <x-guest-layout>
-    <div class="flex flex-col items-center justify-center min-h-screen px-4 py-12 bg-gradient-to-br from-orange-50 via-amber-100 to-yellow-50">
-        <div class="w-full max-w-md p-8 text-center bg-white border border-orange-100 shadow-xl rounded-2xl">
-            <!-- Pet-themed illustration -->
-            <div class="flex justify-center mb-6">
-                <div class="flex items-center justify-center w-24 h-24 rounded-full shadow-lg bg-gradient-to-br from-orange-400 to-amber-500">
-                    <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+    <div class="min-h-screen bg-slate-900 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+        <div class="w-full max-w-md">
+            <!-- Header -->
+            <div class="mb-8 text-center">
+                <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-emerald-600 rounded-lg">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                     </svg>
                 </div>
+                <h1 class="text-3xl font-bold text-white mb-2">Verify Email</h1>
+                <p class="text-slate-400 text-sm">Check your inbox to confirm your email address</p>
             </div>
-            <h1 class="mb-2 text-2xl font-bold text-gray-900">Verify Your Email Address</h1>
-            <p class="mb-4 text-sm text-gray-700">Thank you for joining the Pet Recovery & Adoption System! 🐾<br>To continue, please check your inbox and click the verification link we sent to <span class="font-semibold text-orange-600">{{ Auth::user()->email }}</span>.</p>
 
+            <!-- Content -->
+            <div class="bg-slate-800 rounded-lg border border-slate-700 shadow-xl p-8">
+                <p class="text-slate-300 text-sm mb-6">
+                    A verification link has been sent to <span class="font-semibold text-emerald-400">{{ Auth::user()->email }}</span>. Click the link to verify your email address.
+                </p>
 
-            @if (session('unverified'))
-                <div class="mb-4 text-sm font-bold text-red-600">
-                    {{ session('unverified') }}
+                @if (session('status') == 'verification-link-sent')
+                    <div class="mb-4 p-3 bg-emerald-900/50 border border-emerald-500/50 text-emerald-200 text-sm rounded-lg">
+                        A new verification link has been sent to your email.
+                    </div>
+                @endif
+
+                <form method="POST" action="{{ route('verification.send') }}" class="space-y-4 mb-4">
+                    @csrf
+                    <button type="submit" class="w-full px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:ring-offset-slate-900">
+                        Resend Verification Email
+                    </button>
+                </form>
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="w-full px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:ring-offset-slate-900">
+                        Sign Out
+                    </button>
+                </form>
+
+                <div class="mt-6 pt-6 border-t border-slate-700">
+                    <p class="text-center text-slate-400 text-xs">
+                        Didn't receive the email? Check your spam folder.
+                    </p>
                 </div>
-            @endif
-
-            @if (session('status') == 'verification-link-sent')
-                <div class="mb-4 text-sm font-medium text-green-600">
-                    {{ __('A new verification link has been sent to your email address.') }}
-                </div>
-            @endif
-
-            <form method="POST" action="{{ route('verification.send') }}" class="mb-4">
-                @csrf
-                <button type="submit" class="w-full px-4 py-2 font-semibold text-white transition-all rounded-lg shadow bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
-                    Resend Verification Email
-                </button>
-            </form>
-
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="w-full px-4 py-2 font-semibold text-orange-600 transition-all bg-white border border-orange-200 rounded-lg shadow hover:bg-orange-50 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
-                    Log Out
-                </button>
-            </form>
-
-            <div class="mt-6 text-xs text-gray-500">
-                <span>Didn't get the email? Check your spam folder or click "Resend Verification Email" above.</span>
             </div>
-        </div>
-        <div class="mt-8 text-xs text-center text-gray-400">
-            "Every pet deserves a loving home" 🏡❤️
         </div>
     </div>
 </x-guest-layout>

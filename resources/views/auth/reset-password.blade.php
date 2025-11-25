@@ -1,87 +1,65 @@
 <x-guest-layout>
-    <div class="flex flex-col items-center justify-center min-h-screen px-4 py-12 bg-gradient-to-br from-orange-50 via-amber-100 to-yellow-50">
-        <div class="w-full max-w-md p-8 text-center bg-white border border-orange-100 shadow-xl rounded-2xl">
-            <!-- Password Reset Icon -->
-            <div class="flex justify-center mb-6">
-                <div class="flex items-center justify-center w-24 h-24 rounded-full shadow-lg bg-gradient-to-br from-orange-400 to-amber-500">
-                    <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5s-5 2.24-5 5v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+    <div class="min-h-screen bg-slate-900 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+        <div class="w-full max-w-md">
+            <!-- Header -->
+            <div class="mb-8 text-center">
+                <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-emerald-600 rounded-lg">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </div>
+                <h1 class="text-3xl font-bold text-white mb-2">Reset Password</h1>
+                <p class="text-slate-400 text-sm">Create a new password for your account</p>
             </div>
 
-            <h1 class="mb-2 text-2xl font-bold text-gray-900">Create New Password</h1>
-            <p class="mb-6 text-sm text-gray-700">Please enter your email and create a new password to regain access to your account.</p>
+            <!-- Form -->
+            <div class="bg-slate-800 rounded-lg border border-slate-700 shadow-xl p-8">
+                <form method="POST" action="{{ route('password.store') }}" class="space-y-5">
+                    @csrf
+                    <input type="hidden" name="token" value="{{ $request->route('token') }}">
 
-            <form method="POST" action="{{ route('password.store') }}">
-                @csrf
-
-                <!-- Password Reset Token -->
-                <input type="hidden" name="token" value="{{ $request->route('token') }}">
-
-                <!-- Email Address -->
-                <div class="mb-6 text-left">
-                    <x-input-label for="email" :value="__('Email Address')" />
-                    <x-text-input id="email" class="block w-full mt-2 border-orange-200 rounded-lg focus:border-orange-500 focus:ring-orange-500" type="email" name="email" :value="old('email', $request->email)" required autofocus autocomplete="username" />
-                    <x-input-error :messages="$errors->get('email')" class="mt-2" />
-                </div>
-
-                <!-- Password -->
-                <div class="mb-6 text-left">
-                    <x-input-label for="password" :value="__('New Password')" />
-                    <x-text-input id="password" class="block w-full mt-2 border-orange-200 rounded-lg focus:border-orange-500 focus:ring-orange-500" type="password" name="password" required autocomplete="new-password" />
-                    <div class="mt-2 text-xs text-gray-600">
-                        <div id="password-requirements" class="space-y-1">
-                            <div id="length-check" class="flex items-center">
-                                <span class="w-2 h-2 mr-2 bg-gray-300 rounded-full" id="length-indicator"></span>
-                                At least 8 characters
-                            </div>
-                            <div id="mixed-case-check" class="flex items-center">
-                                <span class="w-2 h-2 mr-2 bg-gray-300 rounded-full" id="mixed-case-indicator"></span>
-                                Mixed case letters
-                            </div>
-                            <div id="number-check" class="flex items-center">
-                                <span class="w-2 h-2 mr-2 bg-gray-300 rounded-full" id="number-indicator"></span>
-                                At least one number
-                            </div>
-                            <div id="symbol-check" class="flex items-center">
-                                <span class="w-2 h-2 mr-2 bg-gray-300 rounded-full" id="symbol-indicator"></span>
-                                At least one symbol
-                            </div>
-                        </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-slate-300 mb-2">Email Address</label>
+                        <input id="email" name="email" type="email" required value="{{ old('email', $request->email) }}"
+                               class="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent @error('email') border-red-500 @enderror"
+                               placeholder="you@example.com">
+                        @error('email')
+                            <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
+                        @enderror
                     </div>
-                    <x-input-error :messages="$errors->get('password')" class="mt-2" />
+
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-slate-300 mb-2">New Password</label>
+                        <input id="password" name="password" type="password" required
+                               class="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent @error('password') border-red-500 @enderror"
+                               placeholder="Create a strong password">
+                        @error('password')
+                            <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="password_confirmation" class="block text-sm font-medium text-slate-300 mb-2">Confirm Password</label>
+                        <input id="password_confirmation" name="password_confirmation" type="password" required
+                               class="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent @error('password_confirmation') border-red-500 @enderror"
+                               placeholder="Re-enter your password">
+                        @error('password_confirmation')
+                            <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <button type="submit" class="w-full px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:ring-offset-slate-900">
+                        Reset Password
+                    </button>
+                </form>
+
+                <div class="mt-6 pt-6 border-t border-slate-700">
+                    <p class="text-center text-slate-400 text-sm">
+                        Remember your password?
+                        <a href="{{ route('login') }}" class="text-emerald-400 hover:text-emerald-300 font-medium">Sign in</a>
+                    </p>
                 </div>
-
-                <!-- Confirm Password -->
-                <div class="mb-6 text-left">
-                    <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-                    <x-text-input id="password_confirmation" class="block w-full mt-2 border-orange-200 rounded-lg focus:border-orange-500 focus:ring-orange-500" type="password" name="password_confirmation" required autocomplete="new-password" />
-                    <div id="password-match" class="hidden mt-2 text-xs text-red-600">Passwords do not match</div>
-                    <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-                </div>
-
-                <button type="submit" class="w-full px-4 py-2 font-semibold text-white transition-all rounded-lg shadow bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
-                    {{ __('Reset Password') }}
-                </button>
-            </form>
-
-            <div class="mt-6 text-center">
-                <p class="text-sm text-gray-600">
-                    {{ __('Remember your password?') }}
-                    <a href="{{ route('login') }}" class="font-semibold text-orange-600 hover:text-orange-700">
-                        {{ __('Sign in here') }}
-                    </a>
-                </p>
             </div>
-
-            <div class="mt-6 text-xs text-gray-500">
-                <span>Didn't request a reset? You can safely ignore this.</span>
-            </div>
-        </div>
-
-        <div class="mt-8 text-xs text-center text-gray-400">
-            "Every pet deserves a loving home" 🏡❤️
         </div>
     </div>
 </x-guest-layout>

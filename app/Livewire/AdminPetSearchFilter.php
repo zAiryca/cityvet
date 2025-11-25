@@ -27,18 +27,12 @@ class AdminPetSearchFilter extends Component
     {
         $query = Pet::query();
 
-        // 💡 UPDATED: Show active pets (impounded & adoptable) and denied status
-        $status = request()->get('status');
+        // Show only active pets (impounded & adoptable)
+        $query->whereIn('status', ['impounded', 'adoptable']);
 
-        if ($status === 'denied') {
-            // Denied tab shows only denied status
-            $query->where('status', 'denied');
-        } else {
-            // All Pets, Impounded, Adoptable tabs show only active pets
-            $query->whereIn('status', ['impounded', 'adoptable']);
-            if ($status && in_array($status, ['impounded', 'adoptable'])) {
-                $query->where('status', $status);
-            }
+        $status = request()->get('status');
+        if ($status && in_array($status, ['impounded', 'adoptable'])) {
+            $query->where('status', $status);
         }
 
         if ($this->search) {

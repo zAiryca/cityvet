@@ -202,9 +202,25 @@
                 <textarea name="adoption_notes" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('adoption_notes') border-red-500 @enderror" placeholder="Additional details about the adoption reason">{{ old('adoption_notes') }}</textarea>
                 @error('adoption_notes') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
             </div>
+
+            <!-- Photo Upload -->
             <div>
                 <label class="block text-sm font-medium text-gray-700">Photo</label>
-                <input type="file" name="photo" accept="image/*" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('photo') border-red-500 @enderror">
+                <div class="flex justify-center px-6 pt-5 pb-6 mt-1 transition duration-150 border-2 border-gray-300 border-dashed rounded-lg hover:border-indigo-400">
+                    <div class="space-y-1 text-center">
+                        <svg class="w-12 h-12 mx-auto text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m-4-4h2m-2 4h4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <div class="flex text-sm text-gray-600">
+                            <label for="file-upload" class="relative font-medium text-indigo-600 bg-white rounded-md cursor-pointer hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+                                <span>Upload a file</span>
+                                <input id="file-upload" name="photo" type="file" accept="image/*" class="sr-only">
+                            </label>
+                            <p class="pl-1">or drag and drop</p>
+                        </div>
+                        <p id="file-name" class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                    </div>
+                </div>
                 @error('photo') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
             </div>
             <div class="flex items-center justify-between px-6 py-4 sm:px-10 bg-gray-50 rounded-b-xl">
@@ -225,25 +241,28 @@ document.addEventListener('DOMContentLoaded', function() {
     const statusSelect = document.querySelector('select[name="status"]');
     const impoundedFields = document.getElementById('impounded-fields');
     const adoptableFields = document.getElementById('adoptable-fields');
+    const adoptionNotesField = document.getElementById('adoption-notes-field');
     const speciesSelect = document.getElementById('species-select');
     const breedSelect = document.getElementById('breed-select');
     const felineBreeds = document.getElementById('feline-breeds');
     const canineBreeds = document.getElementById('canine-breeds');
+    const fileUpload = document.getElementById('file-upload');
+    const fileNameDisplay = document.getElementById('file-name');
 
     function toggleStatusFields() {
         const status = statusSelect.value;
         if (status === 'impounded') {
             impoundedFields.style.display = 'grid';
             adoptableFields.style.display = 'none';
-            document.getElementById('adoption-notes-field').style.display = 'none';
+            adoptionNotesField.style.display = 'none';
         } else if (status === 'adoptable') {
             impoundedFields.style.display = 'none';
             adoptableFields.style.display = 'grid';
-            document.getElementById('adoption-notes-field').style.display = 'block';
+            adoptionNotesField.style.display = 'block';
         } else {
             impoundedFields.style.display = 'none';
             adoptableFields.style.display = 'none';
-            document.getElementById('adoption-notes-field').style.display = 'none';
+            adoptionNotesField.style.display = 'none';
         }
     }
 
@@ -260,6 +279,15 @@ document.addEventListener('DOMContentLoaded', function() {
             canineBreeds.style.display = 'none';
         }
     }
+
+    // Update file name display
+    fileUpload.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            fileNameDisplay.textContent = this.files[0].name;
+        } else {
+            fileNameDisplay.textContent = 'PNG, JPG, GIF up to 10MB';
+        }
+    });
 
     statusSelect.addEventListener('change', toggleStatusFields);
     speciesSelect.addEventListener('change', toggleBreedOptions);

@@ -2,15 +2,16 @@
     <div class="min-h-screen bg-slate-900 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
         <div class="w-full max-w-md">
             <!-- Header -->
-            <div class="mb-8 text-center">
-                <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-emerald-600 rounded-lg">
-                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
-                    </svg>
-                </div>
-                <h1 class="text-3xl font-bold text-white mb-2">City Vet</h1>
-                <p class="text-slate-400 text-sm">Pet Recovery & Adoption System</p>
-            </div>
+         <div class="mb-8 text-center">
+
+    <div class="flex justify-center mx-auto mb-4">
+        <img src="{{ asset('storage/logo/Logos.png') }}" alt="Logo" class="w-2/5 max-w-25 h-auto">
+    </div>
+
+    <h1 class="text-3xl font-bold text-white mb-2">City Vet</h1>
+
+    <p class="text-slate-400 text-sm">Pet Recovery & Adoption System</p>
+</div>
 
             <!-- Login Form -->
             <div class="bg-slate-800 rounded-lg border border-slate-700 shadow-xl p-8">
