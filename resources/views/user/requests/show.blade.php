@@ -3,7 +3,7 @@
 @section('title', '| Request Details')
 
 @section('content')
-<div class="py-10 mx-auto max-w-7xl sm:px-6 lg:px-8">
+<div class="py-10 mx-auto max-w-7xl sm:px-6 lg:px-8 pt-24">
 
     <div class="flex items-center justify-between pb-4 mb-8 border-b border-gray-200">
         <h1 class="text-4xl font-extrabold tracking-tight text-gray-900">
@@ -249,6 +249,40 @@
                 </div>
             @endif
 
+            @if($additionalData && isset($additionalData['id_photo_path']) && $additionalData['id_photo_path'])
+            <div class="p-6 overflow-hidden bg-white border border-gray-100 shadow-lg rounded-xl sm:p-8">
+                <h2 class="pb-3 mb-6 text-2xl font-bold text-gray-900 border-b">
+                    ID Photo
+                </h2>
+                <div class="flex flex-col items-center space-y-4">
+                    <div onclick="document.getElementById('userRequestIdPhotoModal').classList.remove('hidden')"
+                         class="cursor-pointer transform transition duration-200 hover:scale-105">
+                        <img src="{{ asset('storage/' . $additionalData['id_photo_path']) }}"
+                             alt="ID Photo"
+                             class="object-cover w-40 h-56 border-2 border-gray-300 rounded-lg shadow-md hover:shadow-lg transition duration-200">
+                    </div>
+                    <p class="text-sm text-gray-600">Click to view full size</p>
+                </div>
+
+                <!-- Modal for Full Size ID Photo -->
+                <div id="userRequestIdPhotoModal" class="fixed inset-0 z-50 items-center justify-center hidden p-4 transition-opacity duration-300 bg-black bg-opacity-80" onclick="if(event.target.id === 'userRequestIdPhotoModal') this.classList.add('hidden')">
+                    <div class="relative max-w-3xl overflow-hidden bg-white rounded-lg shadow-2xl">
+                        <div class="sticky top-0 z-10 flex items-center justify-between p-3 bg-white border-b border-gray-200">
+                            <h3 class="text-xl font-semibold text-gray-800">Your ID Photo</h3>
+                            <button onclick="document.getElementById('userRequestIdPhotoModal').classList.add('hidden')" class="p-2 text-gray-500 transition duration-150 rounded-full hover:bg-gray-100 hover:text-gray-700 focus:outline-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="p-6 max-h-[80vh] overflow-y-auto">
+                            <img src="{{ asset('storage/' . $additionalData['id_photo_path']) }}" alt="Full Size ID Photo" class="w-full h-auto rounded-lg shadow-md">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+
             @if($request->photos)
                 @php
                     // Process photos safely
@@ -283,3 +317,4 @@
     </div>
 </div>
 @endsection
+

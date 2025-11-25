@@ -3,237 +3,300 @@
 @section('title', '| Create Poster')
 
 @section('content')
-<div class="max-w-7xl mx-auto py-6 px-4">
-    <div class="flex items-center mb-6">
-        <img src="{{ asset('images/findfurever-logo.png') }}" alt="FindFurEver Logo" class="w-12 h-12 mr-4">
-        <h1 class="text-3xl font-bold">Create Lost & Found Poster</h1>
-    </div>
-<div class="px-4 py-6 mx-auto max-w-7xl">
-    <p class="mb-6">Post your lost or found pet directly.</p>
-
-    <form action="{{ route('posters.store') }}" method="POST" enctype="multipart/form-data" class="max-w-2xl p-6 bg-white rounded-lg shadow">
-        @csrf
-        <div class="space-y-4">
+<div class="min-h-screen bg-gray-50 pt-24">
+    <div class="max-w-3xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="flex items-center mb-8">
+            <div class="bg-white rounded-full p-3 shadow-sm mr-4">
+                <img src="{{ asset('https://i.ibb.co/8DPN5B7m/logo.png') }}" alt="FindFurEver Logo" class="w-12 h-12 object-contain">
+            </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700">Type</label>
-                <select name="type" id="type-select" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('type') border-red-500 @enderror">
-                    <option value="">Select Type</option>
-                    <option value="lost" {{ old('type') === 'lost' ? 'selected' : '' }}>Lost Pet</option>
-                    <option value="found" {{ old('type') === 'found' ? 'selected' : '' }}>Found Pet</option>
-                </select>
-                @error('type') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
+                <h1 class="text-2xl font-bold text-gray-900">Create Lost & Found Poster</h1>
+                <p class="text-gray-600 mt-1">Help reunite pets with their families</p>
+            </div>
+        </div>
+
+        <!-- Form Card -->
+        <form action="{{ route('posters.store') }}" method="POST" enctype="multipart/form-data" class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+            @csrf
+
+
+
+
+        <!-- Poster Type -->
+<div class="mb-8">
+    <label class="block text-sm font-semibold text-gray-900 mb-3">Poster Type</label>
+    <div class="grid grid-cols-2 gap-4" id="type-container">
+        <!-- Lost Pet -->
+        <label class="relative cursor-pointer">
+            <input type="radio" name="type" value="lost" {{ old('type') === 'lost' ? 'checked' : '' }} class="sr-only type-radio" required>
+            <div class="border-2 border-gray-200 rounded-xl p-4 text-center transition-all duration-200 hover:border-purple-300 type-option" data-type="lost">
+                <div class="w-8 h-8 mx-auto mb-2 rounded-full bg-red-100 flex items-center justify-center">
+                    <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                    </svg>
+                </div>
+                <span class="font-medium text-gray-900">Lost Pet</span>
+            </div>
+        </label>
+
+        <!-- Found Pet -->
+        <label class="relative cursor-pointer">
+            <input type="radio" name="type" value="found" {{ old('type') === 'found' ? 'checked' : '' }} class="sr-only type-radio">
+            <div class="border-2 border-gray-200 rounded-xl p-4 text-center transition-all duration-200 hover:border-green-300 type-option" data-type="found">
+                <div class="w-8 h-8 mx-auto mb-2 rounded-full bg-green-100 flex items-center justify-center">
+                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <span class="font-medium text-gray-900">Found Pet</span>
+            </div>
+        </label>
+    </div>
+    @error('type') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
+</div>
+
+            <!-- Pet Name (Conditional) -->
+            <div id="pet-name-field" class="mb-6 {{ old('type') === 'found' ? 'hidden' : 'block' }}">
+                <label class="block text-sm font-semibold text-gray-900 mb-2">Pet Name</label>
+                <input type="text" name="pet_name" value="{{ old('pet_name') }}"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 @error('pet_name') border-red-500 @enderror"
+                    placeholder="Enter pet's name">
+                @error('pet_name') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
-            <div id="pet-name-field" style="{{ old('type') === 'found' ? 'display: none;' : 'block' }};">
-                <label class="block text-sm font-medium text-gray-700">Pet Name</label>
-                <input type="text" name="pet_name" value="{{ old('pet_name') }}" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('pet_name') border-red-500 @enderror" {{ old('type') === 'lost' ? 'required' : '' }}>
-                @error('pet_name') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
-            </div>
-
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <!-- Species & Breed -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Species</label>
-                    <select name="species" id="species" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('species') border-red-500 @enderror" required>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">Species</label>
+                    <select name="species" id="species" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 @error('species') border-red-500 @enderror">
                         <option value="">Select Species</option>
-                        <option value="Canine" {{ old('species') === 'Canine' ? 'selected' : '' }}>Canine</option>
-                        <option value="Feline" {{ old('species') === 'Feline' ? 'selected' : '' }}>Feline</option>
+                        <option value="Canine" {{ old('species') === 'Canine' ? 'selected' : '' }}>🐕 Canine</option>
+                        <option value="Feline" {{ old('species') === 'Feline' ? 'selected' : '' }}>🐈 Feline</option>
                     </select>
-                    @error('species') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
+                    @error('species') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Breed</label>
-                    <select name="breed" id="breed" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('breed') border-red-500 @enderror" required>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">Breed</label>
+                    <select name="breed" id="breed" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 @error('breed') border-red-500 @enderror">
                         <option value="">Select Breed</option>
                         @if(old('species') === 'Canine')
                             <option value="Aspin" {{ old('breed') === 'Aspin' ? 'selected' : '' }}>Aspin</option>
                             <option value="Poodle" {{ old('breed') === 'Poodle' ? 'selected' : '' }}>Poodle</option>
                             <option value="Shih Tzu" {{ old('breed') === 'Shih Tzu' ? 'selected' : '' }}>Shih Tzu</option>
-                            <option value="Maltese" {{ old('breed') === 'Maltese' ? 'selected' : '' }}>Maltese</option>
-                            <option value="Pug" {{ old('breed') === 'Pug' ? 'selected' : '' }}>Pug</option>
-                            <option value="Beagle" {{ old('breed') === 'Beagle' ? 'selected' : '' }}>Beagle</option>
-                            <option value="Cocker Spaniel" {{ old('breed') === 'Cocker Spaniel' ? 'selected' : '' }}>Cocker Spaniel</option>
-                            <option value="Labrador Retriever" {{ old('breed') === 'Labrador Retriever' ? 'selected' : '' }}>Labrador Retriever</option>
-                            <option value="German Shepherd" {{ old('breed') === 'German Shepherd' ? 'selected' : '' }}>German Shepherd</option>
-                            <option value="Golden Retriever" {{ old('breed') === 'Golden Retriever' ? 'selected' : '' }}>Golden Retriever</option>
+                            <!-- Add other canine breeds -->
                         @elseif(old('species') === 'Feline')
                             <option value="Philippine Domestic Cat" {{ old('breed') === 'Philippine Domestic Cat' ? 'selected' : '' }}>Philippine Domestic Cat</option>
                             <option value="Siamese" {{ old('breed') === 'Siamese' ? 'selected' : '' }}>Siamese</option>
                             <option value="Persian" {{ old('breed') === 'Persian' ? 'selected' : '' }}>Persian</option>
-                            <option value="Maine Coon" {{ old('breed') === 'Maine Coon' ? 'selected' : '' }}>Maine Coon</option>
-                            <option value="British Shorthair" {{ old('breed') === 'British Shorthair' ? 'selected' : '' }}>British Shorthair</option>
-                            <option value="Ragdoll" {{ old('breed') === 'Ragdoll' ? 'selected' : '' }}>Ragdoll</option>
-                            <option value="Bengal" {{ old('breed') === 'Bengal' ? 'selected' : '' }}>Bengal</option>
-                            <option value="Scottish Fold" {{ old('breed') === 'Scottish Fold' ? 'selected' : '' }}>Scottish Fold</option>
-                            <option value="Abyssinian" {{ old('breed') === 'Abyssinian' ? 'selected' : '' }}>Abyssinian</option>
-                            <option value="Russian Blue" {{ old('breed') === 'Russian Blue' ? 'selected' : '' }}>Russian Blue</option>
+                            <!-- Add other feline breeds -->
                         @endif
                     </select>
-                    @error('breed') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
+                    @error('breed') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <!-- Gender & Colors -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Gender</label>
-                    <select name="gender" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('gender') border-red-500 @enderror">
-                        <option value="">Select</option>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">Gender</label>
+                    <select name="gender"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 @error('gender') border-red-500 @enderror">
+                        <option value="">Select Gender</option>
                         <option value="male" {{ old('gender') === 'male' ? 'selected' : '' }}>Male</option>
                         <option value="female" {{ old('gender') === 'female' ? 'selected' : '' }}>Female</option>
                         <option value="unknown" {{ old('gender') === 'unknown' ? 'selected' : '' }}>Unknown</option>
                     </select>
-                    @error('gender') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
+                    @error('gender') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Colors/Markings</label>
-                    <div class="grid grid-cols-2 gap-2 mt-2 md:grid-cols-4">
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">Colors & Markings</label>
+                    <div class="grid grid-cols-2 gap-3">
                         @php $selectedColors = old('color_markings', []); @endphp
-                        <label class="inline-flex items-center">
-                            <input type="checkbox" name="color_markings[]" value="Black" {{ in_array('Black', $selectedColors) ? 'checked' : '' }} class="text-purple-600 border-gray-300 rounded shadow-sm focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50">
-                            <span class="ml-2 text-sm">Black</span>
+                        @foreach(['Black', 'White', 'Brown', 'Gray', 'Orange', 'Cream', 'Tabby'] as $color)
+                        <label class="flex items-center space-x-3 cursor-pointer group">
+                            <input type="checkbox" name="color_markings[]" value="{{ $color }}"
+                                {{ in_array($color, $selectedColors) ? 'checked' : '' }}
+                                class="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500 group-hover:border-purple-400 transition-colors duration-200">
+                            <span class="text-sm text-gray-700 group-hover:text-gray-900 transition-colors duration-200">{{ $color }}</span>
                         </label>
-                        <label class="inline-flex items-center">
-                            <input type="checkbox" name="color_markings[]" value="White" {{ in_array('White', $selectedColors) ? 'checked' : '' }} class="text-purple-600 border-gray-300 rounded shadow-sm focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50">
-                            <span class="ml-2 text-sm">White</span>
-                        </label>
-                        <label class="inline-flex items-center">
-                            <input type="checkbox" name="color_markings[]" value="Brown" {{ in_array('Brown', $selectedColors) ? 'checked' : '' }} class="text-purple-600 border-gray-300 rounded shadow-sm focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50">
-                            <span class="ml-2 text-sm">Brown</span>
-                        </label>
-                        <label class="inline-flex items-center">
-                            <input type="checkbox" name="color_markings[]" value="Gray" {{ in_array('Gray', $selectedColors) ? 'checked' : '' }} class="text-purple-600 border-gray-300 rounded shadow-sm focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50">
-                            <span class="ml-2 text-sm">Gray</span>
-                        </label>
-                        <label class="inline-flex items-center">
-                            <input type="checkbox" name="color_markings[]" value="Orange" {{ in_array('Orange', $selectedColors) ? 'checked' : '' }} class="text-purple-600 border-gray-300 rounded shadow-sm focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50">
-                            <span class="ml-2 text-sm">Orange</span>
-                        </label>
-                        <label class="inline-flex items-center">
-                            <input type="checkbox" name="color_markings[]" value="Cream" {{ in_array('Cream', $selectedColors) ? 'checked' : '' }} class="text-purple-600 border-gray-300 rounded shadow-sm focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50">
-                            <span class="ml-2 text-sm">Cream</span>
-                        </label>
-                        <label class="inline-flex items-center">
-                            <input type="checkbox" name="color_markings[]" value="Tabby" {{ in_array('Tabby', $selectedColors) ? 'checked' : '' }} class="text-purple-600 border-gray-300 rounded shadow-sm focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50">
-                            <span class="ml-2 text-sm">Tabby</span>
-                        </label>
+                        @endforeach
                     </div>
-                    @error('color_markings') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
+                    @error('color_markings') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
                 </div>
             </div>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Date Lost/Found</label>
-                <input type="date" name="date_lost_found" value="{{ old('date_lost_found') }}" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('date_lost_found') border-red-500 @enderror">
-                @error('date_lost_found') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
+            <!-- Date -->
+            <div class="mb-6">
+                <label class="block text-sm font-semibold text-gray-900 mb-2">Date Lost/Found</label>
+                <input type="date" name="date_lost_found" value="{{ old('date_lost_found') }}" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 @error('date_lost_found') border-red-500 @enderror">
+                @error('date_lost_found') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Short Description</label>
-                <textarea name="description" rows="2" placeholder="Brief description of the pet..." {{ old('description') }} class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('description') border-red-500 @enderror"></textarea>
-                @error('description') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
+            <!-- Descriptions -->
+            <div class="space-y-6 mb-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">Short Description</label>
+                    <textarea name="description" rows="2" placeholder="Brief description of the pet..."
+                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 @error('description') border-red-500 @enderror">{{ old('description') }}</textarea>
+                    @error('description') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-900 mb-2">Additional Comments</label>
+                    <textarea name="uploader_comments" rows="3" placeholder="Any additional information or comments..."
+                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 @error('uploader_comments') border-red-500 @enderror">{{ old('uploader_comments') }}</textarea>
+                    @error('uploader_comments') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
+                </div>
             </div>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Additional Comments (Optional)</label>
-                <textarea name="uploader_comments" rows="3" placeholder="Any additional information or comments..." {{ old('uploader_comments') }} class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('uploader_comments') border-red-500 @enderror"></textarea>
-                @error('uploader_comments') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
+            <!-- Location -->
+            <div id="location-field" class="mb-6">
+                <label class="block text-sm font-semibold text-gray-900 mb-2" id="location-label">Location Details</label>
+                <textarea name="last_seen" id="last_seen_field" rows="3" placeholder="Where was the pet last seen?"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 @error('last_seen') border-red-500 @enderror"
+                    style="{{ old('type') === 'found' ? 'display: none;' : 'display: block;' }}">{{ old('last_seen') }}</textarea>
+                <textarea name="found_at" id="found_at_field" rows="3" placeholder="Where was the pet found?"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 @error('found_at') border-red-500 @enderror"
+                    style="{{ old('type') === 'lost' ? 'display: none;' : 'display: block;' }}">{{ old('found_at') }}</textarea>
+                @error('last_seen') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
+                @error('found_at') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
-            <div id="location-field">
-                <label class="block text-sm font-medium text-gray-700" id="location-label">Location Details</label>
-                <textarea name="last_seen" id="last_seen_field" rows="3" placeholder="Where was the pet last seen?" {{ old('last_seen') }} class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('last_seen') border-red-500 @enderror" style="display: none;"></textarea>
-                <textarea name="found_at" id="found_at_field" rows="3" placeholder="Where was the pet found?" {{ old('found_at') }} class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('found_at') border-red-500 @enderror" style="display: none;"></textarea>
-                @error('last_seen') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
-                @error('found_at') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
+            <!-- Photo Upload -->
+            <div class="mb-6">
+                <label class="block text-sm font-semibold text-gray-900 mb-2">Pet Photo</label>
+                <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-purple-400 transition-colors duration-200">
+                    <input type="file" name="photo" accept="image/*"
+                        class="hidden" id="photo-upload">
+                    <label for="photo-upload" class="cursor-pointer">
+                        <svg class="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <p class="text-gray-600">Click to upload a photo</p>
+                        <p class="text-sm text-gray-500 mt-1">PNG, JPG up to 5MB</p>
+                    </label>
+                </div>
+                @error('photo') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Photo</label>
-                <input type="file" name="photo" accept="image/*" class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('photo') border-red-500 @enderror">
-                @error('photo') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
+            <!-- Contact Info -->
+            <div class="mb-6">
+                <label class="block text-sm font-semibold text-gray-900 mb-2">Contact Information</label>
+                <input type="text" name="contact_info" value="{{ old('contact_info') }}" placeholder="Email and/or phone number" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 @error('contact_info') border-red-500 @enderror">
+                @error('contact_info') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Contact Info</label>
-                <input type="text" name="contact_info" value="{{ old('contact_info') }}" placeholder="Email and/or phone" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 @error('contact_info') border-red-500 @enderror">
-                @error('contact_info') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
-            </div>
-
-            <div id="reward-field" style="{{ old('type') === 'found' ? 'display: none;' : '' }}">
-                <label class="block text-sm font-medium text-gray-700">Reward (Optional)</label>
+            <!-- Reward (Conditional) -->
+            <div id="reward-field" class="mb-8 {{ old('type') === 'found' ? 'hidden' : 'block' }}">
+                <label class="block text-sm font-semibold text-gray-900 mb-2">Reward (Optional)</label>
                 <div class="relative">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">₱</span>
-                    <input type="number" name="reward" step="0.01" value="{{ old('reward') }}" class="block w-full p-2 pl-8 mt-1 border border-gray-300 rounded-md">
+                    <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500">₱</span>
+                    <input type="number" name="reward" step="0.01" value="{{ old('reward') }}" placeholder="0.00"
+                        class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200">
                 </div>
-                @error('reward') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
+                @error('reward') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
-            <div class="flex justify-end space-x-4">
-                <a href="{{ route('posters.index') }}" class="px-4 py-2 text-gray-700 border border-gray-300 rounded-md">Cancel</a>
-                <button type="submit" class="px-6 py-2 text-white bg-purple-600 rounded-md hover:bg-purple-700">Post Now</button>
+            <!-- Action Buttons -->
+            <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                <a href="{{ route('posters.index') }}"
+                    class="px-6 py-3 text-gray-700 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors duration-200 font-medium">
+                    Cancel
+                </a>
+                <button type="submit"
+                    class="px-8 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-xl hover:from-purple-700 hover:to-purple-800 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                    Create Poster
+                </button>
             </div>
-        </div>
-    </form>
+        </form>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const typeSelect = document.querySelectorAll('input[name="type"]');
+        const petNameField = document.getElementById('pet-name-field');
+        const speciesSelect = document.getElementById('species');
+        const breedSelect = document.getElementById('breed');
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const typeSelect = document.getElementById('type-select');
-            const petNameField = document.getElementById('pet-name-field');
-            const speciesSelect = document.getElementById('species');
-            const breedSelect = document.getElementById('breed');
+        // Handle type selection styling
+        function updateTypeStyles() {
+            // Remove all selected styles first
+            document.querySelectorAll('.type-option').forEach(option => {
+                option.classList.remove('border-purple-500', 'bg-purple-50', 'border-green-500', 'bg-green-50');
+                option.classList.add('border-gray-200');
+            });
 
-            function toggleFields() {
-                const selectedType = typeSelect.value;
-                if (selectedType === 'found') {
-                    petNameField.style.display = 'none';
-                    petNameField.querySelector('input').removeAttribute('required');
-                    document.getElementById('last_seen_field').style.display = 'none';
-                    document.getElementById('found_at_field').style.display = 'block';
-                    document.getElementById('location-label').textContent = 'Found At';
-                    document.getElementById('reward-field').style.display = 'none';
-                } else if (selectedType === 'lost') {
-                    petNameField.style.display = 'block';
-                    petNameField.querySelector('input').setAttribute('required', 'required');
-                    document.getElementById('last_seen_field').style.display = 'block';
-                    document.getElementById('found_at_field').style.display = 'none';
-                    document.getElementById('location-label').textContent = 'Last Seen At';
-                    document.getElementById('reward-field').style.display = 'block';
+            // Add styles to selected option
+            const selectedType = document.querySelector('input[name="type"]:checked');
+            if (selectedType) {
+                const selectedOption = selectedType.closest('label').querySelector('.type-option');
+                if (selectedType.value === 'lost') {
+                    selectedOption.classList.add('border-purple-500', 'bg-purple-50');
+                    selectedOption.classList.remove('border-gray-200');
+                } else if (selectedType.value === 'found') {
+                    selectedOption.classList.add('border-green-500', 'bg-green-50');
+                    selectedOption.classList.remove('border-gray-200');
                 }
             }
+        }
 
-            typeSelect.addEventListener('change', toggleFields);
-            // Initialize on page load
+        function toggleFields() {
+            const selectedType = document.querySelector('input[name="type"]:checked')?.value;
+
+            if (selectedType === 'found') {
+                petNameField.classList.add('hidden');
+                document.getElementById('last_seen_field').style.display = 'none';
+                document.getElementById('found_at_field').style.display = 'block';
+                document.getElementById('location-label').textContent = 'Found Location';
+                document.getElementById('reward-field').classList.add('hidden');
+            } else if (selectedType === 'lost') {
+                petNameField.classList.remove('hidden');
+                document.getElementById('last_seen_field').style.display = 'block';
+                document.getElementById('found_at_field').style.display = 'none';
+                document.getElementById('location-label').textContent = 'Last Seen Location';
+                document.getElementById('reward-field').classList.remove('hidden');
+            }
+        }
+
+        // Combined function for both styling and field toggling
+        function handleTypeChange() {
+            updateTypeStyles();
             toggleFields();
+        }
 
-            // Handle species change
-            speciesSelect.addEventListener('change', function() {
-                const selectedSpecies = this.value;
-                breedSelect.innerHTML = '<option value="">Select Breed</option>';
-
-                if (selectedSpecies === 'Canine') {
-                    const canineBreeds = [
-                        'Aspin', 'Poodle', 'Shih Tzu', 'Maltese', 'Pug', 'Beagle',
-                        'Cocker Spaniel', 'Labrador Retriever', 'German Shepherd', 'Golden Retriever'
-                    ];
-                    canineBreeds.forEach(breed => {
-                        const option = document.createElement('option');
-                        option.value = breed;
-                        option.textContent = breed;
-                        breedSelect.appendChild(option);
-                    });
-                } else if (selectedSpecies === 'Feline') {
-                    const felineBreeds = [
-                        'Philippine Domestic Cat', 'Siamese', 'Persian', 'Maine Coon',
-                        'British Shorthair', 'Ragdoll', 'Bengal', 'Scottish Fold', 'Abyssinian', 'Russian Blue'
-                    ];
-                    felineBreeds.forEach(breed => {
-                        const option = document.createElement('option');
-                        option.value = breed;
-                        option.textContent = breed;
-                        breedSelect.appendChild(option);
-                    });
-                }
-            });
+        typeSelect.forEach(radio => {
+            radio.addEventListener('change', handleTypeChange);
         });
-    </script>
-</div>
+
+        // Initialize on page load
+        updateTypeStyles();
+        toggleFields();
+
+        // Handle species change
+        speciesSelect.addEventListener('change', function() {
+            const selectedSpecies = this.value;
+            breedSelect.innerHTML = '<option value="">Select Breed</option>';
+
+            const breeds = {
+                'Canine': ['Aspin', 'Poodle', 'Shih Tzu', 'Maltese', 'Pug', 'Beagle', 'Cocker Spaniel', 'Labrador Retriever', 'German Shepherd', 'Golden Retriever'],
+                'Feline': ['Philippine Domestic Cat', 'Siamese', 'Persian', 'Maine Coon', 'British Shorthair', 'Ragdoll', 'Bengal', 'Scottish Fold', 'Abyssinian', 'Russian Blue']
+            };
+
+            if (breeds[selectedSpecies]) {
+                breeds[selectedSpecies].forEach(breed => {
+                    const option = document.createElement('option');
+                    option.value = breed;
+                    option.textContent = breed;
+                    breedSelect.appendChild(option);
+                });
+            }
+        });
+    });
+</script>
 @endsection
+

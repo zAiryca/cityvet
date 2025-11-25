@@ -26,21 +26,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        // Regular User
-        User::create([
-            'first_name' => 'Erricca',
-            'middle_name' => null,
-            'last_name' => 'Morales',
-            'contact_number' => '09170000000',
-            'street' => '456 Oak Ave',
-            'barangay' => 'Barangay 2',
-            'city_municipality' => 'Sample City',
-            'province' => 'Sample Province',
-            'email' => 'morales.erricca17@gmail.com',
-            'password' => Hash::make('Capstone2'),
-            'role' => 'user',
-            'email_verified_at' => now(),
-        ]);
+
 
         // Additional User
         User::create([

@@ -3,211 +3,333 @@
 @section('title', '| My Pets')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-6xl mx-auto">
+<div class="min-h-screen bg-gray-50 pt-24">
+    <div class="max-w-7xl mx-auto px-4 py-8">
         <!-- Header -->
-        @php $tab = request('tab'); @endphp
-
-        <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
-            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6">
-                <h1 class="text-3xl font-bold text-white">🐾 My Pets</h1>
-                <p class="text-blue-100 mt-2">Manage your pet registrations and pre-registrations</p>
-            </div>
-
-            <div class="px-8 py-4 bg-gray-50">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-3">
-                        <nav class="bg-white rounded-md shadow-sm p-1 flex items-center space-x-1">
-                            <a href="{{ route('pet-registrations.index') }}" class="px-4 py-2 text-sm rounded-md {{ empty($tab) ? 'bg-blue-50 text-blue-700 shadow-sm' : 'text-gray-600 hover:bg-gray-50' }}">All</a>
-                            <a href="{{ route('pet-registrations.index', ['tab' => 'pending']) }}" class="px-4 py-2 text-sm rounded-md {{ ($tab === 'pending') ? 'bg-blue-50 text-blue-700 shadow-sm' : 'text-gray-600 hover:bg-gray-50' }}">Pre-Registered</a>
-                            <a href="{{ route('pet-registrations.index', ['tab' => 'registered']) }}" class="px-4 py-2 text-sm rounded-md {{ ($tab === 'registered') ? 'bg-blue-50 text-blue-700 shadow-sm' : 'text-gray-600 hover:bg-gray-50' }}">Registered</a>
-                            <a href="{{ route('pet-registrations.index', ['tab' => 'denied']) }}" class="px-4 py-2 text-sm rounded-md {{ ($tab === 'denied') ? 'bg-blue-50 text-blue-700 shadow-sm' : 'text-gray-600 hover:bg-gray-50' }}">Denied</a>
-                        </nav>
-                    </div>
-
-                    <div>
-                        <a href="{{ route('pet-registrations.create') }}" class="bg-purple-600 text-white px-6 py-3 rounded-xl hover:bg-purple-700 transition duration-200 font-semibold shadow-lg hover:shadow-xl">
-                            🚀 Pre-Register New Pet
-                        </a>
-                    </div>
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center">
+                <div class="bg-white rounded-full p-3 shadow-sm mr-4">
+                    <img src="{{ asset('https://i.ibb.co/8DPN5B7m/logo.png') }}" alt="FindFurEver Logo" class="w-12 h-12 object-contain">
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">My Pets</h1>
+                    <p class="text-gray-600 mt-1">Manage your pet registrations</p>
                 </div>
             </div>
+            <a href="{{ route('pet-registrations.create') }}"
+               class="px-6 py-3 bg-teal-600 text-white rounded-xl hover:bg-teal-700 transition-all duration-200 font-medium shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                + Pre-Register New Pet
+            </a>
         </div>
 
-        <!-- Pre-Registered Pets Section -->
         @php
+            $tab = request('tab');
             $pending = $petRegistrations->where('status', 'pending');
             $registered = $petRegistrations->where('status', 'registered');
             $denied = $petRegistrations->where('status', 'denied');
         @endphp
 
+        <!-- Tabs -->
+        <div class="bg-white rounded-2xl shadow-sm p-2 mb-6">
+            <div class="flex space-x-1">
+                <a href="{{ route('pet-registrations.index') }}"
+                   class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ empty($tab) ? 'bg-pastel-blue text-gray-800 shadow-sm' : 'text-gray-600 hover:bg-gray-50' }}">
+                    All Pets
+                </a>
+                <a href="{{ route('pet-registrations.index', ['tab' => 'pending']) }}"
+                   class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ ($tab === 'pending') ? 'bg-pastel-yellow text-gray-800 shadow-sm' : 'text-gray-600 hover:bg-gray-50' }}">
+                    ⏱ Pre-Registered
+                </a>
+                <a href="{{ route('pet-registrations.index', ['tab' => 'registered']) }}"
+                   class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ ($tab === 'registered') ? 'bg-pastel-green text-gray-800 shadow-sm' : 'text-gray-600 hover:bg-gray-50' }}">
+                    ✓ Registered
+                </a>
+                <a href="{{ route('pet-registrations.index', ['tab' => 'denied']) }}"
+                   class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ ($tab === 'denied') ? 'bg-pastel-pink text-gray-800 shadow-sm' : 'text-gray-600 hover:bg-gray-50' }}">
+                    × Denied
+                </a>
+            </div>
+        </div>
+
+        <!-- Pre-Registered Pets -->
         @if((empty($tab) || $tab === 'pending') && $pending->count() > 0)
-            <div class="mb-8">
-                <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-                    <div class="bg-gradient-to-r from-yellow-500 to-orange-500 px-8 py-6">
-                        <h2 class="text-2xl font-bold text-white">⏳ Pre-Registered Pets</h2>
-                        <p class="text-yellow-100 mt-1">Pets awaiting official registration approval</p>
-                    </div>
-
-                    <div class="px-8 py-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            @foreach($pending as $petRegistration)
-                                <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-yellow-200 hover:shadow-xl transition duration-300">
-                                    @if($petRegistration->photo)
-                                        <img src="{{ asset('storage/' . $petRegistration->photo) }}" alt="{{ $petRegistration->pet_name }}" class="w-full h-48 object-cover">
-                                    @else
-                                        <div class="w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                                            <div class="text-center">
-                                                <span class="text-4xl">🐾</span>
-                                                <p class="text-gray-500 text-sm mt-2">No Photo</p>
-                                            </div>
-                                        </div>
-                                    @endif
-
-                                    <div class="p-6">
-                                        <div class="flex justify-between items-start mb-3">
-                                            <h3 class="text-xl font-bold text-gray-900">{{ $petRegistration->pet_name }}</h3>
-                                            <span class="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 border border-yellow-200">Pre-Registered</span>
-                                        </div>
-
-                                        <div class="space-y-2 mb-4">
-                                            <p class="text-sm text-gray-600"><span class="font-medium">Species:</span> {{ $petRegistration->species }}</p>
-                                            <p class="text-sm text-gray-600"><span class="font-medium">Breed:</span> {{ $petRegistration->breed }}</p>
-                                            <p class="text-sm text-gray-600"><span class="font-medium">Gender:</span> {{ ucfirst($petRegistration->gender) }}</p>
-                                            <p class="text-sm text-gray-600"><span class="font-medium">Birthday:</span> {{ $petRegistration->birthday ? $petRegistration->birthday->format('M d, Y') : 'Not specified' }}</p>
-                                        </div>
-
-                                        @if($petRegistration->denial_reason)
-                                            <div class="mb-3 p-3 bg-red-50 border border-red-100 rounded">
-                                                <h4 class="text-sm font-semibold text-red-700">Admin reason</h4>
-                                                <p class="text-sm text-red-800 mt-1">{{ $petRegistration->denial_reason }}</p>
-                                            </div>
-                                        @endif
-
-                                        <div class="flex space-x-2">
-                                            <a href="{{ route('pet-registrations.show', $petRegistration) }}" class="flex-1 bg-purple-600 text-white py-3 rounded-lg text-center hover:bg-purple-700 transition duration-200 font-semibold text-sm shadow-md hover:shadow-lg">
-                                                👁️ View
-                                            </a>
-                                            <a href="{{ route('pet-registrations.edit', $petRegistration) }}" class="flex-1 bg-blue-600 text-white py-3 rounded-lg text-center hover:bg-blue-700 transition duration-200 font-semibold text-sm shadow-md hover:shadow-lg">
-                                                ✏️ Edit
-                                            </a>
-                                            <form method="POST" action="{{ route('pet-registrations.destroy', $petRegistration) }}" class="flex-1" onsubmit="return confirm('Are you sure you want to delete this pet registration?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="w-full bg-red-600 text-white py-3 rounded-lg text-center hover:bg-red-700 transition duration-200 font-semibold text-sm shadow-md hover:shadow-lg">
-                                                    🗑️ Delete
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @endif
-
-        {{-- Denied Registrations --}}
-        @if($denied->count() > 0)
-            <div class="mb-8">
-                <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-                    <div class="bg-gradient-to-r from-red-600 to-pink-500 px-8 py-6">
-                        <h2 class="text-2xl font-bold text-white">⛔ Denied Registrations</h2>
-                        <p class="text-red-100 mt-1">Registrations that were denied by the admin. You can edit and resubmit.</p>
-                    </div>
-
-                    <div class="px-8 py-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            @foreach($denied as $petRegistration)
-                                <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-red-200 hover:shadow-xl transition duration-300">
-                                    @if($petRegistration->photo)
-                                        <img src="{{ asset('storage/' . $petRegistration->photo) }}" alt="{{ $petRegistration->pet_name }}" class="w-full h-48 object-cover">
-                                    @else
-                                        <div class="w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                                            <div class="text-center">
-                                                <span class="text-4xl">🐾</span>
-                                                <p class="text-gray-500 text-sm mt-2">No Photo</p>
-                                            </div>
-                                        </div>
-                                    @endif
-
-                                    <div class="p-6">
-                                        <div class="flex justify-between items-start mb-3">
-                                            <h3 class="text-xl font-bold text-gray-900">{{ $petRegistration->pet_name }}</h3>
-                                            <span class="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800 border border-red-200">Denied</span>
-                                        </div>
-
-                                        <div class="space-y-2 mb-4">
-                                            <p class="text-sm text-gray-600"><span class="font-medium">Species:</span> {{ $petRegistration->species }}</p>
-                                            <p class="text-sm text-gray-600"><span class="font-medium">Breed:</span> {{ $petRegistration->breed }}</p>
-                                            <p class="text-sm text-gray-600"><span class="font-medium">Gender:</span> {{ ucfirst($petRegistration->gender) }}</p>
-                                            <p class="text-sm text-gray-600"><span class="font-medium">Birthday:</span> {{ $petRegistration->birthday ? $petRegistration->birthday->format('M d, Y') : 'Not specified' }}</p>
-                                        </div>
-
-                                        <div class="flex space-x-2">
-                                            <a href="{{ route('pet-registrations.show', $petRegistration) }}" class="flex-1 bg-purple-600 text-white py-3 rounded-lg text-center hover:bg-purple-700 transition duration-200 font-semibold text-sm shadow-md hover:shadow-lg">
-                                                👁️ View
-                                            </a>
-                                            <a href="{{ route('pet-registrations.edit', $petRegistration) }}" class="flex-1 bg-blue-600 text-white py-3 rounded-lg text-center hover:bg-blue-700 transition duration-200 font-semibold text-sm shadow-md hover:shadow-lg">
-                                                ✏️ Edit & Resubmit
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @endif
-
-    @if((empty($tab) || $tab === 'registered') && $registered->count() > 0)
         <div class="mb-8">
-            <h2 class="text-2xl font-semibold mb-4">Registered Pets</h2>
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-bold text-gray-900">⏱ Pre-Registered <span class="text-yellow-600">({{ $pending->count() }})</span></h2>
+                <span class="text-sm text-gray-500">Awaiting approval</span>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach($registered as $petRegistration)
-                    <div class="bg-green-50 border border-green-200 rounded-lg shadow-md overflow-hidden">
+                @foreach($pending as $petRegistration)
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                    <!-- Image Section -->
+                    <div class="relative">
                         @if($petRegistration->photo)
-                            <img src="{{ asset('storage/' . $petRegistration->photo) }}" alt="{{ $petRegistration->pet_name }}" class="w-full h-48 object-cover opacity-75">
+                            <img src="{{ asset('storage/' . $petRegistration->photo) }}" alt="{{ $petRegistration->pet_name }}" class="w-full h-48 object-cover">
                         @else
-                            <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
-                                <span class="text-gray-500">No Photo</span>
+                            <div class="w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                                <div class="text-center">
+                                    <svg class="w-16 h-16 text-gray-400 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M10 3.5a1.5 1.5 0 013 0V4a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-.5a1.5 1.5 0 000 3h.5a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-.5a1.5 1.5 0 00-3 0v.5a1 1 0 01-1 1H6a1 1 0 01-1-1v-3a1 1 0 00-1-1h-.5a1.5 1.5 0 010-3H4a1 1 0 001-1V6a1 1 0 011-1h3a1 1 0 001-1v-.5z" />
+                                    </svg>
+                                    <p class="text-gray-500 text-sm mt-2">No Photo</p>
+                                </div>
                             </div>
                         @endif
 
-                        <div class="p-4">
-                            <div class="flex items-center mb-2">
-                                <h3 class="text-lg font-semibold text-gray-900 mr-2">{{ $petRegistration->pet_name }}</h3>
-                                <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Registered</span>
-                            </div>
-                            <p class="text-sm text-gray-600 mb-2">{{ $petRegistration->species }} - {{ $petRegistration->breed }}</p>
-                            <p class="text-sm text-gray-500 mb-3">{{ $petRegistration->birthday ? $petRegistration->birthday->format('M d, Y') : 'No birthday' }}</p>
-
-                            <div class="flex space-x-2">
-                                <a href="{{ route('pet-registrations.show', $petRegistration) }}" class="flex-1 bg-purple-600 text-white py-2 rounded text-center hover:bg-purple-700 transition duration-200 text-sm">
-                                    View
-                                </a>
-                                <form method="POST" action="{{ route('pet-registrations.destroy', $petRegistration) }}" class="flex-1" onsubmit="return confirm('Are you sure you want to delete this pet registration?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="w-full bg-red-600 text-white py-2 rounded text-center hover:bg-red-700 transition duration-200 text-sm">
-                                        Delete
-                                    </button>
-                                </form>
-                            </div>
+                        <!-- Status Badge -->
+                        <div class="absolute top-3 left-3">
+                            <span class="px-3 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded-full shadow-sm">
+                                ⏱ Pending
+                            </span>
                         </div>
                     </div>
+
+                    <!-- Content Section -->
+                    <div class="p-5">
+                        <!-- Pet Info -->
+                        <div class="mb-4">
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $petRegistration->pet_name }}</h3>
+
+                            <div class="flex items-center text-sm text-gray-600 mb-2">
+                                <span class="font-medium">{{ $petRegistration->species }}</span>
+                                <span class="mx-2">•</span>
+                                <span>{{ $petRegistration->breed }}</span>
+                            </div>
+
+                            <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                <span class="flex items-center">
+                                    <span class="mr-1">♂♀</span>
+                                    {{ ucfirst($petRegistration->gender) }}
+                                </span>
+                                <span class="flex items-center">
+                                    <span class="mr-1">📅</span>
+                                    {{ $petRegistration->birthday ? $petRegistration->birthday->format('M d, Y') : 'Not set' }}
+                                </span>
+                            </div>
+                        </div>
+
+                        @if($petRegistration->denial_reason)
+                        <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl">
+                            <p class="text-sm text-red-800">{{ $petRegistration->denial_reason }}</p>
+                        </div>
+                        @endif
+
+                        <!-- Action Buttons -->
+                        <div class="grid grid-cols-3 gap-2">
+                            <a href="{{ route('pet-registrations.show', $petRegistration) }}"
+                               class="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm font-medium text-center shadow-sm">
+                                View
+                            </a>
+                            <a href="{{ route('pet-registrations.edit', $petRegistration) }}"
+                               class="px-3 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors duration-200 text-sm font-medium text-center shadow-sm">
+                                Edit
+                            </a>
+                            <form method="POST" action="{{ route('pet-registrations.destroy', $petRegistration) }}"
+                                  onsubmit="return confirm('Are you sure you want to delete this pet registration?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                        class="w-full px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200 text-sm font-medium shadow-sm">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
                 @endforeach
             </div>
         </div>
-    @endif
+        @endif
 
-    @if((empty($tab) || $tab === 'pending') && $pending->count() == 0 && (empty($tab) || $tab === 'registered') && $registered->count() == 0 && (empty($tab) || $tab === 'denied') && $denied->count() == 0)
-        <div class="bg-white p-6 rounded-lg shadow text-center">
-            <p class="text-gray-500 mb-4">You haven't registered any pets yet.</p>
-            <a href="{{ route('pet-registrations.create') }}" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">Pre-Register Your First Pet</a>
+        <!-- Registered Pets -->
+        @if((empty($tab) || $tab === 'registered') && $registered->count() > 0)
+        <div class="mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-bold text-gray-900">✓ Registered <span class="text-green-600">({{ $registered->count() }})</span></h2>
+                <span class="text-sm text-gray-500">Approved pets</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($registered as $petRegistration)
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-green-200">
+                    <!-- Image Section -->
+                    <div class="relative">
+                        @if($petRegistration->photo)
+                            <img src="{{ asset('storage/' . $petRegistration->photo) }}" alt="{{ $petRegistration->pet_name }}" class="w-full h-48 object-cover">
+                        @else
+                            <div class="w-full h-48 bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
+                                <div class="text-center">
+                                    <svg class="w-16 h-16 text-green-600 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                    </svg>
+                                    <p class="text-green-600 text-sm mt-2">Registered</p>
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Status Badge -->
+                        <div class="absolute top-3 left-3">
+                            <span class="px-3 py-1 text-xs font-semibold bg-green-100 text-green-800 rounded-full shadow-sm">
+                                ✓ Registered
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Content Section -->
+                    <div class="p-5">
+                        <!-- Pet Info -->
+                        <div class="mb-4">
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $petRegistration->pet_name }}</h3>
+
+                            <div class="flex items-center text-sm text-gray-600 mb-2">
+                                <span class="font-medium">{{ $petRegistration->species }}</span>
+                                <span class="mx-2">•</span>
+                                <span>{{ $petRegistration->breed }}</span>
+                            </div>
+
+                            <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                <span>{{ ucfirst($petRegistration->gender) }}</span>
+                                <span>{{ $petRegistration->birthday ? $petRegistration->birthday->format('M d, Y') : 'Not set' }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="{{ route('pet-registrations.show', $petRegistration) }}"
+                               class="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm font-medium text-center shadow-sm">
+                                View
+                            </a>
+                            <form method="POST" action="{{ route('pet-registrations.destroy', $petRegistration) }}"
+                                  onsubmit="return confirm('Are you sure you want to delete this pet registration?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                        class="w-full px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200 text-sm font-medium shadow-sm">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
         </div>
-    @endif
+        @endif
+
+        <!-- Denied Pets -->
+        @if((empty($tab) || $tab === 'denied') && $denied->count() > 0)
+        <div class="mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-bold text-gray-900">× Denied <span class="text-red-600">({{ $denied->count() }})</span></h2>
+                <span class="text-sm text-gray-500">Edit and resubmit</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($denied as $petRegistration)
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-red-200">
+                    <!-- Image Section -->
+                    <div class="relative">
+                        @if($petRegistration->photo)
+                            <img src="{{ asset('storage/' . $petRegistration->photo) }}" alt="{{ $petRegistration->pet_name }}" class="w-full h-48 object-cover">
+                        @else
+                            <div class="w-full h-48 bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center">
+                                <div class="text-center">
+                                    <svg class="w-16 h-16 text-red-600 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                    </svg>
+                                    <p class="text-red-600 text-sm mt-2">Needs Update</p>
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Status Badge -->
+                        <div class="absolute top-3 left-3">
+                            <span class="px-3 py-1 text-xs font-semibold bg-red-100 text-red-800 rounded-full shadow-sm">
+                                × Denied
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Content Section -->
+                    <div class="p-5">
+                        <!-- Pet Info -->
+                        <div class="mb-4">
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $petRegistration->pet_name }}</h3>
+
+                            <div class="flex items-center text-sm text-gray-600 mb-2">
+                                <span class="font-medium">{{ $petRegistration->species }}</span>
+                                <span class="mx-2">•</span>
+                                <span>{{ $petRegistration->breed }}</span>
+                            </div>
+
+                            <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                <span>{{ ucfirst($petRegistration->gender) }}</span>
+                                <span>{{ $petRegistration->birthday ? $petRegistration->birthday->format('M d, Y') : 'Not set' }}</span>
+                            </div>
+                        </div>
+
+                        @if($petRegistration->denial_reason)
+                        <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl">
+                            <p class="text-sm text-red-800">{{ $petRegistration->denial_reason }}</p>
+                        </div>
+                        @endif
+
+                        <!-- Action Buttons -->
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="{{ route('pet-registrations.show', $petRegistration) }}"
+                               class="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm font-medium text-center shadow-sm">
+                                View
+                            </a>
+                            <a href="{{ route('pet-registrations.edit', $petRegistration) }}"
+                               class="px-3 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors duration-200 text-sm font-medium text-center shadow-sm">
+                                Resubmit
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
+        <!-- Empty State -->
+        @if((empty($tab) || $tab === 'pending') && $pending->count() == 0 && (empty($tab) || $tab === 'registered') && $registered->count() == 0 && (empty($tab) || $tab === 'denied') && $denied->count() == 0)
+        <div class="bg-white rounded-2xl shadow-lg p-12 text-center">
+            <div class="max-w-md mx-auto">
+                <svg class="w-24 h-24 text-gray-400 mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 3.5a1.5 1.5 0 013 0V4a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-.5a1.5 1.5 0 000 3h.5a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-.5a1.5 1.5 0 00-3 0v.5a1 1 0 01-1 1H6a1 1 0 01-1-1v-3a1 1 0 00-1-1h-.5a1.5 1.5 0 010-3H4a1 1 0 001-1V6a1 1 0 011-1h3a1 1 0 001-1v-.5z" />
+                </svg>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">No pets yet</h3>
+                <p class="text-gray-600 mb-6">Start by pre-registering your first pet to get them officially registered!</p>
+                <a href="{{ route('pet-registrations.create') }}"
+                   class="inline-flex items-center px-6 py-3 bg-teal-600 text-white rounded-xl hover:bg-teal-700 transition-all duration-200 font-medium shadow-sm hover:shadow-md">
+                    + Pre-Register Your First Pet
+                </a>
+            </div>
+        </div>
+        @endif
+    </div>
 </div>
+
+<style>
+.bg-pastel-blue { background-color: #dbeafe; }
+.hover\:bg-pastel-blue-dark:hover { background-color: #bfdbfe; }
+
+.bg-pastel-green { background-color: #dcfce7; }
+.hover\:bg-pastel-green-dark:hover { background-color: #bbf7d0; }
+
+.bg-pastel-yellow { background-color: #fef9c3; }
+.hover\:bg-pastel-yellow-dark:hover { background-color: #fef08a; }
+
+.bg-pastel-pink { background-color: #fce7f3; }
+.hover\:bg-pastel-pink-dark:hover { background-color: #fbcfe8; }
+
+.bg-pastel-purple { background-color: #e9d5ff; }
+.hover\:bg-pastel-purple-dark:hover { background-color: #d8b4fe; }
+
+.bg-pastel-orange { background-color: #fed7aa; }
+.hover\:bg-pastel-orange-dark:hover { background-color: #fdba74; }
+</style>
 @endsection
+

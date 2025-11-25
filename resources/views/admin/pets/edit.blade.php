@@ -59,29 +59,29 @@
                                 <option value="">Select Breed</option>
                                 <!-- Feline breeds -->
                                 <optgroup label="Feline Breeds" id="feline-breeds" style="display: none;">
-                                    <option value="Persian" {{ old('breed', $pet->breed) === 'Persian' ? 'selected' : '' }}>Persian</option>
+                                    <option value="Philippine Domestic Cat" {{ old('breed', $pet->breed) === 'Philippine Domestic Cat' ? 'selected' : '' }}>Philippine Domestic Cat</option>
                                     <option value="Siamese" {{ old('breed', $pet->breed) === 'Siamese' ? 'selected' : '' }}>Siamese</option>
+                                    <option value="Persian" {{ old('breed', $pet->breed) === 'Persian' ? 'selected' : '' }}>Persian</option>
                                     <option value="Maine Coon" {{ old('breed', $pet->breed) === 'Maine Coon' ? 'selected' : '' }}>Maine Coon</option>
                                     <option value="British Shorthair" {{ old('breed', $pet->breed) === 'British Shorthair' ? 'selected' : '' }}>British Shorthair</option>
                                     <option value="Ragdoll" {{ old('breed', $pet->breed) === 'Ragdoll' ? 'selected' : '' }}>Ragdoll</option>
                                     <option value="Bengal" {{ old('breed', $pet->breed) === 'Bengal' ? 'selected' : '' }}>Bengal</option>
-                                    <option value="Sphynx" {{ old('breed', $pet->breed) === 'Sphynx' ? 'selected' : '' }}>Sphynx</option>
-                                    <option value="Abyssinian" {{ old('breed', $pet->breed) === 'Abyssinian' ? 'selected' : '' }}>Abyssinian</option>
                                     <option value="Scottish Fold" {{ old('breed', $pet->breed) === 'Scottish Fold' ? 'selected' : '' }}>Scottish Fold</option>
+                                    <option value="Abyssinian" {{ old('breed', $pet->breed) === 'Abyssinian' ? 'selected' : '' }}>Abyssinian</option>
                                     <option value="Russian Blue" {{ old('breed', $pet->breed) === 'Russian Blue' ? 'selected' : '' }}>Russian Blue</option>
                                 </optgroup>
                                 <!-- Canine breeds -->
                                 <optgroup label="Canine Breeds" id="canine-breeds" style="display: none;">
                                     <option value="Aspin" {{ old('breed', $pet->breed) === 'Aspin' ? 'selected' : '' }}>Aspin</option>
-                                    <option value="Puspin" {{ old('breed', $pet->breed) === 'Puspin' ? 'selected' : '' }}>Puspin</option>
-                                    <option value="Shih Tzu" {{ old('breed', $pet->breed) === 'Shih Tzu' ? 'selected' : '' }}>Shih Tzu</option>
                                     <option value="Poodle" {{ old('breed', $pet->breed) === 'Poodle' ? 'selected' : '' }}>Poodle</option>
-                                    <option value="Golden Retriever" {{ old('breed', $pet->breed) === 'Golden Retriever' ? 'selected' : '' }}>Golden Retriever</option>
-                                    <option value="Labrador" {{ old('breed', $pet->breed) === 'Labrador' ? 'selected' : '' }}>Labrador</option>
-                                    <option value="German Shepherd" {{ old('breed', $pet->breed) === 'German Shepherd' ? 'selected' : '' }}>German Shepherd</option>
-                                    <option value="Bulldog" {{ old('breed', $pet->breed) === 'Bulldog' ? 'selected' : '' }}>Bulldog</option>
+                                    <option value="Shih Tzu" {{ old('breed', $pet->breed) === 'Shih Tzu' ? 'selected' : '' }}>Shih Tzu</option>
+                                    <option value="Maltese" {{ old('breed', $pet->breed) === 'Maltese' ? 'selected' : '' }}>Maltese</option>
+                                    <option value="Pug" {{ old('breed', $pet->breed) === 'Pug' ? 'selected' : '' }}>Pug</option>
                                     <option value="Beagle" {{ old('breed', $pet->breed) === 'Beagle' ? 'selected' : '' }}>Beagle</option>
-                                    <option value="Chihuahua" {{ old('breed', $pet->breed) === 'Chihuahua' ? 'selected' : '' }}>Chihuahua</option>
+                                    <option value="Cocker Spaniel" {{ old('breed', $pet->breed) === 'Cocker Spaniel' ? 'selected' : '' }}>Cocker Spaniel</option>
+                                    <option value="Labrador Retriever" {{ old('breed', $pet->breed) === 'Labrador Retriever' ? 'selected' : '' }}>Labrador Retriever</option>
+                                    <option value="German Shepherd" {{ old('breed', $pet->breed) === 'German Shepherd' ? 'selected' : '' }}>German Shepherd</option>
+                                    <option value="Golden Retriever" {{ old('breed', $pet->breed) === 'Golden Retriever' ? 'selected' : '' }}>Golden Retriever</option>
                                 </optgroup>
                             </select>
                             @error('breed') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror

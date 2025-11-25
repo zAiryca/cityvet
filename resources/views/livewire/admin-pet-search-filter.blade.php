@@ -71,12 +71,12 @@
     <div class="mb-6 border-b border-gray-200">
         <nav class="flex pb-2 space-x-4 overflow-x-auto">
             @php
-                // 💡 UPDATED: Only show active pet statuses
-                // Completed/Failed pets go to Adoption & Claim History
+                // 💡 UPDATED: Show active pets and denied status separately
                 $statuses = [
                     'All Pets' => null,
                     'Adoptable' => 'adoptable',
                     'Impounded' => 'impounded',
+                    'Denied' => 'denied',
                 ];
                 $currentStatus = request()->get('status');
             @endphp

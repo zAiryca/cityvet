@@ -3,13 +3,15 @@
 @section('title', '| Edit Pet Registration')
 
 @section('content')
-<div class="min-h-screen px-4 py-12 bg-gray-50 sm:px-6 lg:px-8">
+<div class="min-h-screen px-4 py-12 bg-gray-50 sm:px-6 lg:px-8 pt-24">
     <div class="max-w-4xl mx-auto">
 
-        <div class="mb-10 text-center">
-            <h1 class="text-4xl font-extrabold text-indigo-700 sm:text-5xl">Edit Pet Registration 🐶🐱</h1>
-            <p class="mt-3 text-xl text-gray-600">Update your pet's registration details.</p>
-        </div>
+      <div class="pt-24">
+    <div class="mb-10 text-center">
+        <h1 class="text-4xl font-extrabold text-indigo-700 sm:text-5xl">Edit Pet Registration 🐶🐱</h1>
+        <p class="mt-3 text-xl text-gray-600">Update your pet's registration details.</p>
+    </div>
+</div>
 
         <form action="{{ route('pet-registrations.update', $petRegistration) }}" method="POST" enctype="multipart/form-data" class="bg-white divide-y divide-gray-200 shadow-2xl rounded-xl">
             @csrf
@@ -229,7 +231,7 @@
             </div>
 
             <div class="flex items-center justify-between px-6 py-4 sm:px-10 bg-gray-50 rounded-b-xl">
-                <a href="{{ route('pet-registrations.index') }}" class="inline-flex justify-center px-6 py-2 text-sm font-medium text-gray-700 transition duration-150 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100">
+                <a href="{{ route('pet-registrations.index') }}" class="inline-flex justify-center px-6 py-2 text-sm font-medium text-white transition duration-150 bg-gray-600 border border-transparent rounded-lg shadow-sm hover:bg-gray-700">
                     Cancel
                 </a>
                 <button type="submit" class="inline-flex justify-center px-8 py-3 text-base font-medium text-white transition duration-150 bg-teal-600 border border-transparent rounded-lg shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
@@ -298,3 +300,4 @@
     });
 </script>
 @endsection
+

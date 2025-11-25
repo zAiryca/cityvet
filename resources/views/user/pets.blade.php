@@ -10,7 +10,7 @@
     };
 </script>
 @endif
-<div class="max-w-7xl mx-auto py-6 px-4">
+<div class="max-w-7xl mx-auto py-6 px-4 pt-24">
     <h1 class="text-3xl font-bold mb-6">My Pets</h1>
     <p class="mb-6">Manage your pet registrations and pre-registrations.</p>
 
@@ -133,3 +133,4 @@
     @endif
 </div>
 @endsection
+

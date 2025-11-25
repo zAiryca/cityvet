@@ -246,7 +246,11 @@ class PetController extends Controller
             ->where('requestable_type', Pet::class)
             ->where('id', '!=', $approvedRequest->id)
             ->where('status', '!=', 'completed')
-            ->update(['status' => 'denied']);
+            ->update([
+                'status' => 'denied',
+                'denial_reason' => 'Other applicant was chosen',
+                'denial_type' => 'automatic'
+            ]);
 
         return back()->with('success', 'Pet marked as adopted and ownership transferred. Other requests have been automatically denied.');
     }
@@ -287,7 +291,11 @@ class PetController extends Controller
             ->where('requestable_type', Pet::class)
             ->where('id', '!=', $approvedRequest->id)
             ->where('status', '!=', 'completed')
-            ->update(['status' => 'denied', 'denial_reason' => 'Other applicant was chosen']);
+            ->update([
+                'status' => 'denied',
+                'denial_reason' => 'Other applicant was chosen',
+                'denial_type' => 'automatic'
+            ]);
 
         return back()->with('success', 'Pet claimed and ownership transferred to claimant. Other requests have been automatically denied.');
     }

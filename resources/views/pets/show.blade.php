@@ -3,213 +3,260 @@
 @section('title', '| ' . $pet->display_code)
 
 @section('content')
-<div class="px-4 py-6 mx-auto max-w-7xl">
-    <div class="overflow-hidden bg-white rounded-lg shadow-lg">
-        <div class="relative">
-            @if($pet->photo)
-                <img src="{{ $pet->photo ? asset('storage/' . $pet->photo) : 'https://via.placeholder.com/800x600?text=' . $pet->display_code }}" alt="{{ $pet->display_code }}" class="object-contain w-full h-96 md:h-[500px] bg-gray-100 p-4">
+<div class="pt-28 pb-12 bg-gradient-to-b from-blue-50 to-white">
+    <div class="px-4 mx-auto max-w-5xl">
+        <!-- Header -->
+        <div class="flex items-start justify-between mb-8">
+            <div>
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-900">{{ $pet->display_code }}</h1>
+                <p class="mt-2 text-gray-600">{{ ucfirst($pet->species) }} • {{ ucfirst($pet->breed) }}</p>
+            </div>
+            <span class="px-4 py-2 text-sm font-semibold rounded-full whitespace-nowrap ml-4
+                {{ $pet->status === 'adoptable' ? 'bg-green-100 text-green-800' :
+                   ($pet->status === 'impounded' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800') }}">
+                {{ ucfirst($pet->status) }}
+            </span>
+        </div>
+
+        <!-- Photo & Quick Info Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Photo Section -->
+            <div class="md:col-span-1">
+                <div class="overflow-hidden bg-white rounded-xl shadow-md h-64 flex items-center justify-center">
+                    @if($pet->photo)
+                        <img src="{{ asset('storage/' . $pet->photo) }}" alt="{{ $pet->display_code }}" class="w-full h-full object-cover">
+                    @else
+                        <div class="flex flex-col items-center justify-center w-full h-full">
+                            <svg class="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <p class="mt-2 text-sm text-gray-400">No photo</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Quick Info Cards -->
+            <div class="md:col-span-2 space-y-3">
+                <div class="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+                    <p class="text-xs text-gray-500 font-semibold uppercase">Species & Breed</p>
+                    <p class="text-lg font-bold text-gray-900 mt-1">{{ ucfirst($pet->species) }} — {{ ucfirst($pet->breed) }}</p>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Gender</p>
+                        <p class="text-lg font-bold text-gray-900 mt-1">{{ ucfirst($pet->gender) }}</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+                        <p class="text-xs text-gray-500 font-semibold uppercase">Estimated Age</p>
+                        <p class="text-lg font-bold text-gray-900 mt-1">{{ $pet->estimated_age }}</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+                    <p class="text-xs text-gray-500 font-semibol
+                    d uppercase">Markings</p>
+                    <p class="text-base font-semibold text-gray-900 mt-1">{{ $pet->color_markings ?? 'Not specified' }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status & Timeline -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Status Alert -->
+            <div class="md:col-span-2">
+                @if($pet->status === 'impounded')
+                    <div class="bg-gradient-to-r from-red-50 to-red-100 border border-red-200 rounded-xl p-6">
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0">
+                                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-lg font-bold text-red-900">Currently Impounded</h3>
+                                <p class="text-red-800 text-sm mt-1">
+                                    <strong>{{ $pet->remaining_days ? (int)$pet->remaining_days : '0' }} days</strong> remaining to claim this pet
+                                </p>
+                                <p class="text-red-800 text-xs mt-2">If you're the owner, submit a claim with proof of ownership. After the deadline, this pet becomes available for adoption only.</p>
+                                <p class="text-red-700 text-xs font-semibold mt-2">Claim Fee: ₱1,025 + ₱150/day if late</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Process -->
+                    <div class="mt-4 bg-white rounded-xl p-4 shadow-sm border border-gray-200">
+                        <p class="text-xs font-bold text-gray-700 mb-3">CLAIM PROCESS</p>
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-sm font-bold">1</div>
+                                <p class="text-xs text-gray-600 mt-1 text-center">Submit Form</p>
+                            </div>
+                            <svg class="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-8 h-8 rounded-full bg-yellow-500 text-white flex items-center justify-center text-sm font-bold">2</div>
+                                <p class="text-xs text-gray-600 mt-1 text-center">Review</p>
+                            </div>
+                            <svg class="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center text-sm font-bold">3</div>
+                                <p class="text-xs text-gray-600 mt-1 text-center">Pickup</p>
+                            </div>
+                        </div>
+                    </div>
+                @elseif($pet->status === 'adoptable')
+                    <div class="bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-xl p-6">
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h-2m0 0H10m2 0v2m0-2v-2m7 7h-4m0 0h-4m4 0v2m0-2v-2" />
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-lg font-bold text-green-900">Ready for Adoption</h3>
+                                <p class="text-green-800 text-sm mt-1">This sweet pet is looking for a loving home! Complete the adoption application to get started.</p>
+                                <p class="text-green-700 text-xs font-semibold mt-2">5-Step Adoption Process</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Process -->
+                    <div class="mt-4 bg-white rounded-xl p-4 shadow-sm border border-gray-200">
+                        <div class="flex items-center justify-between gap-1 text-xs">
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-7 h-7 rounded-full bg-green-600 text-white flex items-center justify-center text-xs font-bold">1</div>
+                                <p class="text-gray-600 mt-1 text-center">Apply</p>
+                            </div>
+                            <svg class="w-3 h-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-7 h-7 rounded-full bg-green-600 text-white flex items-center justify-center text-xs font-bold">2</div>
+                                <p class="text-gray-600 mt-1 text-center">Review</p>
+                            </div>
+                            <svg class="w-3 h-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-7 h-7 rounded-full bg-yellow-500 text-white flex items-center justify-center text-xs font-bold">3</div>
+                                <p class="text-gray-600 mt-1 text-center">Meet</p>
+                            </div>
+                            <svg class="w-3 h-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-7 h-7 rounded-full bg-green-600 text-white flex items-center justify-center text-xs font-bold">4</div>
+                                <p class="text-gray-600 mt-1 text-center">Verify</p>
+                            </div>
+                            <svg class="w-3 h-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-7 h-7 rounded-full bg-green-600 text-white flex items-center justify-center text-xs font-bold">5</div>
+                                <p class="text-gray-600 mt-1 text-center">Adopt!</p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            </div>
+
+            <!-- Timeline Sidebar -->
+            <div class="bg-white rounded-xl p-6 shadow-md h-fit">
+                <p class="text-xs font-bold text-gray-700 mb-4 uppercase">Timeline</p>
+                <div class="space-y-3">
+                    @if($pet->impounded_date)
+                        <div class="flex gap-3">
+                            <div class="w-2 h-2 rounded-full bg-red-500 mt-1.5 flex-shrink-0"></div>
+                            <div>
+                                <p class="text-xs text-gray-500">Impounded</p>
+                                <p class="text-sm font-semibold text-gray-900">{{ $pet->impounded_date->format('M d, Y') }}</p>
+                            </div>
+                        </div>
+                    @endif
+
+                    @if($pet->decision_date)
+                        <div class="flex gap-3">
+                            <div class="w-2 h-2 rounded-full bg-green-500 mt-1.5 flex-shrink-0"></div>
+                            <div>
+                                <p class="text-xs text-gray-500">Available</p>
+                                <p class="text-sm font-semibold text-gray-900">{{ $pet->decision_date->format('M d, Y') }}</p>
+                            </div>
+                        </div>
+                    @endif
+
+                    @if($pet->remaining_days !== null)
+                        @php $days = max(0, (int)floor($pet->remaining_days)); @endphp
+                        <div class="flex gap-3">
+                            <div class="w-2 h-2 rounded-full {{ $days <= 1 ? 'bg-red-500' : 'bg-yellow-500' }} mt-1.5 flex-shrink-0"></div>
+                            <div>
+                                <p class="text-xs text-gray-500">Remaining</p>
+                                <p class="text-sm font-semibold {{ $days <= 1 ? 'text-red-600' : 'text-gray-900' }}">{{ $days }} day{{ $days !== 1 ? 's' : '' }}</p>
+                            </div>
+                        </div>
+                    @endif
+
+                    <div class="pt-2 border-t border-gray-200 flex gap-3">
+                        <div class="w-2 h-2 rounded-full bg-gray-400 mt-1.5 flex-shrink-0"></div>
+                        <div>
+                            <p class="text-xs text-gray-500">Updated</p>
+                            <p class="text-sm font-semibold text-gray-900">{{ $pet->updated_at->format('M d') }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Description Section -->
+        <div class="bg-white rounded-xl p-6 shadow-md mb-8">
+            <h2 class="text-lg font-bold text-gray-900 mb-3">Description</h2>
+            <p class="text-gray-700 leading-relaxed text-sm">{{ $pet->description ?? 'No description available.' }}</p>
+
+            @if($pet->status === 'adoptable' && !$pet->impounded_date && $pet->adoption_reason)
+                @php
+                    $reasons = [
+                        'surrendered_by_owner' => 'Surrendered by Owner',
+                        'remained_unclaimed' => 'Remained Unclaimed',
+                        'found_by_citizen' => 'Found by Citizen',
+                    ];
+                    $reason = $reasons[$pet->adoption_reason] ?? $pet->adoption_reason;
+                @endphp
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                    <p class="text-xs text-gray-500 font-semibold">How Available</p>
+                    <p class="text-sm font-semibold text-gray-900 mt-1">{{ $reason }}</p>
+                </div>
+            @endif
+        </div>
+
+        <!-- Action Button -->
+        <div class="mb-8">
+            @auth
+                @if($pet->status === 'adoptable')
+                    <button onclick="openAdoptModal()" class="w-full md:w-auto px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg transition-colors shadow-md">
+                        <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Start Adoption Application
+                    </button>
+                @elseif($pet->status === 'impounded')
+                    <button onclick="openClaimModal()" class="w-full md:w-auto px-8 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors shadow-md">
+                        <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Submit Claim Request
+                    </button>
+                @endif
             @else
-                <div class="flex items-center justify-center w-full bg-gray-200 h-96 md:h-[500px]">
-                    <span class="text-xl text-gray-500">No Photo Available</span>
-                </div>
-            @endif
-        </div>
-
-        <div class="p-8">
-            <div class="flex items-start justify-between mb-6">
-                <div>
-                    <h1 class="mb-2 text-3xl font-bold text-gray-900">{{ $pet->display_code }}</h1>
-                    <p class="text-lg text-gray-600">{{ ucfirst($pet->species) }} • {{ ucfirst($pet->breed) }}</p>
-                </div>
-                <div class="text-right">
-                    <span class="px-3 py-1 text-sm font-semibold rounded-full
-                        {{ $pet->status === 'adoptable' ? 'bg-green-100 text-green-800' :
-                           ($pet->status === 'impounded' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800') }}">
-                        {{ ucfirst($pet->status) }}
-                    </span>
-                </div>
-            </div>
-
-            {{-- Updated Claim Flow wording for Impounded pets --}}
-            @if($pet->status === 'impounded')
-            <div class="p-6 mb-8 border border-red-300 rounded-lg bg-red-50">
-                <h2 class="mb-4 text-2xl font-bold text-red-800">🚨 How to Claim an Impounded Pet</h2>
-                <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-                    <div class="text-center">
-                        <div class="flex items-center justify-center w-10 h-10 mx-auto mb-2 text-xl font-bold text-white bg-red-600 rounded-full">1</div>
-                        <p class="font-semibold text-red-700">Start the Claim</p>
-                        <p class="text-sm text-gray-600">Click <strong>Claim Pet</strong> and complete the online claim form with your contact and ownership details.</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="flex items-center justify-center w-10 h-10 mx-auto mb-2 text-xl font-bold text-white bg-red-600 rounded-full">2</div>
-                        <p class="font-semibold text-red-700">We Verify</p>
-                        <p class="text-sm text-gray-600">Our team will review your information, contact you for verification, and advise any applicable fees or requirements.</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="flex items-center justify-center w-10 h-10 mx-auto mb-2 text-xl font-bold text-white bg-red-600 rounded-full">3</div>
-                        <p class="font-semibold text-red-700">Complete Release</p>
-                        <p class="text-sm text-gray-600">Visit the City Veterinary Department to complete paperwork, pay fees, and collect your pet once verified.</p>
-                    </div>
-                </div>
-                <p class="p-3 mt-4 text-sm font-medium text-center text-red-800 bg-red-200 rounded-md">
-                    ⚠️ Please submit your claim promptly. "Days Remaining" shows how long the current holding period lasts — if the period expires the pet may be moved to the adoptable list.
-                </p>
-            </div>
-            @endif
-
-            {{-- Updated Adoption Flow wording for Adoptable pets --}}
-            @if($pet->status === 'adoptable')
-            <div class="p-6 mb-8 border border-green-300 rounded-lg bg-green-50">
-                <h2 class="mb-4 text-2xl font-bold text-green-800">✅ How to Adopt This Pet</h2>
-                <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-                    <div class="text-center">
-                        <div class="flex items-center justify-center w-10 h-10 mx-auto mb-2 text-xl font-bold text-white bg-green-600 rounded-full">1</div>
-                        <p class="font-semibold text-green-700">Express Interest</p>
-                        <p class="text-sm text-gray-600">Click <strong>Adopt</strong> and complete the adoption form to express your interest.</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="flex items-center justify-center w-10 h-10 mx-auto mb-2 text-xl font-bold text-white bg-green-600 rounded-full">2</div>
-                        <p class="font-semibold text-green-700">Application Review</p>
-                        <p class="text-sm text-gray-600">Our team reviews your submission to check basic eligibility and match with the pet's needs.</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="flex items-center justify-center w-10 h-10 mx-auto mb-2 text-xl font-bold text-white bg-green-600 rounded-full">3</div>
-                        <p class="font-semibold text-green-700">Screening/Interview</p>
-                        <p class="text-sm text-gray-600">We may schedule a short interview or home check to confirm a good fit.</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="flex items-center justify-center w-10 h-10 mx-auto mb-2 text-xl font-bold text-white bg-green-600 rounded-full">4</div>
-                        <p class="font-semibold text-green-700">Finalize Adoption</p>
-                        <p class="text-sm text-gray-600">If approved, complete adoption paperwork and arrange pickup with the department.</p>
-                    </div>
-                </div>
-                <p class="p-3 mt-4 text-sm font-medium text-center text-green-800 bg-green-200 rounded-md">
-                    💡 Tip: Completing the form online speeds up processing. The department will contact you about next steps if your application is shortlisted.
-                </p>
-            </div>
-            @endif
-
-            <div class="grid grid-cols-1 gap-8 mb-8 md:grid-cols-2">
-                <div>
-                    <h2 class="mb-4 text-xl font-semibold">Pet Details</h2>
-                    <div class="space-y-3">
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Gender:</span>
-                            <span class="font-medium">{{ ucfirst($pet->gender) }}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Estimated Age:</span>
-                            <span class="font-medium">{{ $pet->estimated_age }}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Color/Markings:</span>
-                            <span class="font-medium">{{ $pet->color_markings ?? 'Not specified' }}</span>
-                        </div>
-                        <div class="overflow-hidden bg-white rounded-lg shadow-sm">
-                            <div class="px-4 py-3 border border-gray-100 rounded-t bg-gray-50">
-                                <h3 class="text-sm font-semibold text-gray-900">Timeline</h3>
-                            </div>
-                            <div class="p-4 space-y-3">
-                                @if($pet->impounded_date)
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Impounded</span>
-                                        <span class="font-medium">{{ $pet->impounded_date->format('M d, Y') }}</span>
-                                    </div>
-                                @endif
-
-                                @if($pet->decision_date)
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Adoptable Date</span>
-                                        <span class="font-medium">{{ $pet->decision_date->format('M d, Y') }}</span>
-                                    </div>
-                                @endif
-
-                                @if($pet->remaining_days !== null)
-                                    @php $remainingDays = max(0, (int) floor($pet->remaining_days)); @endphp
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Days remaining</span>
-                                        <span class="font-medium {{ $remainingDays <= 1 ? 'text-red-600 font-bold' : 'text-orange-600' }}">{{ $remainingDays }} day{{ $remainingDays !== 1 ? 's' : '' }}</span>
-                                    </div>
-                                @endif
-
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Last Updated</span>
-                                    <span class="font-medium">{{ $pet->updated_at->format('M d, Y H:i') }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <h2 class="mb-4 text-xl font-semibold">Description</h2>
-                    <p class="leading-relaxed text-gray-700">{{ $pet->description ?? 'No description available.' }}</p>
-
-                    {{-- Adoption fields shown immediately after Description for adoptable pets (hide if came from impounded) --}}
-                    @if($pet->status === 'adoptable' && !$pet->impounded_date)
-                        @php
-                            $adoptionReasonLabels = [
-                                'surrendered_by_owner' => 'Surrendered by Owner',
-                                'remained_unclaimed' => 'Remained Unclaimed',
-                                'found_by_citizen' => 'Found by Citizen',
-                            ];
-                            if (!empty($pet->adoption_reason_other)) {
-                                $adoptionLabel = $pet->adoption_reason_other;
-                            } else {
-                                $adoptionLabel = $adoptionReasonLabels[$pet->adoption_reason] ?? $pet->adoption_reason;
-                            }
-                        @endphp
-
-                        @if($pet->adoption_reason)
-                            <div class="mt-4">
-                                <p class="text-sm font-medium text-gray-600">Adoption Reason</p>
-                                <p class="font-medium text-gray-900">{{ $adoptionLabel }}</p>
-                            </div>
-                        @endif
-
-                        @if($pet->adoption_notes)
-                            <div class="mt-3">
-                                <p class="text-sm font-medium text-gray-600">Adoption Notes</p>
-                                <p class="text-gray-900">{{ $pet->adoption_notes }}</p>
-                            </div>
-                        @endif
-                    @endif
-                    @if($pet->status === 'impounded')
-                        <div class="p-4 mt-4 border border-red-200 rounded-lg bg-red-50">
-                            <h3 class="mb-2 text-lg font-semibold text-red-800">Important Claim Notice</h3>
-                            <p class="text-red-700">This pet is currently **impounded**. If you are the rightful owner, please **submit a claim request** as soon as possible before the claim period expires and it becomes adoptable.</p>
-                        </div>
-                    @elseif($pet->status === 'adoptable')
-                        <div class="p-4 mt-4 border border-green-200 rounded-lg bg-green-50">
-                            <h3 class="mb-2 text-lg font-semibold text-green-800">Ready for Adoption</h3>
-                            <p class="text-green-700">This pet is available for adoption. Fill out the adoption form to start the process. Must submit adoption form through system. Direct pickup not available.</p>
-                        </div>
-                    @endif
-                </div>
-            </div>
-
-            <div class="pt-8 border-t">
-                @auth
-                    @if($pet->status === 'adoptable')
-                        <button onclick="openAdoptModal()" class="px-8 py-3 text-lg font-semibold text-white transition duration-200 bg-green-600 rounded-lg hover:bg-green-700">
-                            Adopt {{ $pet->display_code }}
-                        </button>
-                    @elseif($pet->status === 'impounded')
-                        <button onclick="openClaimModal()" class="px-8 py-3 text-lg font-semibold text-white transition duration-200 bg-red-600 rounded-lg hover:bg-red-700">
-                            Claim {{ $pet->display_code }}
-                        </button>
-                    @endif
-                @else
-                    <a href="{{ route('login') }}" class="inline-block px-8 py-3 text-lg font-semibold text-white transition duration-200 bg-blue-600 rounded-lg hover:bg-blue-700">
-                        Login to {{ $pet->status === 'adoptable' ? 'Adopt' : 'Claim' }}
-                    </a>
-                @endauth
-
-                <a href="{{ route('pets.' . $pet->status) }}" class="ml-4 font-medium text-gray-600 hover:text-gray-800">
-                    ← Back to {{ ucfirst($pet->status) }} Pets
+                <a href="{{ route('login') }}" class="inline-block w-full md:w-auto px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors shadow-md text-center">
+                    <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                    </svg>
+                    Log In to Continue
                 </a>
-            </div>
+            @endauth
         </div>
+
+        <!-- Back Link -->
+        <a href="{{ route('pets.' . $pet->status) }}" class="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold text-sm">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            Back to {{ ucfirst($pet->status) }} Pets
+        </a>
     </div>
 </div>
 
@@ -296,7 +343,7 @@
 
                                             <!-- Modal for Full Size ID Photo -->
                                             <div id="petsShowIdPhotoModal"
-                                                 class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 transition-opacity duration-300 bg-black bg-opacity-80"
+                                                 class="fixed inset-0 z-50 items-center justify-center hidden p-4 transition-opacity duration-300 bg-black bg-opacity-80"
                                                  onclick="if(event.target.id === 'petsShowIdPhotoModal') this.classList.add('hidden')">
                                                 <div class="relative max-w-3xl overflow-hidden bg-white rounded-lg shadow-2xl">
                                                     <div class="sticky top-0 z-10 flex items-center justify-between p-3 bg-white border-b border-gray-200">
@@ -493,59 +540,62 @@
     <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/5 lg:w-1/2 shadow-lg rounded-md bg-white max-h-[90vh] overflow-y-auto">
         <div class="mt-3">
             <h3 class="mb-4 text-xl font-bold text-center text-gray-900">City of Alaminos - City Veterinary Department</h3>
-            <h4 class="mb-6 text-lg font-semibold text-center text-gray-800">Impounded Pet Claim Request</h4>
-            <p class="mb-6 text-sm text-center text-gray-600">Please use this form to start the process of **reclaiming your impounded pet**. After submission, a staff member will contact you to verify your ownership, determine required fees/fines, and schedule the release.</p>
-            <p class="mb-6 text-sm font-medium text-center text-red-600">Note: Pets not claimed within the mandatory holding period ({{ $pet->remaining_days ? (int)$pet->remaining_days : 'N/A' }} days remaining) will be placed for adoption.</p>
+            <h4 class="mb-2 text-lg font-semibold text-center text-gray-800">Quick Pet Claim Request</h4>
+            <div class="p-3 mb-4 border border-red-200 rounded-lg bg-red-50">
+                <p class="text-xs text-red-700 text-center"><strong>💰 Claim Fees:</strong> ₱1,025 base fine + ₱150/day if delayed beyond the deadline</p>
+            </div>
+            <div class="p-3 mb-4 border border-blue-200 rounded-lg bg-blue-50">
+                <p class="text-xs text-blue-700 text-center"><strong>⚡ Quick Process:</strong> Submit this form (takes just 2 minutes!) and you can bring your proofs directly to the vet department. Admin will approve your request instantly.</p>
+            </div>
+            <p class="mb-4 text-sm text-center text-gray-600">No need to wait - use the website to register your claim, then visit with your proofs for instant approval and pet release.</p>
 
                 <form action="{{ route('pets.request', $pet) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="type" value="claim">
                 {{-- Visible fields below now include name attributes so values are submitted. Hidden duplicates removed. --}}
 
-                <div class="mb-8">
-                    <h5 class="pb-2 mb-4 text-lg font-semibold text-gray-800 border-b">Section 1: Owner's Information</h5>
-                    <div class="p-4 mb-4 border border-blue-200 rounded-lg bg-blue-50">
-                        <p class="mb-2 text-sm text-blue-800"><strong>Note:</strong> Your profile information is auto-filled below. Please ensure it is up-to-date as this is what we will use to contact you.</p>
-                    </div>
-                    <div class="grid grid-cols-1 gap-4 mb-4 md:grid-cols-3">
+                <div class="mb-6">
+                    <h5 class="pb-2 mb-3 text-base font-semibold text-gray-800 border-b">Section 1: Your Information</h5>
+                    <p class="mb-3 text-xs text-gray-600">Your profile info is auto-filled. Review for accuracy.</p>
+                    <div class="grid grid-cols-1 gap-3 mb-3 md:grid-cols-3">
                         <div>
-                            <label class="block mb-1 text-sm font-medium text-gray-700">Last Name</label>
-                            <input name="last_name" type="text" value="{{ auth()->user()->last_name ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" readonly>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Last Name</label>
+                            <input name="last_name" type="text" value="{{ auth()->user()->last_name ?? '' }}" required class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md bg-gray-50" readonly>
                         </div>
                         <div>
-                            <label class="block mb-1 text-sm font-medium text-gray-700">First Name</label>
-                            <input name="first_name" type="text" value="{{ auth()->user()->first_name ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" readonly>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">First Name</label>
+                            <input name="first_name" type="text" value="{{ auth()->user()->first_name ?? '' }}" required class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md bg-gray-50" readonly>
                         </div>
                         <div>
-                            <label class="block mb-1 text-sm font-medium text-gray-700">Middle Name</label>
-                            <input name="middle_name" type="text" value="{{ auth()->user()->middle_name ?? '' }}" class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" readonly>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Middle Name</label>
+                            <input name="middle_name" type="text" value="{{ auth()->user()->middle_name ?? '' }}" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md bg-gray-50" readonly>
                         </div>
                     </div>
-                    <div class="mb-4">
-                        <label class="block mb-1 text-sm font-medium text-gray-700">Complete Address</label>
-                        <input name="address" type="text" value="{{ (auth()->user()->street ?? '') . ', ' . (auth()->user()->barangay ?? '') . ', ' . (auth()->user()->city_municipality ?? '') }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" readonly>
+                    <div class="mb-3">
+                        <label class="block mb-1 text-xs font-medium text-gray-700">Address</label>
+                        <input name="address" type="text" value="{{ (auth()->user()->street ?? '') . ', ' . (auth()->user()->barangay ?? '') . ', ' . (auth()->user()->city_municipality ?? '') }}" required class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md bg-gray-50" readonly>
                     </div>
-                    <div class="grid grid-cols-1 gap-4 mb-4 md:grid-cols-2">
+                    <div class="grid grid-cols-1 gap-3 mb-3 md:grid-cols-2">
                         <div>
-                            <label class="block mb-1 text-sm font-medium text-gray-700">Contact Number</label>
-                            <input name="contact_number" type="tel" value="{{ auth()->user()->contact_number ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" readonly>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Contact</label>
+                            <input name="contact_number" type="tel" value="{{ auth()->user()->contact_number ?? '' }}" required class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md bg-gray-50" readonly>
                         </div>
                         <div>
-                            <label class="block mb-1 text-sm font-medium text-gray-700">Email Address</label>
-                            <input name="email" type="email" value="{{ auth()->user()->email ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50" readonly>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Email</label>
+                            <input name="email" type="email" value="{{ auth()->user()->email ?? '' }}" required class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md bg-gray-50" readonly>
                         </div>
                     </div>
-                    <div class="mb-4">
-                        <label class="block mb-1 text-sm font-medium text-gray-700">Date of Birth (MM/DD/YYYY)</label>
-                        <input name="date_of_birth" type="date" value="{{ auth()->user()->birthday ? auth()->user()->birthday->format('Y-m-d') : '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50" readonly>
+                    <div class="mb-3">
+                        <label class="block mb-1 text-xs font-medium text-gray-700">Date of Birth</label>
+                        <input name="date_of_birth" type="date" value="{{ auth()->user()->birthday ? auth()->user()->birthday->format('Y-m-d') : '' }}" required class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md bg-gray-50" readonly>
                     </div>
 
                     @if(auth()->user()->id_photo)
-                        <div class="mb-4">
-                            <label class="block mb-1 text-sm font-medium text-gray-700">ID Photo</label>
+                        <div class="mb-3">
+                            <label class="block mb-1 text-xs font-medium text-gray-700">ID Photo</label>
                             <div onclick="document.getElementById('petsShowIdPhotoModal2').classList.remove('hidden')"
-                                 class="flex flex-col items-center justify-center w-24 h-16 transition duration-150 ease-in-out bg-black border-2 border-gray-400 rounded cursor-pointer hover:bg-gray-900">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                 class="flex flex-col items-center justify-center w-20 h-14 transition duration-150 ease-in-out bg-black border-2 border-gray-400 rounded cursor-pointer hover:bg-gray-900">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.75 4h2.5a2 2 0 011.664.89l.812 1.22a2 2 0 001.664.89H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
@@ -553,54 +603,50 @@
 
                             <!-- Modal for Full Size ID Photo -->
                             <div id="petsShowIdPhotoModal2"
-                                 class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 transition-opacity duration-300 bg-black bg-opacity-80"
+                                 class="fixed inset-0 z-50 items-center justify-center hidden p-4 transition-opacity duration-300 bg-black bg-opacity-80"
                                  onclick="if(event.target.id === 'petsShowIdPhotoModal2') this.classList.add('hidden')">
                                 <div class="relative max-w-3xl overflow-hidden bg-white rounded-lg shadow-2xl">
                                     <div class="sticky top-0 z-10 flex items-center justify-between p-3 bg-white border-b border-gray-200">
-                                        <h3 class="text-xl font-semibold text-gray-800">Your ID Photo</h3>
+                                        <h3 class="text-lg font-semibold text-gray-800">Your ID Photo</h3>
                                         <button onclick="document.getElementById('petsShowIdPhotoModal2').classList.add('hidden')"
                                                 class="p-2 text-gray-500 transition duration-150 rounded-full hover:bg-gray-100 hover:text-gray-700 focus:outline-none">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                                             </svg>
                                         </button>
                                     </div>
-                                    <div class="p-6 max-h-[80vh] overflow-y-auto">
+                                    <div class="p-4 max-h-[80vh] overflow-y-auto">
                                         <img src="{{ asset('storage/' . auth()->user()->id_photo) }}"
-                                             alt="Full Size ID Photo"
+                                             alt="ID Photo"
                                              class="w-full h-auto rounded-lg shadow-md">
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <input type="hidden" name="id_photo_path" value="{{ auth()->user()->id_photo }}">
-                    @else
-                        <div class="p-3 mb-4 border border-yellow-200 rounded bg-yellow-50">
-                            <p class="text-sm text-yellow-800"><strong>Note:</strong> You haven't uploaded an ID photo yet. Please upload one in your <a href="{{ route('profile.edit') }}" class="text-blue-600 underline hover:text-blue-800">profile settings</a> for faster verification.</p>
-                        </div>
                     @endif
+                </div>
 
-                    <h5 class="pb-2 mt-6 mb-4 text-lg font-semibold text-gray-800 border-b">Section 2: Proof of Ownership</h5>
-
-                    <div class="mb-4">
-                        <label class="block mb-1 text-sm font-medium text-gray-700">1. Describe the unique features of the pet (e.g., small scar near right eye, specific bark, behavioral trait) *Required for verification*</label>
-                        <textarea name="proof_of_ownership_description" rows="3" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
+                <div class="mb-6">
+                    <h5 class="pb-2 mb-3 text-base font-semibold text-gray-800 border-b">Section 2: Proof of Ownership</h5>
+                    <div class="mb-3">
+                        <label class="block mb-1 text-xs font-medium text-gray-700">Describe unique features of your pet</label>
+                        <textarea name="proof_of_ownership_description" rows="2" required class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="E.g., scar, specific mark, behavioral trait..."></textarea>
                     </div>
 
-                    <div class="mb-4">
-                        <label class="block mb-1 text-sm font-medium text-gray-700">2. Upload Proof of Ownership/Care (Optional but highly recommended)</label>
-                        <input type="file" name="photos[]" multiple accept="image/*, .pdf" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
-                        <p class="mt-1 text-sm text-gray-500">Examples: Vet records, photo of you with the pet, barangay registration, etc.</p>
+                    <div class="mb-3">
+                        <label class="block mb-1 text-xs font-medium text-gray-700">Upload proof (vet records, photos, barangay reg, etc.)</label>
+                        <input type="file" name="photos[]" multiple accept="image/*, .pdf" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
                     </div>
 
-                    <div class="mb-4 space-y-3">
+                    <div class="space-y-2 text-xs">
                         <label class="flex items-center">
                             <input type="checkbox" name="certify_info" required class="mr-2">
-                            I certify that the information I provided in this claim request is true and correct.
+                            <span>I confirm all information is true</span>
                         </label>
                         <label class="flex items-center">
                             <input type="checkbox" name="agree_terms" required class="mr-2">
-                            I have read and agree to the terms and procedures for reclaiming an impounded pet.
+                            <span>I understand I must pay the settlement fee (₱1,025 + daily charges if late) and visit the vet department to pick up my pet</span>
                         </label>
                     </div>
                 </div>

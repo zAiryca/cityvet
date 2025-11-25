@@ -3,7 +3,7 @@
 @section('title', '| My Requests')
 
 @section('content')
-<div class="px-4 py-6 mx-auto max-w-7xl">
+<div class="px-4 py-6 mx-auto max-w-7xl pt-24">
     <h1 class="mb-6 text-3xl font-bold">My Requests</h1>
     <p class="mb-6">Track your claim, adopt and requests.</p>
 
@@ -166,3 +166,4 @@
     }
 </script>
 @endsection
+

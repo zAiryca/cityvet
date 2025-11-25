@@ -22,6 +22,10 @@ class PetRequestController extends Controller
             if ($type) {
                 $q->where('type', $type);
             }
+            // For denied status, only show manual denials (not automatic)
+            if ($requestStatus === 'denied') {
+                $q->where('denial_type', 'manual');
+            }
         });
 
         // For approved requests, only show pets that are adoptable or impounded
@@ -40,6 +44,10 @@ class PetRequestController extends Controller
                 $q->where('status', $requestStatus);
                 if ($type) {
                     $q->where('type', $type);
+                }
+                // For denied status, only show manual denials (not automatic)
+                if ($requestStatus === 'denied') {
+                    $q->where('denial_type', 'manual');
                 }
                 $q->orderBy('created_at', 'desc');
             },
@@ -112,7 +120,10 @@ class PetRequestController extends Controller
     {
         if (!Auth::user()->isAdmin()) abort(403);
 
-        $petRequest->update(['status' => 'denied']);
+        $petRequest->update([
+            'status' => 'denied',
+            'denial_type' => 'manual'
+        ]);
 
         if ($petRequest->user) {
             $petRequest->user->notify(new \App\Notifications\RequestStatusNotification($petRequest, 'denied'));
@@ -160,7 +171,8 @@ class PetRequestController extends Controller
             foreach ($otherRequests as $otherRequest) {
                 $otherRequest->update([
                     'status' => 'denied',
-                    'denial_reason' => 'Other applicant was chosen'
+                    'denial_reason' => 'Other applicant was chosen',
+                    'denial_type' => 'automatic'
                 ]);
 
                 // Notify user that their request was denied

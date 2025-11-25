@@ -22,21 +22,42 @@
                 <!-- Email Address -->
                 <div class="mb-6 text-left">
                     <x-input-label for="email" :value="__('Email Address')" />
-                    <x-text-input id="email" class="block mt-2 w-full border-orange-200 focus:border-orange-500 focus:ring-orange-500 rounded-lg" type="email" name="email" :value="old('email', $request->email)" required autofocus autocomplete="username" />
+                    <x-text-input id="email" class="block w-full mt-2 border-orange-200 rounded-lg focus:border-orange-500 focus:ring-orange-500" type="email" name="email" :value="old('email', $request->email)" required autofocus autocomplete="username" />
                     <x-input-error :messages="$errors->get('email')" class="mt-2" />
                 </div>
 
                 <!-- Password -->
                 <div class="mb-6 text-left">
                     <x-input-label for="password" :value="__('New Password')" />
-                    <x-text-input id="password" class="block mt-2 w-full border-orange-200 focus:border-orange-500 focus:ring-orange-500 rounded-lg" type="password" name="password" required autocomplete="new-password" />
+                    <x-text-input id="password" class="block w-full mt-2 border-orange-200 rounded-lg focus:border-orange-500 focus:ring-orange-500" type="password" name="password" required autocomplete="new-password" />
+                    <div class="mt-2 text-xs text-gray-600">
+                        <div id="password-requirements" class="space-y-1">
+                            <div id="length-check" class="flex items-center">
+                                <span class="w-2 h-2 mr-2 bg-gray-300 rounded-full" id="length-indicator"></span>
+                                At least 8 characters
+                            </div>
+                            <div id="mixed-case-check" class="flex items-center">
+                                <span class="w-2 h-2 mr-2 bg-gray-300 rounded-full" id="mixed-case-indicator"></span>
+                                Mixed case letters
+                            </div>
+                            <div id="number-check" class="flex items-center">
+                                <span class="w-2 h-2 mr-2 bg-gray-300 rounded-full" id="number-indicator"></span>
+                                At least one number
+                            </div>
+                            <div id="symbol-check" class="flex items-center">
+                                <span class="w-2 h-2 mr-2 bg-gray-300 rounded-full" id="symbol-indicator"></span>
+                                At least one symbol
+                            </div>
+                        </div>
+                    </div>
                     <x-input-error :messages="$errors->get('password')" class="mt-2" />
                 </div>
 
                 <!-- Confirm Password -->
                 <div class="mb-6 text-left">
                     <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-                    <x-text-input id="password_confirmation" class="block mt-2 w-full border-orange-200 focus:border-orange-500 focus:ring-orange-500 rounded-lg" type="password" name="password_confirmation" required autocomplete="new-password" />
+                    <x-text-input id="password_confirmation" class="block w-full mt-2 border-orange-200 rounded-lg focus:border-orange-500 focus:ring-orange-500" type="password" name="password_confirmation" required autocomplete="new-password" />
+                    <div id="password-match" class="hidden mt-2 text-xs text-red-600">Passwords do not match</div>
                     <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
                 </div>
 

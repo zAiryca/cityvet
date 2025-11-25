@@ -3,7 +3,7 @@
 @section('title', '| Announcements')
 
 @section('content')
-<div class="px-4 py-6 mx-auto max-w-7xl">
+<div class="px-4 py-6 mx-auto max-w-7xl pt-28">
     <h1 class="mb-6 text-3xl font-bold">Announcements</h1>
     <p class="mb-6">Stay updated with the latest announcements from Pet Recovery and Adoption System for Alaminos City.</p>
 
@@ -62,3 +62,5 @@
     @endif
 </div>
 @endsection
+
+

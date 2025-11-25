@@ -3,7 +3,7 @@
 @section('title', '| Profile')
 
 @section('content')
-<div class="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
+<div class="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8 pt-24">
     <h1 class="mb-8 text-3xl font-extrabold text-gray-900">My Profile Settings</h1>
 
     @php
@@ -333,3 +333,4 @@
     });
 </script>
 @endsection
+
