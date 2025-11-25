@@ -72,33 +72,64 @@
 
         @forelse($pets as $pet)
 
-            <div class="overflow-hidden transition duration-300 bg-white rounded-lg shadow-md hover:shadow-lg">
+            <div class="overflow-hidden transition-all duration-300 bg-white rounded-xl shadow-md hover:shadow-xl hover:scale-105 border border-gray-100">
 
-                @if($pet->photo)
-                    <img src="{{ asset('storage/' . $pet->photo) }}" alt="{{ $pet->name ?: 'Pet' }}" class="object-cover w-full h-40">
-                @else
-                    <div class="flex items-center justify-center w-full h-40 bg-gray-200">
-                        <span class="text-gray-500">No Photo</span>
+                <!-- Photo Section with Status Badge -->
+                <div class="relative h-48 overflow-hidden bg-gray-100">
+                    @if($pet->photo)
+                        <img src="{{ asset('storage/' . $pet->photo) }}" alt="{{ $pet->name ?: 'Pet' }}" class="object-cover w-full h-full">
+                    @else
+                        <div class="flex items-center justify-center w-full h-full">
+                            <svg class="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                    @endif
+                    <div class="absolute top-3 right-3">
+                        <span class="inline-flex items-center px-3 py-1 text-xs font-bold rounded-full bg-red-100 text-red-800">
+                            <span class="w-2 h-2 mr-1.5 bg-red-600 rounded-full animate-pulse"></span>
+                            Impounded
+                        </span>
                     </div>
-                @endif
+                </div>
 
-                <div class="p-3">
-                    <h3 class="mb-1 text-lg font-semibold text-gray-900">{{ $pet->display_code }}</h3>
-                    <p class="mb-2 text-sm text-gray-600">{{ $pet->species }} • {{ $pet->breed }}</p>
-                    <p class="mb-2 text-sm text-gray-600">{{ ucfirst($pet->gender) }}</p>
-                    <p class="mb-3 text-sm text-gray-500">
-                        @if($pet->remaining_days > 0)
-                            <span class="font-medium text-green-600">{{ (int)$pet->remaining_days }} days remaining</span>
-                        @else
-                            <span class="font-medium text-red-600">Expired</span>
-                        @endif
-                    </p>
-
-                    <div class="flex items-center justify-between">
-                        <a href="{{ route('pets.show', $pet) }}" class="px-3 py-1 text-sm text-white transition duration-200 bg-red-600 rounded hover:bg-red-700">
-                            Claim
-                        </a>
+                <div class="p-4">
+                    <!-- ID and Species -->
+                    <div class="mb-3">
+                        <h3 class="text-lg font-bold text-gray-900">{{ $pet->display_code }}</h3>
+                        <p class="text-sm text-gray-600 mt-1">{{ ucfirst($pet->species) }} • {{ ucfirst($pet->breed) }}</p>
                     </div>
+
+                    <!-- Quick Info -->
+                    <div class="grid grid-cols-2 gap-2 mb-4">
+                        <div class="text-xs">
+                            <p class="text-gray-500 font-semibold uppercase">Gender</p>
+                            <p class="text-gray-900 font-semibold">{{ ucfirst($pet->gender) }}</p>
+                        </div>
+                        <div class="text-xs">
+                            <p class="text-gray-500 font-semibold uppercase">Age</p>
+                            <p class="text-gray-900 font-semibold">{{ $pet->estimated_age ?? 'N/A' }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Days Remaining Alert -->
+                    <div class="mb-4 p-2 rounded-lg {{ $pet->remaining_days <= 3 ? 'bg-red-50 border border-red-200' : 'bg-yellow-50 border border-yellow-200' }}">
+                        <p class="text-xs {{ $pet->remaining_days <= 3 ? 'text-red-700 font-bold' : 'text-yellow-700 font-semibold' }}">
+                            @if($pet->remaining_days > 0)
+                                ⏰ {{ (int)$pet->remaining_days }} day{{ (int)$pet->remaining_days !== 1 ? 's' : '' }} left
+                            @else
+                                ⏳ Expired
+                            @endif
+                        </p>
+                    </div>
+
+                    <!-- Action Button -->
+                    <a href="{{ route('pets.show', $pet) }}" class="w-full block text-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors shadow-sm">
+                        <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        View Details
+                    </a>
                 </div>
 
             </div>

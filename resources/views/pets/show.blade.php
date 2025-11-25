@@ -223,17 +223,23 @@
         </div>
 
         <!-- Action Button -->
-        <div class="mb-8">
+        <div class="mb-8 flex flex-wrap gap-3">
             @auth
                 @if($pet->status === 'adoptable')
-                    <button onclick="openAdoptModal()" class="w-full md:w-auto px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg transition-colors shadow-md">
+                    <button onclick="openAdoptModal()" class="px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg transition-colors shadow-md">
                         <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
                         Start Adoption Application
                     </button>
+                    <button onclick="openClaimModalFromAdoptable()" class="px-8 py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-lg transition-colors shadow-md">
+                        <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        This is My Pet - Claim It
+                    </button>
                 @elseif($pet->status === 'impounded')
-                    <button onclick="openClaimModal()" class="w-full md:w-auto px-8 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors shadow-md">
+                    <button onclick="openClaimModal()" class="px-8 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors shadow-md">
                         <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
@@ -241,7 +247,7 @@
                     </button>
                 @endif
             @else
-                <a href="{{ route('login') }}" class="inline-block w-full md:w-auto px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors shadow-md text-center">
+                <a href="{{ route('login') }}" class="inline-block px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors shadow-md text-center">
                     <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
                     </svg>
@@ -534,6 +540,134 @@
 </div>
 @endif
 
+{{-- CLAIM MODAL FOR ADOPTABLE PETS (when user saw it late and wants to claim it) --}}
+@if($pet->status === 'adoptable')
+<div id="claimModalFromAdoptable" class="fixed inset-0 z-50 hidden w-full h-full overflow-y-auto bg-gray-600 bg-opacity-50">
+    <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-4/5 lg:w-3/4 shadow-lg rounded-md bg-white max-h-[90vh] overflow-y-auto">
+        <div class="mt-3">
+            <h3 class="mb-4 text-xl font-bold text-center text-gray-900">City of Alaminos - City Veterinary Department</h3>
+            <h4 class="mb-6 text-lg font-semibold text-center text-gray-800">Claim Request Form</h4>
+            <p class="mb-6 text-sm text-center text-gray-600">If this is your pet, please submit a claim with proof of ownership.</p>
+
+            <div class="p-3 mb-4 border border-orange-200 rounded-lg bg-orange-50">
+                <p class="text-xs text-orange-700 text-center"><strong>⏰ Late Discovery:</strong> This pet is now in our adoptable collection. Submit your claim with proof of ownership and the vet department will help sort this out.</p>
+            </div>
+            <div class="p-3 mb-4 border border-blue-200 rounded-lg bg-blue-50">
+                <p class="text-xs text-blue-700 text-center"><strong>⚡ Quick Process:</strong> Submit this form (takes just 2 minutes!) and visit the vet department with your proofs for instant review.</p>
+            </div>
+            <p class="mb-4 text-sm text-center text-gray-600">Use the website to register your claim, then visit with your proofs for verification and resolution.</p>
+
+            <form action="{{ route('pets.request', $pet) }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" name="type" value="claim">
+
+                <div class="mb-6">
+                    <h5 class="pb-2 mb-3 text-base font-semibold text-gray-800 border-b">Section 1: Your Information</h5>
+                    <p class="mb-3 text-xs text-gray-600">Your profile info is auto-filled. Review for accuracy.</p>
+                    <div class="grid grid-cols-1 gap-3 mb-3 md:grid-cols-3">
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Last Name</label>
+                            <input name="last_name" type="text" value="{{ auth()->user()->last_name ?? '' }}" required class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md bg-gray-50" readonly>
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">First Name</label>
+                            <input name="first_name" type="text" value="{{ auth()->user()->first_name ?? '' }}" required class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md bg-gray-50" readonly>
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Middle Name</label>
+                            <input name="middle_name" type="text" value="{{ auth()->user()->middle_name ?? '' }}" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md bg-gray-50" readonly>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="block mb-1 text-xs font-medium text-gray-700">Address</label>
+                        <input name="address" type="text" value="{{ (auth()->user()->street ?? '') . ', ' . (auth()->user()->barangay ?? '') . ', ' . (auth()->user()->city_municipality ?? '') }}" required class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md bg-gray-50" readonly>
+                    </div>
+                    <div class="grid grid-cols-1 gap-3 mb-3 md:grid-cols-2">
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Contact</label>
+                            <input name="contact_number" type="tel" value="{{ auth()->user()->contact_number ?? '' }}" required class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md bg-gray-50" readonly>
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700">Email</label>
+                            <input name="email" type="email" value="{{ auth()->user()->email ?? '' }}" required class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md bg-gray-50" readonly>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="block mb-1 text-xs font-medium text-gray-700">Date of Birth</label>
+                        <input name="date_of_birth" type="date" value="{{ auth()->user()->birthday ? auth()->user()->birthday->format('Y-m-d') : '' }}" required class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md bg-gray-50" readonly>
+                    </div>
+
+                    @if(auth()->user()->id_photo)
+                        <div class="mb-3">
+                            <label class="block mb-1 text-xs font-medium text-gray-700">ID Photo</label>
+                            <div onclick="document.getElementById('petsClaimIdPhotoModalAdoptable').classList.remove('hidden')"
+                                 class="flex flex-col items-center justify-center w-20 h-14 transition duration-150 ease-in-out bg-black border-2 border-gray-400 rounded cursor-pointer hover:bg-gray-900">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.75 4h2.5a2 2 0 011.664.89l.812 1.22a2 2 0 001.664.89H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </div>
+
+                            <!-- Modal for Full Size ID Photo -->
+                            <div id="petsClaimIdPhotoModalAdoptable"
+                                 class="fixed inset-0 z-50 items-center justify-center hidden p-4 transition-opacity duration-300 bg-black bg-opacity-80"
+                                 onclick="if(event.target.id === 'petsClaimIdPhotoModalAdoptable') this.classList.add('hidden')">
+                                <div class="relative max-w-3xl overflow-hidden bg-white rounded-lg shadow-2xl">
+                                    <div class="sticky top-0 z-10 flex items-center justify-between p-3 bg-white border-b border-gray-200">
+                                        <h3 class="text-lg font-semibold text-gray-800">Your ID Photo</h3>
+                                        <button onclick="document.getElementById('petsClaimIdPhotoModalAdoptable').classList.add('hidden')"
+                                                class="p-2 text-gray-500 transition duration-150 rounded-full hover:bg-gray-100 hover:text-gray-700 focus:outline-none">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="p-4 max-h-[80vh] overflow-y-auto">
+                                        <img src="{{ asset('storage/' . auth()->user()->id_photo) }}"
+                                             alt="ID Photo"
+                                             class="w-full h-auto rounded-lg shadow-md">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="id_photo_path" value="{{ auth()->user()->id_photo }}">
+                    @endif
+                </div>
+
+                <div class="mb-6">
+                    <h5 class="pb-2 mb-3 text-base font-semibold text-gray-800 border-b">Section 2: Proof of Ownership</h5>
+                    <div class="mb-3">
+                        <label class="block mb-1 text-xs font-medium text-gray-700">Describe unique features of your pet</label>
+                        <textarea name="proof_of_ownership_description" rows="2" required class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500" placeholder="E.g., scar, specific mark, behavioral trait..."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="block mb-1 text-xs font-medium text-gray-700">Upload proof (vet records, photos, barangay reg, etc.)</label>
+                        <input type="file" name="photos[]" multiple accept="image/*, .pdf" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500">
+                    </div>
+
+                    <div class="space-y-2 text-xs">
+                        <label class="flex items-center">
+                            <input type="checkbox" name="certify_info" required class="mr-2">
+                            <span>I confirm all information is true</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="agree_terms" required class="mr-2">
+                            <span>I understand the vet department will verify my claim</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closeClaimModalFromAdoptable()" class="px-4 py-2 text-gray-700 bg-gray-300 rounded-md hover:bg-gray-400">Cancel</button>
+                    <button type="submit" class="px-6 py-3 font-semibold text-white bg-orange-600 rounded-md hover:bg-orange-700">Submit Claim Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endif
+
 {{-- CLAIM MODAL (Revised to be much simpler and only for claiming) --}}
 @if($pet->status === 'impounded')
 <div id="claimModal" class="fixed inset-0 z-50 hidden w-full h-full overflow-y-auto bg-gray-600 bg-opacity-50">
@@ -673,8 +807,14 @@
     function openClaimModal() {
         document.getElementById('claimModal').classList.remove('hidden');
     }
+    function openClaimModalFromAdoptable() {
+        document.getElementById('claimModalFromAdoptable').classList.remove('hidden');
+    }
     function closeClaimModal() {
         document.getElementById('claimModal').classList.add('hidden');
+    }
+    function closeClaimModalFromAdoptable() {
+        document.getElementById('claimModalFromAdoptable').classList.add('hidden');
     }
 </script>
 @endsection
