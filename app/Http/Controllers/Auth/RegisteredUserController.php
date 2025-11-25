@@ -42,8 +42,9 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        // Auto-login the user after registration so they can see the verification notice
-        Auth::login($user);
+        // DO NOT auto-login the user after registration
+        // Users should only be authenticated after they verify their email
+        // This ensures they remain as guests during email verification
 
         return redirect(route('verification.notice', absolute: false));
     }

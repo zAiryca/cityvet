@@ -56,7 +56,7 @@
                         <x-slot name="trigger">
                             <button class="inline-flex items-center px-4 py-2 text-base font-medium leading-4 text-white transition duration-150 ease-in-out bg-gray-800 border border-gray-700 rounded-xl hover:bg-gray-700 focus:outline-none">
                                 <i class="fas fa-user-circle mr-2"></i>
-                                <span>{{ Auth::user()->first_name }}</span>
+                                <span></span>
                                 <i class="fas fa-chevron-down ml-2 text-sm"></i>
                             </button>
                         </x-slot>
@@ -141,8 +141,7 @@
         @auth
             <div class="pt-4 pb-1 border-t border-gray-800">
                 <div class="px-4">
-                    <div class="text-base font-semibold text-white">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</div>
-                    <div class="text-sm font-medium text-gray-400">{{ Auth::user()->email }}</div>
+                    <div class="text-base font-semibold text-white">Account Menu</div>
                 </div>
 
                 <div class="mt-3 space-y-1">
