@@ -17,6 +17,8 @@ class PetRequest extends Model
     protected $casts = [
         'photos' => 'array',
         'additional_data' => 'array',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     // 🧩 Polymorphic relationship (can belong to Pet or Event)

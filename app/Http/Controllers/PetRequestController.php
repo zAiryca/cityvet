@@ -76,6 +76,10 @@ class PetRequestController extends Controller
     public function show(PetRequest $request)
     {
         if (!Auth::user()->isAdmin()) abort(403);
+
+        // Eager load relationships for the view
+        $request->load(['user', 'requestable']);
+
         return view('admin.requests.show', compact('request'));
     }
 

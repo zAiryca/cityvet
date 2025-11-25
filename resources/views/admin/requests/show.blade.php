@@ -27,7 +27,7 @@
                 <div class="flex flex-col justify-between md:flex-row md:items-center">
                     <div class="mb-4 md:mb-0">
                         <h2 class="text-xl font-medium text-gray-900">Request #{{ $request->id }}</h2>
-                        <p class="mt-1 text-sm text-gray-600">Submitted on {{ $request->created_at->format('F j, Y') }}</p>
+                        <p class="mt-1 text-sm text-gray-600">Submitted on {{ $request->created_at ? $request->created_at->format('F j, Y') : 'N/A' }}</p>
                     </div>
                     <div class="flex items-center space-x-4">
                         <span class="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full
@@ -45,6 +45,13 @@
 
             <!-- Request Information Sections -->
             <div class="divide-y divide-gray-200">
+                @php
+                    $additionalData = null;
+                    if ($request->additional_data) {
+                        $additionalData = is_array($request->additional_data) ? $request->additional_data : json_decode($request->additional_data, true);
+                    }
+                @endphp
+
                 <!-- Pet Information Section -->
                 @if($request->requestable && $request->requestable_type === 'App\\Models\\Pet')
                 <div class="px-8 py-6">
@@ -110,10 +117,26 @@
                 @endif
 
                 <!-- Requester Information Section -->
-                @if($request->additional_data)
                 @php
-                    $additionalData = is_array($request->additional_data) ? $request->additional_data : json_decode($request->additional_data, true);
+                    // Use additional_data if available, otherwise fallback to user info
+                    $requesterName = '';
+                    $requesterEmail = '';
+                    $requesterPhone = '';
+                    $requesterAddress = '';
+
+                    if ($additionalData) {
+                        $requesterName = ($additionalData['first_name'] ?? '') . ' ' . ($additionalData['last_name'] ?? '');
+                        $requesterEmail = $additionalData['email'] ?? '';
+                        $requesterPhone = $additionalData['contact_number'] ?? '';
+                        $requesterAddress = $additionalData['address'] ?? '';
+                    } else if ($request->user) {
+                        $requesterName = $request->user->first_name . ' ' . $request->user->last_name;
+                        $requesterEmail = $request->user->email;
+                        $requesterPhone = $request->user->contact_number ?? '';
+                        $requesterAddress = $request->user->address ?? '';
+                    }
                 @endphp
+                @if($requesterName || $requesterEmail)
                 <div class="px-8 py-6">
                     <div class="flex items-center mb-4">
                         <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -128,21 +151,21 @@
                         <div class="space-y-4">
                             <div>
                                 <p class="text-sm font-medium text-gray-500">Full Name</p>
-                                <p class="text-sm text-gray-900">{{ $additionalData['first_name'] ?? '' }} {{ $additionalData['last_name'] ?? '' }}</p>
+                                <p class="text-sm text-gray-900">{{ $requesterName }}</p>
                             </div>
                             <div>
                                 <p class="text-sm font-medium text-gray-500">Email Address</p>
-                                <p class="text-sm text-gray-900">{{ $additionalData['email'] ?? '' }}</p>
+                                <p class="text-sm text-gray-900">{{ $requesterEmail }}</p>
                             </div>
                             <div>
                                 <p class="text-sm font-medium text-gray-500">Phone Number</p>
-                                <p class="text-sm text-gray-900">{{ $additionalData['contact_number'] ?? '' }}</p>
+                                <p class="text-sm text-gray-900">{{ $requesterPhone }}</p>
                             </div>
                         </div>
                         <div class="space-y-4">
                             <div>
                                 <p class="text-sm font-medium text-gray-500">Address</p>
-                                <p class="text-sm text-gray-900">{{ $additionalData['address'] ?? '' }}</p>
+                                <p class="text-sm text-gray-900">{{ $requesterAddress }}</p>
                             </div>
                             @if($request->type === 'adopt')
                             <div>
