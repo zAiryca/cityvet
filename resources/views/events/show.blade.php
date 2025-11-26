@@ -3,7 +3,7 @@
 @section('title', '| Announcement Details')
 
 @section('content')
-<div class="px-4 py-6 mx-auto max-w-7xl">
+<div class="flex justify-center px-4 py-12 mx-auto mt-20 max-w-7xl">
     <div class="bg-white rounded-lg shadow overflow-hidden max-w-4xl mx-auto border-l-8 {{ $announcement->category == 'Event' ? 'border-teal-600' : ($announcement->category == 'Trivia' ? 'border-purple-600' : ($announcement->category == 'Fun Fact' ? 'border-amber-600' : 'border-rose-600')) }}">
         <div class="p-8">
             <h1 class="mb-4 text-3xl font-bold">{{ $announcement->title }}</h1>

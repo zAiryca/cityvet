@@ -1,6 +1,6 @@
 <div>
     <!-- Search and Filter Form -->
-    <div class="p-6 mb-6 bg-white rounded-lg shadow-sm border border-gray-200">
+    <div class="p-6 mb-6 bg-white border border-gray-200 rounded-lg shadow-sm">
         <!-- Single Row: Search, Species, Breed, Gender, Color (4 columns) -->
         <div class="grid grid-cols-1 gap-3 md:grid-cols-5 lg:grid-cols-5">
             <!-- Search -->
@@ -49,7 +49,7 @@
                 <label class="block mb-1 text-xs font-semibold text-gray-700">{{ __('Color') }}</label>
                 <div class="grid grid-cols-4 gap-2">
                     @foreach($colors as $colorOption)
-                        <label class="flex items-center cursor-pointer text-xs">
+                        <label class="flex items-center text-xs cursor-pointer">
                             <input type="checkbox" wire:model.live="selectedColors" value="{{ $colorOption }}" class="w-3 h-3 mr-1 border-gray-300 rounded focus:ring-blue-500">
                             <span class="text-xs text-gray-700">{{ $colorOption }}</span>
                         </label>
@@ -72,7 +72,7 @@
 
         @forelse($pets as $pet)
 
-            <div class="overflow-hidden transition-all duration-300 bg-white rounded-xl shadow-md hover:shadow-xl hover:scale-105 border border-gray-100">
+            <div class="overflow-hidden transition-all duration-300 bg-white border border-gray-100 shadow-md rounded-xl hover:shadow-xl hover:scale-105">
 
                 <!-- Photo Section with Status Badge -->
                 <div class="relative h-48 overflow-hidden bg-gray-100">
@@ -86,7 +86,7 @@
                         </div>
                     @endif
                     <div class="absolute top-3 right-3">
-                        <span class="inline-flex items-center px-3 py-1 text-xs font-bold rounded-full bg-red-100 text-red-800">
+                        <span class="inline-flex items-center px-3 py-1 text-xs font-bold text-red-800 bg-red-100 rounded-full">
                             <span class="w-2 h-2 mr-1.5 bg-red-600 rounded-full animate-pulse"></span>
                             Impounded
                         </span>
@@ -97,18 +97,18 @@
                     <!-- ID and Species -->
                     <div class="mb-3">
                         <h3 class="text-lg font-bold text-gray-900">{{ $pet->display_code }}</h3>
-                        <p class="text-sm text-gray-600 mt-1">{{ ucfirst($pet->species) }} • {{ ucfirst($pet->breed) }}</p>
+                        <p class="mt-1 text-sm text-gray-600">{{ ucfirst($pet->species) }} • {{ ucfirst($pet->breed) }}</p>
                     </div>
 
                     <!-- Quick Info -->
                     <div class="grid grid-cols-2 gap-2 mb-4">
                         <div class="text-xs">
-                            <p class="text-gray-500 font-semibold uppercase">Gender</p>
-                            <p class="text-gray-900 font-semibold">{{ ucfirst($pet->gender) }}</p>
+                            <p class="font-semibold text-gray-500 uppercase">Gender</p>
+                            <p class="font-semibold text-gray-900">{{ ucfirst($pet->gender) }}</p>
                         </div>
                         <div class="text-xs">
-                            <p class="text-gray-500 font-semibold uppercase">Age</p>
-                            <p class="text-gray-900 font-semibold">{{ $pet->estimated_age ?? 'N/A' }}</p>
+                            <p class="font-semibold text-gray-500 uppercase">Estimated Age</p>
+                            <p class="font-semibold text-gray-900">{{ $pet->estimated_age ?? 'N/A' }}</p>
                         </div>
                     </div>
 
@@ -124,8 +124,8 @@
                     </div>
 
                     <!-- Action Button -->
-                    <a href="{{ route('pets.show', $pet) }}" class="w-full block text-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors shadow-sm">
-                        <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ route('pets.show', $pet) }}" class="block w-full px-4 py-2 font-bold text-center text-white transition-colors bg-red-600 rounded-lg shadow-sm hover:bg-red-700">
+                        <svg class="inline-block w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
                         View Details

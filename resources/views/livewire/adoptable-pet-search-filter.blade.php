@@ -1,6 +1,6 @@
 <div>
     <!-- Search and Filter Form -->
-    <div class="p-6 mb-6 bg-white rounded-lg shadow-sm border border-gray-200">
+    <div class="p-6 mb-6 bg-white border border-gray-200 rounded-lg shadow-sm">
         <!-- Single Row: Search, Species, Breed, Gender, Color (4 columns) -->
         <div class="grid grid-cols-1 gap-3 md:grid-cols-5 lg:grid-cols-5">
             <!-- Search -->
@@ -49,7 +49,7 @@
                 <label class="block mb-1 text-xs font-semibold text-gray-700">{{ __('Color') }}</label>
                 <div class="grid grid-cols-4 gap-2">
                     @foreach($colors as $colorOption)
-                        <label class="flex items-center cursor-pointer text-xs">
+                        <label class="flex items-center text-xs cursor-pointer">
                             <input type="checkbox" wire:model.live="selectedColors" value="{{ $colorOption }}" class="w-3 h-3 mr-1 border-gray-300 rounded focus:ring-green-500">
                             <span class="text-xs text-gray-700">{{ $colorOption }}</span>
                         </label>
@@ -72,7 +72,7 @@
 
         @forelse($pets as $pet)
 
-            <div class="overflow-hidden transition-all duration-300 bg-white rounded-xl shadow-md hover:shadow-xl hover:scale-105 border border-gray-100">
+            <div class="overflow-hidden transition-all duration-300 bg-white border border-gray-100 shadow-md rounded-xl hover:shadow-xl hover:scale-105">
 
                 <!-- Photo Section with Status Badge -->
                 <div class="relative h-48 overflow-hidden bg-gray-100">
@@ -86,7 +86,7 @@
                         </div>
                     @endif
                     <div class="absolute top-3 right-3">
-                        <span class="inline-flex items-center px-3 py-1 text-xs font-bold rounded-full bg-green-100 text-green-800">
+                        <span class="inline-flex items-center px-3 py-1 text-xs font-bold text-green-800 bg-green-100 rounded-full">
                             <span class="w-2 h-2 mr-1.5 bg-green-600 rounded-full animate-pulse"></span>
                             Adoptable
                         </span>
@@ -97,38 +97,38 @@
                     <!-- ID and Species -->
                     <div class="mb-3">
                         <h3 class="text-lg font-bold text-gray-900">{{ $pet->display_code }}</h3>
-                        <p class="text-sm text-gray-600 mt-1">{{ ucfirst($pet->species) }} • {{ ucfirst($pet->breed) }}</p>
+                        <p class="mt-1 text-sm text-gray-600">{{ ucfirst($pet->species) }} • {{ ucfirst($pet->breed) }}</p>
                     </div>
 
                     <!-- Quick Info -->
                     <div class="grid grid-cols-2 gap-2 mb-4">
                         <div class="text-xs">
-                            <p class="text-gray-500 font-semibold uppercase">Gender</p>
-                            <p class="text-gray-900 font-semibold">{{ ucfirst($pet->gender) }}</p>
+                            <p class="font-semibold text-gray-500 uppercase">Gender</p>
+                            <p class="font-semibold text-gray-900">{{ ucfirst($pet->gender) }}</p>
                         </div>
                         <div class="text-xs">
-                            <p class="text-gray-500 font-semibold uppercase">Age</p>
-                            <p class="text-gray-900 font-semibold">{{ $pet->estimated_age ?? 'N/A' }}</p>
+                            <p class="font-semibold text-gray-500 uppercase">Estimated Age</p>
+                            <p class="font-semibold text-gray-900">{{ $pet->estimated_age ?? 'N/A' }}</p>
                         </div>
                     </div>
 
                     <!-- Available Info -->
-                    <div class="mb-4 p-2 rounded-lg bg-green-50 border border-green-200">
-                        <p class="text-xs text-green-700 font-semibold">
+                    <div class="p-2 mb-4 border border-green-200 rounded-lg bg-green-50">
+                        <p class="text-xs font-semibold text-green-700">
                             Ready for adoption
                         </p>
                     </div>
 
                     <!-- Action Buttons -->
                     <div class="grid grid-cols-2 gap-2">
-                        <a href="{{ route('pets.show', $pet) }}" class="block text-center px-3 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-lg transition-colors shadow-sm">
-                            <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <a href="{{ route('pets.show', $pet) }}" class="block px-3 py-2 text-sm font-bold text-center text-white transition-colors bg-green-600 rounded-lg shadow-sm hover:bg-green-700">
+                            <svg class="inline-block w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                             </svg>
                             Adopt
                         </a>
-                        <a href="{{ route('pets.show', $pet) }}" class="block text-center px-3 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-bold rounded-lg transition-colors shadow-sm">
-                            <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <a href="{{ route('pets.show', $pet) }}" class="block px-3 py-2 text-sm font-bold text-center text-white transition-colors bg-orange-600 rounded-lg shadow-sm hover:bg-orange-700">
+                            <svg class="inline-block w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             Claim

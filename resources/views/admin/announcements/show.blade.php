@@ -20,6 +20,6 @@
         </div>
     </div>
 
-    <!-- No registrations section since announcements are for viewing only -->
+    <!-- No registrations section na ta pang announce nlng to -->
 </div>
 @endsection
