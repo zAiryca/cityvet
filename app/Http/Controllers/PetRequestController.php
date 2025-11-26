@@ -73,14 +73,20 @@ class PetRequestController extends Controller
         return view('admin.requests.index', compact('pets', 'requestStatus', 'pendingCount', 'approvedCount', 'deniedCount'));
     }
 
-    public function show(PetRequest $petRequest)
+    /**
+     * Display the specified resource.
+     * * FIX: Renamed parameter from $petRequest to $request to match the route parameter name
+     * (Route Model Binding expects the parameter name to match the route segment name).
+     */
+    public function show(PetRequest $request)
     {
         if (!Auth::user()->isAdmin()) abort(403);
 
-        // Explicitly reload from database to ensure all columns are loaded
-        $petRequest = PetRequest::with(['user', 'requestable'])->find($petRequest->id);
+        // Load relationships (user and requestable/pet) directly on the bound model.
+        // No need for a second DB query using find($request->id).
+        $request->load(['user', 'requestable']);
 
-        return view('admin.requests.show', ['request' => $petRequest]);
+        return view('admin.requests.show', ['request' => $request]);
     }
 
     public function update(Request $request, PetRequest $petRequest)
