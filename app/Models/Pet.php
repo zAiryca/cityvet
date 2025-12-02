@@ -139,7 +139,30 @@ class Pet extends Model
     // Scope: For user visibility (hide unclaimed/unadopted)
     public function scopeVisibleToUsers($query)
     {
-        return $query->whereNotIn('status', ['unclaimed', 'unadopted']);
+        return $query->whereNotIn('status', ['unclaimed', 'unadopted'])
+                     ->where(function($q) {
+                         // For impounded pets: only show if remaining_days > 0
+                         // For adoptable pets: only show if remaining_days > 0
+                         $threeeDaysAgo = now()->subDays(3)->toDateString();
+                         $fourDaysAgo = now()->subDays(4)->toDateString();
+
+                         $q->where(function($subq) use ($threeeDaysAgo, $fourDaysAgo) {
+                             $subq->where('status', 'impounded')
+                                  ->whereNull('impounded_date')
+                                  ->orWhere(function($x) use ($threeeDaysAgo) {
+                                      $x->where('status', 'impounded')
+                                        ->whereDate('impounded_date', '>', $threeeDaysAgo);
+                                  });
+                         })
+                         ->orWhere(function($subq) use ($fourDaysAgo) {
+                             $subq->where('status', 'adoptable')
+                                  ->whereNull('decision_date')
+                                  ->orWhere(function($x) use ($fourDaysAgo) {
+                                      $x->where('status', 'adoptable')
+                                        ->whereDate('decision_date', '>', $fourDaysAgo);
+                                  });
+                         });
+                     });
     }
 
     // Scope: For admin unclaimed pets

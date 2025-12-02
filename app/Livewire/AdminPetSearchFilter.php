@@ -35,6 +35,7 @@ class AdminPetSearchFilter extends Component
             $query->where('status', $status);
         }
 
+        // Apply search first
         if ($this->search) {
             $query->where(function($q) {
                 $q->where('name', 'like', '%' . $this->search . '%')
@@ -43,6 +44,7 @@ class AdminPetSearchFilter extends Component
             });
         }
 
+        // Apply other filters
         if ($this->species) {
             $query->where('species', $this->species);
         }

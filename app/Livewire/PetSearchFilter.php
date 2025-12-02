@@ -47,9 +47,18 @@ class PetSearchFilter extends Component
 
     public function render()
     {
-        $query = Pet::query();
+        $query = Pet::query()->visibleToUsers();
 
-        // Apply filters
+        // Apply search first
+        if ($this->search) {
+            $query->where(function($q) {
+                $q->where('name', 'like', '%' . $this->search . '%')
+                  ->orWhere('description', 'like', '%' . $this->search . '%')
+                  ->orWhere('display_code', 'like', '%' . $this->search . '%');
+            });
+        }
+
+        // Apply other filters
         if ($this->species) {
             $query->where('species', $this->species);
         }
@@ -63,19 +72,9 @@ class PetSearchFilter extends Component
         }
 
         if (!empty($this->selectedColors)) {
-            $query->where(function($q) {
-                foreach ($this->selectedColors as $color) {
-                    $q->orWhere('color_markings', 'like', '%' . $color . '%');
-                }
-            });
-        }
-
-        if ($this->search) {
-            $query->where(function($q) {
-                $q->where('name', 'like', '%' . $this->search . '%')
-                  ->orWhere('description', 'like', '%' . $this->search . '%')
-                  ->orWhere('display_code', 'like', '%' . $this->search . '%');
-            });
+            foreach ($this->selectedColors as $color) {
+                $query->where('color_markings', 'like', '%' . $color . '%');
+            }
         }
 
         // Filter by status based on current route or admin status filter

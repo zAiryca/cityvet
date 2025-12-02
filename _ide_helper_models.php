@@ -14,17 +14,17 @@
 namespace App\Models{
 /**
  * @property int $id
- * @property string $category
- * @property int $user_id
  * @property string $title
  * @property string $description
- * @property string|null $date_when
+ * @property string $type
+ * @property string $date_when
  * @property string|null $location
  * @property string|null $published_at
- * @property string $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
+ * @property string|null $category
+ * @property int|null $user_id
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement query()
@@ -37,8 +37,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement whereLocation($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement wherePublishedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement whereUserId($value)
  */
@@ -49,25 +49,30 @@ namespace App\Models{
 /**
  * @property int $id
  * @property int|null $user_id
- * @property string $name
+ * @property string|null $name
  * @property string $species
  * @property string $breed
- * @property \Illuminate\Support\Carbon $birth_date
  * @property string $gender
+ * @property int|null $estimated_age_years
+ * @property int|null $estimated_age_months
  * @property string $color_markings
  * @property string|null $description
  * @property string|null $photo
+ * @property string|null $photos
  * @property string $status
  * @property string $registration_status
  * @property string|null $admin_notes
  * @property \Illuminate\Support\Carbon|null $impounded_date
  * @property string|null $caught_location
- * @property \Illuminate\Support\Carbon|null $urgent_deadline
  * @property \Illuminate\Support\Carbon|null $decision_date
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
- * @property-read mixed $display_pet_id
+ * @property string|null $adoption_reason
+ * @property string|null $adoption_notes
+ * @property string|null $adoption_reason_other
+ * @property-read mixed $display_code
+ * @property-read mixed $estimated_age
  * @property-read mixed $remaining_days
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PetRequest> $requests
  * @property-read int|null $requests_count
@@ -76,8 +81,13 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet unadopted()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet unclaimed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet visibleToUsers()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereAdminNotes($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereBirthDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereAdoptionNotes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereAdoptionReason($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereAdoptionReasonOther($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereBreed($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereCaughtLocation($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereColorMarkings($value)
@@ -85,16 +95,18 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereDecisionDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereEstimatedAgeMonths($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereEstimatedAgeYears($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereGender($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereImpoundedDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet wherePhoto($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet wherePhotos($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereRegistrationStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereSpecies($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereUrgentDeadline($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Pet whereUserId($value)
  */
 	class Pet extends \Eloquent {}
@@ -104,18 +116,59 @@ namespace App\Models{
 /**
  * @property int $id
  * @property int $user_id
+ * @property string $pet_name
+ * @property string $species
+ * @property string $breed
+ * @property \Illuminate\Support\Carbon|null $birthday
+ * @property string $gender
+ * @property array<array-key, mixed>|null $color_markings
+ * @property string|null $description
+ * @property string|null $photo
+ * @property string $status
+ * @property string|null $denial_reason
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $display_pet_id
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRegistration newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRegistration newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRegistration query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRegistration whereBirthday($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRegistration whereBreed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRegistration whereColorMarkings($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRegistration whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRegistration whereDenialReason($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRegistration whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRegistration whereGender($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRegistration whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRegistration wherePetName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRegistration wherePhoto($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRegistration whereSpecies($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRegistration whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRegistration whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRegistration whereUserId($value)
+ */
+	class PetRegistration extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property int $user_id
  * @property int|null $requestable_id
  * @property string|null $requestable_type
  * @property string $type
- * @property string $status
+ * @property string|null $status
+ * @property string|null $denial_reason Reason why request was denied
+ * @property string|null $denial_type Type of denial: manual (admin) or automatic (system)
  * @property string $reason
  * @property string $contact_info
  * @property string|null $admin_notes
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
- * @property string|null $photos
- * @property string|null $additional_data
+ * @property array<array-key, mixed>|null $photos
+ * @property array<array-key, mixed>|null $additional_data
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $requestable
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRequest newModelQuery()
@@ -126,6 +179,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRequest whereContactInfo($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRequest whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRequest whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRequest whereDenialReason($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRequest whereDenialType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRequest whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRequest wherePhotos($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PetRequest whereReason($value)
@@ -150,6 +205,7 @@ namespace App\Models{
  * @property string $gender
  * @property string $color_markings
  * @property string|null $description
+ * @property string|null $uploader_comments
  * @property \Illuminate\Support\Carbon $date_lost_found
  * @property string|null $last_seen
  * @property string|null $found_at
@@ -160,7 +216,6 @@ namespace App\Models{
  * @property string $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read mixed $display_poster_id
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Poster newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Poster newQuery()
@@ -183,6 +238,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Poster whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Poster whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Poster whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Poster whereUploaderComments($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Poster whereUserId($value)
  */
 	class Poster extends \Eloquent {}
@@ -194,6 +250,8 @@ namespace App\Models{
  * @property string $first_name
  * @property string|null $middle_name
  * @property string $last_name
+ * @property string|null $gender
+ * @property \Illuminate\Support\Carbon|null $birthday
  * @property string|null $contact_number
  * @property string|null $emergency_contact
  * @property string|null $street
@@ -205,20 +263,19 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property string $password
  * @property string $role
- * @property bool $terms
- * @property bool $privacy
+ * @property int $terms
+ * @property int $privacy
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $first_name_lower
  * @property string|null $last_name_lower
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Pet> $adoptedPets
- * @property-read int|null $adopted_pets_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Pet> $claimedPets
- * @property-read int|null $claimed_pets_count
+ * @property string|null $id_photo
  * @property-read string $name
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PetRegistration> $petRegistrations
+ * @property-read int|null $pet_registrations_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Pet> $pets
  * @property-read int|null $pets_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Poster> $posters
@@ -230,6 +287,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereBarangay($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereBirthday($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCityMunicipality($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereContactNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCreatedAt($value)
@@ -238,7 +296,9 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmergencyContact($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereFirstName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereFirstNameLower($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereGender($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereIdPhoto($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereLastName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereLastNameLower($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereMiddleName($value)

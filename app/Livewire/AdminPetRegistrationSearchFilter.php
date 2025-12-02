@@ -57,7 +57,13 @@ class AdminPetRegistrationSearchFilter extends Component
     {
         $query = PetRegistration::query();
 
-        // Filter by search
+        // Filter by status from URL parameter
+        $status = request()->get('registration_status');
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        // Apply search first
         if ($this->search) {
             $query->where(function ($q) {
                 $q->where('pet_name', 'like', '%' . $this->search . '%')
@@ -66,25 +72,17 @@ class AdminPetRegistrationSearchFilter extends Component
             });
         }
 
-        // Filter by species
+        // Apply other filters
         if ($this->species) {
             $query->where('species', $this->species);
         }
 
-        // Filter by breed
         if ($this->breed) {
             $query->where('breed', $this->breed);
         }
 
-        // Filter by gender
         if ($this->gender) {
             $query->where('gender', $this->gender);
-        }
-
-        // Filter by status from URL parameter
-        $status = request()->get('registration_status');
-        if ($status) {
-            $query->where('status', $status);
         }
 
         // Filter by selected colors
@@ -103,6 +101,15 @@ class AdminPetRegistrationSearchFilter extends Component
         ]);
     }
 
+    public function updated($property)
+    {
+        if ($property === 'species') {
+            $this->breed = '';
+        }
+
+        $this->resetPage();
+    }
+
     public function clearFilters()
     {
         $this->search = '';
@@ -110,5 +117,6 @@ class AdminPetRegistrationSearchFilter extends Component
         $this->breed = '';
         $this->gender = '';
         $this->selectedColors = [];
+        $this->resetPage();
     }
 }

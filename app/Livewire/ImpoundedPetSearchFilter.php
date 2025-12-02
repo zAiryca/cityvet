@@ -47,8 +47,9 @@ class ImpoundedPetSearchFilter extends Component
 
     public function render()
     {
-        $query = Pet::where('status', 'impounded');
+        $query = Pet::where('status', 'impounded')->visibleToUsers();
 
+        // Apply search first
         if ($this->search) {
             $query->where(function($q) {
                 $q->where('name', 'like', '%' . $this->search . '%')
@@ -57,6 +58,7 @@ class ImpoundedPetSearchFilter extends Component
             });
         }
 
+        // Apply other filters
         if ($this->species) {
             $query->where('species', $this->species);
         }

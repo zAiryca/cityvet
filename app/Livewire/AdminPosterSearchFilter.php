@@ -67,7 +67,7 @@ class AdminPosterSearchFilter extends Component
         }
         // For 'all' tab, no type/status filtering
 
-        // Apply search filters - search across all relevant fields
+        // Apply search first
         if ($this->search) {
             $query->where(function($q) {
                 $q->where('pet_name', 'like', '%' . $this->search . '%')
@@ -82,6 +82,7 @@ class AdminPosterSearchFilter extends Component
             });
         }
 
+        // Apply other filters
         if ($this->species) {
             $query->where('species', $this->species);
         }
@@ -111,6 +112,15 @@ class AdminPosterSearchFilter extends Component
         $posters = $query->latest()->paginate(15);
 
         return view('livewire.admin-poster-search-filter', compact('posters'));
+    }
+
+    public function updated($property)
+    {
+        if ($property === 'species') {
+            $this->breed = '';
+        }
+
+        $this->resetPage();
     }
 
     public function clearFilters()

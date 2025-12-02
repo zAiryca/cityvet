@@ -126,9 +126,9 @@
                     <!-- Action Button -->
                     <a href="{{ route('pets.show', $pet) }}" class="block w-full px-4 py-2 font-bold text-center text-white transition-colors bg-red-600 rounded-lg shadow-sm hover:bg-red-700">
                         <svg class="inline-block w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        View Details
+                        Claim Pet
                     </a>
                 </div>
 

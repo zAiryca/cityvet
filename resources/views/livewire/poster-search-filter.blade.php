@@ -2,7 +2,7 @@
 
     <!-- Search and Filter Form -->
 
-    <div class="p-6 mb-6 bg-white rounded-lg shadow-sm border border-gray-200">
+    <div class="p-6 mb-6 bg-white border border-gray-200 rounded-lg shadow-sm">
 
         <!-- First Row: Search, Type, Species, Breed, Gender -->
         <div class="grid grid-cols-1 gap-2 mb-3 md:grid-cols-2 lg:grid-cols-5">
@@ -66,7 +66,7 @@
                 <label class="block mb-1 text-xs font-semibold text-gray-700">{{ __('Color') }}</label>
                 <div class="grid grid-cols-4 gap-1">
                     @foreach($colors as $colorOption)
-                        <label class="flex items-center cursor-pointer text-xs">
+                        <label class="flex items-center text-xs cursor-pointer">
                             <input type="checkbox" wire:model.live="selectedColors" value="{{ $colorOption }}" class="w-3 h-3 mr-1 border-gray-300 rounded focus:ring-purple-500">
                             <span class="text-xs text-gray-700">{{ $colorOption }}</span>
                         </label>
@@ -106,18 +106,18 @@
     <!-- Results -->
 <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
     @forelse($posters as $poster)
-        <div class="overflow-hidden transition duration-300 bg-white rounded-2xl shadow-lg hover:shadow-xl border border-pink-100 transform hover:-translate-y-1">
+        <div class="overflow-hidden transition duration-300 transform bg-white border border-pink-100 shadow-lg rounded-2xl hover:shadow-xl hover:-translate-y-1">
             <!-- Image Section -->
-            <div class="bg-gradient-to-br from-blue-50 to-green-50 p-4">
+            <div class="p-4 bg-gradient-to-br from-blue-50 to-green-50">
                 @if($poster->photo)
-                    <div class="rounded-xl overflow-hidden border-2 border-white shadow-md">
+                    <div class="overflow-hidden border-2 border-white shadow-md rounded-xl">
                         <img src="{{ asset('storage/' . $poster->photo) }}" alt="{{ $poster->pet_name ?: 'Pet' }}" class="object-cover w-full h-40">
                     </div>
                 @else
-                    <div class="flex items-center justify-center w-full h-40 bg-gradient-to-br from-pink-50 to-purple-50 rounded-xl border-2 border-white">
+                    <div class="flex items-center justify-center w-full h-40 border-2 border-white bg-gradient-to-br from-pink-50 to-purple-50 rounded-xl">
                         <div class="text-center">
-                            <i class="fas fa-paw text-3xl text-purple-300 mb-2"></i>
-                            <p class="text-purple-400 text-sm">No Photo</p>
+                            <i class="mb-2 text-3xl text-purple-300 fas fa-paw"></i>
+                            <p class="text-sm text-purple-400">No Photo</p>
                         </div>
                     </div>
                 @endif
@@ -127,63 +127,63 @@
             <div class="p-4 bg-gradient-to-br from-pink-50 to-purple-50">
                 @if($poster->type === 'lost')
                     @if($poster->pet_name)
-                        <h3 class="mb-2 text-base font-bold text-gray-800 flex items-center">
-                            <i class="fas fa-search mr-2 text-red-400"></i>{{ $poster->pet_name }}
+                        <h3 class="flex items-center mb-2 text-base font-bold text-gray-800">
+                            <i class="mr-2 text-red-400 fas fa-search"></i>{{ $poster->pet_name }}
                         </h3>
                     @endif
-                    <div class="space-y-1 mb-3">
-                        <p class="text-sm text-gray-600 flex items-center">
-                            <i class="fas fa-tag mr-2 text-purple-400"></i>Lost - {{ $poster->species }}
+                    <div class="mb-3 space-y-1">
+                        <p class="flex items-center text-sm text-gray-600">
+                            <i class="mr-2 text-purple-400 fas fa-tag"></i>Lost - {{ $poster->species }}
                         </p>
-                        <p class="text-sm text-gray-600 flex items-center">
-                            <i class="fas fa-dna mr-2 text-yellow-400"></i>{{ $poster->breed }}
+                        <p class="flex items-center text-sm text-gray-600">
+                            <i class="mr-2 text-yellow-400 fas fa-dna"></i>{{ $poster->breed }}
                         </p>
-                        <p class="text-sm text-gray-600 flex items-center">
-                            <i class="fas fa-venus-mars mr-2 text-pink-400"></i>{{ ucfirst($poster->gender) }}
+                        <p class="flex items-center text-sm text-gray-600">
+                            <i class="mr-2 text-pink-400 fas fa-venus-mars"></i>{{ ucfirst($poster->gender) }}
                         </p>
-                        <p class="text-sm text-gray-500 flex items-center">
-                            <i class="fas fa-calendar-day mr-2 text-blue-400"></i>{{ $poster->date_lost_found->format('M d, Y') }}
+                        <p class="flex items-center text-sm text-gray-500">
+                            <i class="mr-2 text-blue-400 fas fa-calendar-day"></i>{{ $poster->date_lost_found->format('M d, Y') }}
                         </p>
                     </div>
                     @if($poster->reward)
-                        <div class="mb-3 p-2 bg-gradient-to-r from-green-100 to-green-50 rounded-lg border border-green-200">
-                            <p class="text-sm font-semibold text-green-700 flex items-center justify-center">
-                                <i class="fas fa-gift mr-2"></i>₱{{ $poster->reward }} Reward
+                        <div class="p-2 mb-3 border border-green-200 rounded-lg bg-gradient-to-r from-green-100 to-green-50">
+                            <p class="flex items-center justify-center text-sm font-semibold text-green-700">
+                                <i class="mr-2 fas fa-gift"></i>₱{{ $poster->reward }} Reward
                             </p>
                         </div>
                     @else
                         <div class="mb-3"></div>
                     @endif
                 @else
-                    <h3 class="mb-2 text-base font-bold text-gray-800 flex items-center">
-                        <i class="fas fa-home mr-2 text-green-400"></i>FND{{ str_pad($poster->id, 4, '0', STR_PAD_LEFT) }}
+                    <h3 class="flex items-center mb-2 text-base font-bold text-gray-800">
+                        <i class="mr-2 text-green-400 fas fa-home"></i>FND{{ str_pad($poster->id, 4, '0', STR_PAD_LEFT) }}
                     </h3>
-                    <div class="space-y-1 mb-3">
-                        <p class="text-sm text-gray-600 flex items-center">
-                            <i class="fas fa-tag mr-2 text-purple-400"></i>Found - {{ $poster->species }}
+                    <div class="mb-3 space-y-1">
+                        <p class="flex items-center text-sm text-gray-600">
+                            <i class="mr-2 text-purple-400 fas fa-tag"></i>Found - {{ $poster->species }}
                         </p>
-                        <p class="text-sm text-gray-600 flex items-center">
-                            <i class="fas fa-dna mr-2 text-yellow-400"></i>{{ $poster->breed }}
+                        <p class="flex items-center text-sm text-gray-600">
+                            <i class="mr-2 text-yellow-400 fas fa-dna"></i>{{ $poster->breed }}
                         </p>
-                        <p class="text-sm text-gray-600 flex items-center">
-                            <i class="fas fa-venus-mars mr-2 text-pink-400"></i>{{ ucfirst($poster->gender) }}
+                        <p class="flex items-center text-sm text-gray-600">
+                            <i class="mr-2 text-pink-400 fas fa-venus-mars"></i>{{ ucfirst($poster->gender) }}
                         </p>
-                        <p class="text-sm text-gray-500 flex items-center">
-                            <i class="fas fa-calendar-day mr-2 text-blue-400"></i>{{ $poster->date_lost_found->format('M d, Y') }}
+                        <p class="flex items-center text-sm text-gray-500">
+                            <i class="mr-2 text-blue-400 fas fa-calendar-day"></i>{{ $poster->date_lost_found->format('M d, Y') }}
                         </p>
                     </div>
                     <div class="mb-3"></div>
                 @endif
 
                 <a href="{{ route('posters.show', $poster) }}"
-                   class="block w-full py-2 text-center text-white transition duration-200 bg-gradient-to-r from-purple-400 to-purple-500 rounded-xl hover:from-purple-500 hover:to-purple-600 font-medium flex items-center justify-center">
-                    <i class="fas fa-eye mr-2"></i>View Details
+                   class="flex items-center justify-center w-full py-2 font-medium text-center text-white transition duration-200 bg-gradient-to-r from-purple-400 to-purple-500 rounded-xl hover:from-purple-500 hover:to-purple-600">
+                    <i class="mr-2 fas fa-eye"></i>View Details
                 </a>
             </div>
         </div>
     @empty
-        <div class="py-12 text-center col-span-full bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl border border-pink-100">
-            <i class="fas fa-search text-4xl text-purple-300 mb-4"></i>
+        <div class="py-12 text-center border border-pink-100 col-span-full bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl">
+            <i class="mb-4 text-4xl text-purple-300 fas fa-search"></i>
             <p class="text-lg text-gray-600">{{ __('messages.No posters found matching your criteria.') }}</p>
         </div>
     @endforelse
