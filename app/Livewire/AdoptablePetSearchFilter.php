@@ -51,10 +51,14 @@ class AdoptablePetSearchFilter extends Component
 
         // Apply search first
         if ($this->search) {
-            $query->where(function($q) {
-                $q->where('name', 'like', '%' . $this->search . '%')
-                  ->orWhere('description', 'like', '%' . $this->search . '%')
-                  ->orWhere('display_code', 'like', '%' . $this->search . '%');
+            $searchTerm = strtolower($this->search);
+            $query->where(function($q) use ($searchTerm) {
+                $q->whereRaw('LOWER(name) LIKE ?', ['%' . $searchTerm . '%'])
+                  ->orWhereRaw('LOWER(species) LIKE ?', ['%' . $searchTerm . '%'])
+                  ->orWhereRaw('LOWER(breed) LIKE ?', ['%' . $searchTerm . '%'])
+                  ->orWhereRaw('LOWER(gender) LIKE ?', ['%' . $searchTerm . '%'])
+                  ->orWhereRaw('LOWER(color_markings) LIKE ?', ['%' . $searchTerm . '%'])
+                  ->orWhereRaw('LOWER(description) LIKE ?', ['%' . $searchTerm . '%']);
             });
         }
 

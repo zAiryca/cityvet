@@ -16,6 +16,7 @@ namespace App\Models{
  * @property int $id
  * @property string $title
  * @property string $description
+ * @property string|null $photo
  * @property string $type
  * @property string $date_when
  * @property string|null $location
@@ -36,6 +37,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement whereLocation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement wherePhoto($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement wherePublishedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement whereType($value)
@@ -43,6 +45,28 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Announcement whereUserId($value)
  */
 	class Announcement extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property int $announcement_id
+ * @property string $photo_path
+ * @property int $order
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Announcement $announcement
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AnnouncementPhoto newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AnnouncementPhoto newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AnnouncementPhoto query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AnnouncementPhoto whereAnnouncementId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AnnouncementPhoto whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AnnouncementPhoto whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AnnouncementPhoto whereOrder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AnnouncementPhoto wherePhotoPath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AnnouncementPhoto whereUpdatedAt($value)
+ */
+	class AnnouncementPhoto extends \Eloquent {}
 }
 
 namespace App\Models{

@@ -11,17 +11,13 @@
                 <h1 class="text-3xl font-semibold text-gray-900">Request Details</h1>
                 <p class="mt-2 text-gray-600">Review and manage adoption/claim request information</p>
             </div>
-            <a href="{{ route('admin.requests.index') }}"
-               class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors duration-200 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                </svg>
-                Back to Requests
+            <a href="javascript:void(0)" onclick="history.back()" class="bg-gray-500 text-white hover:bg-gray-700 px-4 py-2 rounded">
+                Back
             </a>
         </div>
 
         <!-- Main Content Card -->
-        <div class="overflow-hidden bg-white border border-gray-200 rounded-xl shadow-sm">
+        <div class="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-xl">
             <!-- Request Header -->
             <div class="px-8 py-6 border-b border-gray-200 bg-gray-50">
                 <div class="flex flex-col justify-between md:flex-row md:items-center">
@@ -61,10 +57,12 @@
                 @if($request->requestable && $request->requestable_type === 'App\\Models\\Pet')
                 <div class="px-8 py-6">
                     <div class="flex items-center mb-4">
-                        <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                        </svg>
-                        <h3 class="text-lg font-medium text-gray-900">Pet Information</h3>
+                        <div class="flex items-center justify-center w-8 h-8 mr-3 bg-blue-100 rounded-lg">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-blue-800">Pet Information</h3>
                     </div>
 
                     <div class="flex flex-col gap-6 md:flex-row">
@@ -73,7 +71,8 @@
                             <div class="w-40 h-32 overflow-hidden border border-gray-200 rounded-lg">
                                 <img src="{{ $request->requestable->photo ? asset('storage/' . $request->requestable->photo) : 'https://via.placeholder.com/200x150?text=' . $request->requestable->display_code }}"
                                      alt="{{ $request->requestable->display_code }}"
-                                     class="object-cover w-full h-full">
+                                     class="object-cover w-full h-full transition-opacity cursor-pointer hover:opacity-90"
+                                     onclick="openAdminRequestPetPhotoModal()">
                             </div>
                         </div>
 
@@ -121,258 +120,236 @@
                 </div>
                 @endif
 
-                <!-- Requester Information Section -->
-                @php
-                    // Use additional_data if available, otherwise fallback to user info
-                    $requesterName = '';
-                    $requesterEmail = '';
-                    $requesterPhone = '';
-                    $requesterAddress = '';
+                {{-- Unified Form Fields Display --}}
+                @if($additionalData)
+                    <div class="px-8 py-6">
+                        <div class="space-y-6">
+                            {{-- Multi-Column Form Fields --}}
+                            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                                {{-- Column 1: Personal Information --}}
+                                <div class="space-y-4">
+                                    <h4 class="pb-2 text-sm font-semibold text-gray-800 border-b border-gray-200">Personal Information</h4>
 
-                    if ($additionalData) {
-                        $requesterName = ($additionalData['first_name'] ?? '') . ' ' . ($additionalData['last_name'] ?? '');
-                        $requesterEmail = $additionalData['email'] ?? '';
-                        $requesterPhone = $additionalData['contact_number'] ?? '';
-                        $requesterAddress = $additionalData['address'] ?? '';
-                    } else if ($request->user) {
-                        $requesterName = $request->user->first_name . ' ' . $request->user->last_name;
-                        $requesterEmail = $request->user->email;
-                        $requesterPhone = $request->user->contact_number ?? '';
-                        $requesterAddress = $request->user->address ?? '';
-                    }
-                @endphp
-                @if($requesterName || $requesterEmail)
-                <div class="px-8 py-6">
-                    <div class="flex items-center mb-4">
-                        <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                        </svg>
-                        <h3 class="text-lg font-medium text-gray-900">
-                            {{ $request->type === 'adopt' ? 'Adopter' : ($request->type === 'claim' ? 'Claimant' : 'Requester') }} Information
-                        </h3>
-                    </div>
+                                    <div>
+                                        <span class="block mb-1 text-xs font-medium text-gray-600">Full Name</span>
+                                        <span class="block text-sm text-gray-900">{{ ($additionalData['first_name'] ?? '') . ' ' . ($additionalData['middle_name'] ?? '') . ' ' . ($additionalData['last_name'] ?? '') }}</span>
+                                    </div>
 
-                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                        <div class="space-y-4">
-                            <div>
-                                <p class="text-sm font-medium text-gray-500">Full Name</p>
-                                <p class="text-sm text-gray-900">{{ $requesterName }}</p>
+                                    @if(isset($additionalData['date_of_birth']) && $additionalData['date_of_birth'])
+                                    <div>
+                                        <span class="block mb-1 text-xs font-medium text-gray-600">Date of Birth</span>
+                                        <span class="block text-sm text-gray-900">{{ date('M d, Y', strtotime($additionalData['date_of_birth'])) }}</span>
+                                    </div>
+                                    @endif
+
+                                    @if(isset($additionalData['email']) && $additionalData['email'])
+                                    <div>
+                                        <span class="block mb-1 text-xs font-medium text-gray-600">Email Address</span>
+                                        <span class="block text-sm text-gray-900">{{ $additionalData['email'] }}</span>
+                                    </div>
+                                    @endif
+                                </div>
+
+                                {{-- Column 2: Contact & Housing --}}
+                                <div class="space-y-4">
+                                    <h4 class="pb-2 text-sm font-semibold text-gray-800 border-b border-gray-200">Contact & Housing</h4>
+
+                                    @if(isset($additionalData['contact_number']) && $additionalData['contact_number'])
+                                    <div>
+                                        <span class="block mb-1 text-xs font-medium text-gray-600">Contact Number</span>
+                                        <span class="block text-sm text-gray-900">{{ $additionalData['contact_number'] }}</span>
+                                    </div>
+                                    @endif
+
+                                    @if(isset($additionalData['address']) && $additionalData['address'])
+                                    <div>
+                                        <span class="block mb-1 text-xs font-medium text-gray-600">Address</span>
+                                        <span class="block text-sm text-gray-900">{{ $additionalData['address'] }}</span>
+                                    </div>
+                                    @endif
+
+                                    {{-- Adoption Housing Fields --}}
+                                    @if($request->type === 'adopt')
+                                        @if(isset($additionalData['dwelling_type']) && $additionalData['dwelling_type'])
+                                        <div>
+                                            <span class="block mb-1 text-xs font-medium text-gray-600">Dwelling Type</span>
+                                            <span class="block text-sm text-gray-900">{{ ucfirst(str_replace('_', ' ', $additionalData['dwelling_type'])) }}</span>
+                                        </div>
+                                        @endif
+
+                                        @if(isset($additionalData['landlord_permission']) && $additionalData['landlord_permission'])
+                                        <div>
+                                            <span class="block mb-1 text-xs font-medium text-gray-600">Landlord Permission</span>
+                                            <span class="block text-sm text-gray-900">{{ ucfirst($additionalData['landlord_permission']) }}</span>
+                                        </div>
+                                        @endif
+                                    @endif
+                                </div>
+
+                                {{-- Column 3: Household & Details --}}
+                                <div class="space-y-4">
+                                    <h4 class="pb-2 text-sm font-semibold text-gray-800 border-b border-gray-200">Household & Details</h4>
+
+                                    {{-- Adoption Household Fields --}}
+                                    @if($request->type === 'adopt')
+                                        @if(isset($additionalData['adults_count']) && $additionalData['adults_count'])
+                                        <div>
+                                            <span class="block mb-1 text-xs font-medium text-gray-600">Number of Adults</span>
+                                            <span class="block text-sm text-gray-900">{{ $additionalData['adults_count'] }}</span>
+                                        </div>
+                                        @endif
+
+                                        @if(isset($additionalData['children_count']) && $additionalData['children_count'])
+                                        <div>
+                                            <span class="block mb-1 text-xs font-medium text-gray-600">Number of Children</span>
+                                            <span class="block text-sm text-gray-900">{{ $additionalData['children_count'] }}</span>
+                                        </div>
+                                        @endif
+
+                                        @if(isset($additionalData['allergies']) && $additionalData['allergies'])
+                                        <div>
+                                            <span class="block mb-1 text-xs font-medium text-gray-600">Allergies</span>
+                                            <span class="block text-sm text-gray-900">{{ ucfirst($additionalData['allergies']) }}</span>
+                                        </div>
+                                        @endif
+
+                                        @if(isset($additionalData['other_pets']) && $additionalData['other_pets'])
+                                        <div>
+                                            <span class="block mb-1 text-xs font-medium text-gray-600">Other Pets</span>
+                                            <span class="block text-sm text-gray-900">{{ ucfirst($additionalData['other_pets']) }}</span>
+                                        </div>
+                                        @endif
+
+                                        @if(isset($additionalData['fenced_property']) && $additionalData['fenced_property'])
+                                        <div>
+                                            <span class="block mb-1 text-xs font-medium text-gray-600">Fenced Property</span>
+                                            <span class="block text-sm text-gray-900">{{ ucfirst($additionalData['fenced_property']) }}</span>
+                                        </div>
+                                        @endif
+
+                                        @if(isset($additionalData['pet_living_area']) && $additionalData['pet_living_area'])
+                                        <div>
+                                            <span class="block mb-1 text-xs font-medium text-gray-600">Pet Living Area</span>
+                                            <span class="block text-sm text-gray-900">{{ ucfirst(str_replace('_', ' ', $additionalData['pet_living_area'])) }}</span>
+                                        </div>
+                                        @endif
+                                    @endif
+                                </div>
                             </div>
+
+                            {{-- Full Width Sections --}}
+                            @if($request->type === 'adopt' && isset($additionalData['other_pets_list']) && $additionalData['other_pets_list'])
                             <div>
-                                <p class="text-sm font-medium text-gray-500">Email Address</p>
-                                <p class="text-sm text-gray-900">{{ $requesterEmail }}</p>
+                                <h4 class="mb-2 text-sm font-semibold text-gray-800">Other Pets Description</h4>
+                                <p class="text-sm text-gray-900 whitespace-pre-wrap">{{ $additionalData['other_pets_list'] }}</p>
                             </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-500">Phone Number</p>
-                                <p class="text-sm text-gray-900">{{ $requesterPhone }}</p>
-                            </div>
-                        </div>
-                        <div class="space-y-4">
-                            <div>
-                                <p class="text-sm font-medium text-gray-500">Address</p>
-                                <p class="text-sm text-gray-900">{{ $requesterAddress }}</p>
-                            </div>
+                            @endif
+
+                            {{-- Reason Section --}}
                             @if($request->type === 'adopt')
                             <div>
-                                <p class="text-sm font-medium text-gray-500">Home Type</p>
-                                <p class="text-sm text-gray-900">{{ ucfirst(str_replace('_', ' ', $additionalData['dwelling_type'] ?? '')) }}</p>
+                                <h4 class="mb-2 text-sm font-semibold text-gray-800">Reason for Adoption</h4>
+                                @php
+                                    $reasonText = $additionalData['reason'] ?? $request->reason ?? '';
+                                @endphp
+                                @if($reasonText)
+                                <p class="text-sm text-gray-900 whitespace-pre-wrap">{{ $reasonText }}</p>
+                                @else
+                                <p class="text-sm italic text-gray-500">No reason provided</p>
+                                @endif
                             </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-500">Other Pets</p>
-                                <p class="text-sm text-gray-900">{{ ucfirst($additionalData['other_pets'] ?? '') }}</p>
+                            @elseif($request->type === 'claim')
+                                @if($request->status === 'approved')
+                                    {{-- Completed Claim - Show Pet Identification --}}
+                                    <div>
+                                        <h4 class="mb-3 text-sm font-semibold text-gray-800">Pet Identification</h4>
+                                        <div class="p-4 border border-blue-200 rounded-lg bg-blue-50">
+                                            <p class="mb-2 text-xs font-medium text-blue-700">Pet Traits (Owner Should Know):</p>
+                                            <div class="grid grid-cols-2 gap-3 text-sm">
+                                                <div><span class="font-medium text-gray-600">Species:</span> <span class="text-gray-900">{{ $request->requestable->species ?? 'N/A' }}</span></div>
+                                                <div><span class="font-medium text-gray-600">Breed:</span> <span class="text-gray-900">{{ $request->requestable->breed ?: 'Unknown' }}</span></div>
+                                                <div><span class="font-medium text-gray-600">Color:</span> <span class="text-gray-900">{{ $request->requestable->color_markings ?: 'Not specified' }}</span></div>
+                                                <div><span class="font-medium text-gray-600">Gender:</span> <span class="text-gray-900">{{ ucfirst($request->requestable->gender ?? 'unknown') }}</span></div>
+                                                @if($request->requestable->estimated_age_years || $request->requestable->estimated_age_months)
+                                                <div><span class="font-medium text-gray-600">Age:</span> <span class="text-gray-900">
+                                                    {{ $request->requestable->estimated_age_years ? $request->requestable->estimated_age_years . ' years' : '' }}
+                                                    {{ $request->requestable->estimated_age_months ? $request->requestable->estimated_age_months . ' months' : '' }}
+                                                </span></div>
+                                                @endif
+                                            </div>
+                                            @if($request->requestable->description)
+                                            <div class="pt-3 mt-3 border-t border-blue-300">
+                                                <p class="mb-1 text-xs font-medium text-blue-700">Pet Description:</p>
+                                                <p class="text-sm text-gray-800">{{ $request->requestable->description }}</p>
+                                            </div>
+                                            @endif
+                                        </div>
+                                        @if(isset($additionalData['proof_of_ownership_description']) && $additionalData['proof_of_ownership_description'])
+                                        <div class="mt-3">
+                                            <p class="mb-1 text-xs font-medium text-gray-600">Owner's Proof of Ownership:</p>
+                                            <p class="p-3 text-sm text-gray-900 whitespace-pre-wrap rounded bg-gray-50">{{ $additionalData['proof_of_ownership_description'] }}</p>
+                                        </div>
+                                        @elseif($request->reason)
+                                        <div class="mt-3">
+                                            <p class="mb-1 text-xs font-medium text-gray-600">Owner's Proof of Ownership:</p>
+                                            <p class="p-3 text-sm text-gray-900 whitespace-pre-wrap rounded bg-gray-50">{{ $request->reason }}</p>
+                                        </div>
+                                        @endif
+                                    </div>
+                                @else
+                                    {{-- Pending/Denied Claim - Show Pet Identification --}}
+                                    <div>
+                                        <h4 class="mb-2 text-sm font-semibold text-gray-800">Pet Identification</h4>
+                                        @if(isset($additionalData['proof_of_ownership_description']) && $additionalData['proof_of_ownership_description'])
+                                        <p class="text-sm text-gray-900 whitespace-pre-wrap">{{ $additionalData['proof_of_ownership_description'] }}</p>
+                                        @elseif($request->reason)
+                                        <p class="text-sm text-gray-900 whitespace-pre-wrap">{{ $request->reason }}</p>
+                                        @endif
+                                    </div>
+                                @endif
+                            @endif
+
+                            {{-- Photos Section --}}
+                            @if(isset($additionalData['id_photo_path']) && $additionalData['id_photo_path'] || ($request->photos && is_array($request->photos) && count($request->photos) > 0))
+                            <div class="pt-4 border-t border-gray-200">
+                                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                    {{-- ID Photo --}}
+                                    @if(isset($additionalData['id_photo_path']) && $additionalData['id_photo_path'])
+                                    <div>
+                                        <h4 class="mb-3 text-sm font-semibold text-gray-800">ID Photo</h4>
+                                        <div onclick="document.getElementById('adminRequestIdPhotoModal').classList.remove('hidden')"
+                                             class="inline-flex items-center p-2 mt-1 transition-colors duration-200 bg-teal-100 rounded-lg cursor-pointer hover:bg-teal-200">
+                                            <svg class="w-4 h-4 mr-2 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                                            </svg>
+                                            <span class="text-sm font-medium">View ID Photo</span>
+                                        </div>
+                                    </div>
+                                    @endif
+
+                                    {{-- Supporting Photos --}}
+                                    @if($request->photos && is_array($request->photos) && count($request->photos) > 0)
+                                    <div>
+                                        <h4 class="mb-3 text-sm font-semibold text-gray-800">Supporting Details/Proof</h4>
+                                        <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+                                            @foreach($request->photos as $index => $photo)
+                                            <div class="overflow-hidden border border-gray-200 rounded-lg">
+                                                <img src="{{ asset('storage/' . $photo) }}" alt="Request Photo {{ $index + 1 }}" class="object-cover w-full h-20 cursor-pointer hover:opacity-90" onclick="openImageModal({{ $index }})">
+                                            </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                    @endif
+                                </div>
                             </div>
                             @endif
                         </div>
                     </div>
-                </div>
-                @endif
-
-                <!-- ID Photo Section -->
-                @if($additionalData && isset($additionalData['id_photo_path']) && $additionalData['id_photo_path'])
-                <div class="px-8 py-6">
-                    <div class="flex items-center mb-4">
-                        <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.75 4h2.5a2 2 0 011.664.89l.812 1.22a2 2 0 001.664.89H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        </svg>
-                        <h3 class="text-lg font-medium text-gray-900">ID Photo</h3>
-                    </div>
-
-                    <div class="flex flex-col items-center space-y-4">
-                        <div onclick="document.getElementById('adminRequestIdPhotoModal').classList.remove('hidden')"
-                             class="cursor-pointer transform transition duration-200 hover:scale-105">
-                            <img src="{{ asset('storage/' . $additionalData['id_photo_path']) }}"
-                                 alt="ID Photo"
-                                 class="object-cover w-48 h-64 border-2 border-gray-300 rounded-lg shadow-md hover:shadow-lg transition duration-200">
-                        </div>
-                        <p class="text-sm text-gray-600">Click to view full size</p>
-                    </div>
-
-                    <!-- Modal for Full Size ID Photo -->
-                    <div id="adminRequestIdPhotoModal" class="fixed inset-0 z-50 items-center justify-center hidden p-4 transition-opacity duration-300 bg-black bg-opacity-80" onclick="if(event.target.id === 'adminRequestIdPhotoModal') this.classList.add('hidden')">
-                        <div class="relative max-w-3xl overflow-hidden bg-white rounded-lg shadow-2xl">
-                            <div class="sticky top-0 z-10 flex items-center justify-between p-3 bg-white border-b border-gray-200">
-                                <h3 class="text-xl font-semibold text-gray-800">Applicant ID Photo</h3>
-                                <button onclick="document.getElementById('adminRequestIdPhotoModal').classList.add('hidden')" class="p-2 text-gray-500 transition duration-150 rounded-full hover:bg-gray-100 hover:text-gray-700 focus:outline-none">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </div>
-                            <div class="p-6 max-h-[80vh] overflow-y-auto">
-                                <img src="{{ asset('storage/' . $additionalData['id_photo_path']) }}" alt="Full Size ID Photo" class="w-full h-auto rounded-lg shadow-md">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @endif
-
-                <!-- Request Details Section -->
-                <div class="px-8 py-6">
-                    <div class="flex items-center mb-4">
-                        <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                        </svg>
-                        <h3 class="text-lg font-medium text-gray-900">Request Details</h3>
-                    </div>
-
-                    <div class="space-y-4">
-                        <div>
-                            <p class="text-sm font-medium text-gray-500">Reason for Request</p>
-                            <p class="mt-1 text-sm text-gray-900 leading-relaxed">{{ $request->reason }}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-500">Contact Information</p>
-                            <p class="mt-1 text-sm text-gray-900">{{ $request->contact_info }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Adoption Specific Details Section -->
-                @if($request->type === 'adopt' && $additionalData)
-                <div class="px-8 py-6">
-                    <div class="flex items-center mb-4">
-                        <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
-                        </svg>
-                        <h3 class="text-lg font-medium text-gray-900">Adoption Application Details</h3>
-                    </div>
-
-                    <!-- Personal Information -->
-                    <div class="mb-6 space-y-4">
-                        <h4 class="font-semibold text-gray-800 text-base">Personal Information</h4>
-                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                            <div>
-                                <p class="text-sm font-medium text-gray-500">Date of Birth</p>
-                                <p class="text-sm text-gray-900">{{ $additionalData['date_of_birth'] ?? 'N/A' }}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Housing Information -->
-                    <div class="mb-6 space-y-4">
-                        <h4 class="font-semibold text-gray-800 text-base">Housing Information</h4>
-                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                            <div>
-                                <p class="text-sm font-medium text-gray-500">Dwelling Type</p>
-                                <p class="text-sm text-gray-900">{{ ucfirst(str_replace('_', ' ', $additionalData['dwelling_type'] ?? '')) }}</p>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-500">Landlord Permission</p>
-                                <p class="text-sm text-gray-900">{{ ucfirst($additionalData['landlord_permission'] ?? 'N/A') }}</p>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-500">Fenced Property</p>
-                                <p class="text-sm text-gray-900">{{ ucfirst($additionalData['fenced_property'] ?? 'N/A') }}</p>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-500">Pet Living Area</p>
-                                <p class="text-sm text-gray-900">{{ ucfirst(str_replace('_', ' ', $additionalData['pet_living_area'] ?? '')) }}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Household Information -->
-                    <div class="mb-6 space-y-4">
-                        <h4 class="font-semibold text-gray-800 text-base">Household Information</h4>
-                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                            <div>
-                                <p class="text-sm font-medium text-gray-500">Number of Adults</p>
-                                <p class="text-sm text-gray-900">{{ $additionalData['adults_count'] ?? 'N/A' }}</p>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-500">Number of Children</p>
-                                <p class="text-sm text-gray-900">{{ $additionalData['children_count'] ?? 'N/A' }}</p>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-500">Allergies</p>
-                                <p class="text-sm text-gray-900">{{ ucfirst($additionalData['allergies'] ?? 'N/A') }}</p>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-500">Other Pets</p>
-                                <p class="text-sm text-gray-900">{{ ucfirst($additionalData['other_pets'] ?? 'N/A') }}</p>
-                            </div>
-                        </div>
-                        @if($additionalData['other_pets_list'] ?? null)
-                        <div>
-                            <p class="text-sm font-medium text-gray-500">Other Pets Description</p>
-                            <p class="text-sm text-gray-900">{{ $additionalData['other_pets_list'] }}</p>
-                        </div>
-                        @endif
-                    </div>
-                </div>
-                @endif
-
-                <!-- Claim Specific Details Section -->
-                @if($request->type === 'claim' && $additionalData)
-                <div class="px-8 py-6">
-                    <div class="flex items-center mb-4">
-                        <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m7 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        <h3 class="text-lg font-medium text-gray-900">Claim Details</h3>
-                    </div>
-
-                    <div class="space-y-4">
-                        <div>
-                            <p class="text-sm font-medium text-gray-500">Proof of Ownership</p>
-                            <p class="mt-1 text-sm text-gray-900 leading-relaxed">{{ $request->reason }}</p>
-                        </div>
-                    </div>
-                </div>
-                @endif
-
-                <!-- Uploaded Photos Section -->
-                @if($request->photos)
-                @php
-                    $photos = is_array($request->photos) ? $request->photos : json_decode($request->photos, true);
-                @endphp
-                @if(is_array($photos) && count($photos) > 0)
-                <div class="px-8 py-6">
-                    <div class="flex items-center mb-4">
-                        <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                        </svg>
-                        <h3 class="text-lg font-medium text-gray-900">Supporting Details/Proof</h3>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                        @foreach($photos as $index => $photo)
-                        <div class="overflow-hidden border border-gray-200 rounded-lg">
-                            <img src="{{ asset('storage/' . $photo) }}"
-                                 alt="Request Photo {{ $index + 1 }}"
-                                 class="object-cover w-full h-32 cursor-pointer hover:opacity-90"
-                                 onclick="openImageModal('{{ asset('storage/' . $photo) }}')">
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
-                @endif
                 @endif
             </div>
 
             <!-- Action Section -->
-            <div class="px-8 py-6 bg-gray-50 border-t border-gray-200">
+            <div class="px-8 py-6 border-t border-gray-200 bg-gray-50">
                 <!-- Success Message -->
                 @if(session('success'))
                 <div class="px-4 py-3 mb-6 text-sm text-green-700 bg-green-100 border border-green-200 rounded-lg">
@@ -435,44 +412,175 @@
     </div>
 </div>
 
-<!-- Image Modal (for photo viewing) -->
-<div id="imageModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-75">
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="relative max-w-4xl max-h-full">
-            <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white hover:text-gray-300">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
-            <img id="modalImage" src="" alt="Enlarged view" class="max-w-full max-h-screen rounded-lg">
+<!-- Admin Request Pet Photo Modal -->
+@if($request->requestable && $request->requestable->photo)
+<div id="adminRequestPetPhotoModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 bg-black/30 backdrop-blur-sm" onclick="closeAdminRequestPetPhotoModal()">
+    <button onclick="closeAdminRequestPetPhotoModal()" class="absolute text-white top-6 right-6 hover:text-gray-100">
+        <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    </button>
+    <img src="{{ asset('storage/' . $request->requestable->photo) }}" alt="Full Size Pet Photo" class="max-w-4xl max-h-[85vh] rounded-lg shadow-2xl">
+</div>
+@endif
+
+<!-- Image Modal (for supporting photo viewing) -->
+<div id="imageModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm" onclick="if(event.target.id === 'imageModal') closeImageModal()">
+    <div class="relative flex flex-col items-center justify-center max-w-6xl max-h-[90vh]">
+        <button onclick="closeImageModal()" class="absolute text-white top-6 right-6 hover:text-gray-300 z-10">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+        <button id="adminRequestPrevBtn" type="button" onclick="prevRequestImage()" class="absolute left-4 top-1/2 -translate-y-1/2 p-2 text-white rounded-full bg-black/50 hover:bg-black/70 z-10" aria-label="Previous image">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+        <button id="adminRequestNextBtn" type="button" onclick="nextRequestImage()" class="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-white rounded-full bg-black/50 hover:bg-black/70 z-10" aria-label="Next image">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </button>
+        <img id="modalImage" src="" alt="Enlarged view" class="max-w-4xl max-h-[85vh] rounded-lg shadow-2xl object-contain">
+        <div class="mt-4 text-center">
+            <p id="adminRequestImageCounter" class="text-sm text-white"></p>
+            <p id="adminRequestImageCaption" class="mt-1 text-sm text-white"></p>
         </div>
     </div>
 </div>
 
+<!-- Admin Request ID Photo Modal -->
+@if(isset($additionalData['id_photo_path']) && $additionalData['id_photo_path'])
+<div id="adminRequestIdPhotoModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 bg-black/30 backdrop-blur-sm" onclick="if(event.target.id === 'adminRequestIdPhotoModal') this.classList.add('hidden')">
+    <button onclick="document.getElementById('adminRequestIdPhotoModal').classList.add('hidden')" class="absolute text-white top-6 right-6 hover:text-gray-100">
+        <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    </button>
+    <img src="{{ asset('storage/' . $additionalData['id_photo_path']) }}" alt="Requester ID Photo" class="max-w-4xl max-h-[85vh] rounded-lg shadow-2xl">
+</div>
+@endif
+
 <script>
-function openImageModal(src) {
-    document.getElementById('modalImage').src = src;
+function openAdminRequestPetPhotoModal() {
+    document.getElementById('adminRequestPetPhotoModal').classList.remove('hidden');
+}
+
+function closeAdminRequestPetPhotoModal() {
+    document.getElementById('adminRequestPetPhotoModal').classList.add('hidden');
+}
+
+@php
+    $requestPhotoSources = [];
+    if ($request->photos) {
+        if (is_string($request->photos)) {
+            $requestPhotoSources = json_decode($request->photos, true) ?? [];
+        } elseif (is_array($request->photos)) {
+            $requestPhotoSources = $request->photos;
+        } else {
+            $requestPhotoSources = (array) $request->photos;
+        }
+    }
+@endphp
+
+const adminRequestPhotoSources = [
+    @foreach($requestPhotoSources as $idx => $photo)
+        { src: "{{ asset('storage/' . $photo) }}", alt: "Request Photo {{ $idx + 1 }}" }@if(!$loop->last),@endif
+    @endforeach
+];
+let currentAdminRequestImageIndex = 0;
+
+function openImageModal(index) {
+    if (!adminRequestPhotoSources.length) {
+        return;
+    }
+
+    currentAdminRequestImageIndex = index;
+    updateImageModal();
     document.getElementById('imageModal').classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
+}
+
+function updateImageModal() {
+    const source = adminRequestPhotoSources[currentAdminRequestImageIndex];
+    const image = document.getElementById('modalImage');
+    image.src = source.src;
+    image.alt = source.alt;
+    document.getElementById('adminRequestImageCaption').textContent = source.alt;
+    document.getElementById('adminRequestImageCounter').textContent = `${currentAdminRequestImageIndex + 1} / ${adminRequestPhotoSources.length}`;
+    const showNav = adminRequestPhotoSources.length > 1;
+    document.getElementById('adminRequestPrevBtn').style.display = showNav ? 'block' : 'none';
+    document.getElementById('adminRequestNextBtn').style.display = showNav ? 'block' : 'none';
+}
+
+function nextRequestImage() {
+    openImageModal((currentAdminRequestImageIndex + 1) % adminRequestPhotoSources.length);
+}
+
+function prevRequestImage() {
+    openImageModal((currentAdminRequestImageIndex + adminRequestPhotoSources.length - 1) % adminRequestPhotoSources.length);
 }
 
 function closeImageModal() {
     document.getElementById('imageModal').classList.add('hidden');
-    document.body.style.overflow = 'auto';
 }
 
-// Close modal on escape key
+// Enhanced keyboard event listener for backspace and arrow keys
 document.addEventListener('keydown', function(event) {
+    if (event.key === 'Backspace') {
+        const petModal = document.getElementById('adminRequestPetPhotoModal');
+        if (petModal && !petModal.classList.contains('hidden')) {
+            closeAdminRequestPetPhotoModal();
+            return;
+        }
+
+        const idModal = document.getElementById('adminRequestIdPhotoModal');
+        if (idModal && !idModal.classList.contains('hidden')) {
+            idModal.classList.add('hidden');
+            return;
+        }
+
+        const imageModal = document.getElementById('imageModal');
+        if (imageModal && !imageModal.classList.contains('hidden')) {
+            closeImageModal();
+            return;
+        }
+    }
+
+    if (event.key === 'ArrowLeft') {
+        const imageModal = document.getElementById('imageModal');
+        if (imageModal && !imageModal.classList.contains('hidden') && adminRequestPhotoSources.length > 1) {
+            prevRequestImage();
+            event.preventDefault();
+            return;
+        }
+    }
+
+    if (event.key === 'ArrowRight') {
+        const imageModal = document.getElementById('imageModal');
+        if (imageModal && !imageModal.classList.contains('hidden') && adminRequestPhotoSources.length > 1) {
+            nextRequestImage();
+            event.preventDefault();
+            return;
+        }
+    }
+
     if (event.key === 'Escape') {
         closeImageModal();
+        closeAdminRequestPetPhotoModal();
+        if (document.getElementById('adminRequestIdPhotoModal')) {
+            document.getElementById('adminRequestIdPhotoModal').classList.add('hidden');
+        }
     }
 });
 
-// Close modal when clicking outside the image
-document.getElementById('imageModal').addEventListener('click', function(event) {
-    if (event.target === this) {
-        closeImageModal();
-    }
-});
+if (document.getElementById('imageModal')) {
+    document.getElementById('imageModal').addEventListener('click', function(event) {
+        if (event.target === this) {
+            closeImageModal();
+        }
+    });
+}
+
 </script>
 @endsection

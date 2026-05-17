@@ -12,7 +12,7 @@ class PetController extends Controller
 {
     public function index()
     {
-        $pets = Pet::paginate(12);
+        $pets = Pet::visibleToUsers()->paginate(12);
         return view('pets.index', compact('pets'));
     }
 
@@ -80,7 +80,7 @@ class PetController extends Controller
                 'reason' => 'required|string',
                 'certify_info' => 'required|accepted',
                 'agree_terms' => 'required|accepted',
-                'photos.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240',
+                'photos.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:51200',
             ]);
         } elseif ($request->type === 'claim') {
             $request->validate([
@@ -93,7 +93,7 @@ class PetController extends Controller
                 'email' => 'required|email|max:255',
                 'proof_of_ownership_description' => 'required|string|max:1000',
                 'photos' => 'nullable|array',
-                'photos.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,pdf,doc,docx|max:5120',
+                'photos.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,pdf,doc,docx|max:51200',
                 'certify_info' => 'required|accepted',
                 'agree_terms' => 'required|accepted',
             ]);
@@ -135,6 +135,7 @@ class PetController extends Controller
                 'email' => $request->email ?? Auth::user()->email ?? null,
                 // prefer form value, otherwise use profile birthday
                 'date_of_birth' => $request->date_of_birth ?? (Auth::user()->birthday ? Auth::user()->birthday->format('Y-m-d') : null),
+                'proof_of_ownership_description' => $request->proof_of_ownership_description ?? null,
                 'certify_info' => $request->certify_info ?? null,
                 'agree_terms' => $request->agree_terms ?? null,
                 // include id photo path for claim verification

@@ -21,18 +21,16 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withSchedule(function (Schedule $schedule) {
         // Auto-transition impounded pets to adoptable after 3 days
         $schedule->command('pets:transition-impounded-to-adoptable')
-            ->daily()->at('00:00')
+            ->daily()->at('12:00')
             ->withoutOverlapping()
             ->appendOutputTo(storage_path('logs/schedule-impound.log'));
 
         // Auto-transition adoptable pets to unadopted after 4 days
         $schedule->command('pets:transition-adoptable-to-unadopted')
-            ->daily()->at('00:30')
+            ->daily()->at('12:30')
             ->withoutOverlapping()
             ->appendOutputTo(storage_path('logs/schedule-adoptable.log'));
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();
-
-

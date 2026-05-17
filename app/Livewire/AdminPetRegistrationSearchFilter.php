@@ -65,10 +65,14 @@ class AdminPetRegistrationSearchFilter extends Component
 
         // Apply search first
         if ($this->search) {
-            $query->where(function ($q) {
-                $q->where('pet_name', 'like', '%' . $this->search . '%')
-                  ->orWhere('display_pet_id', 'like', '%' . $this->search . '%')
-                  ->orWhere('description', 'like', '%' . $this->search . '%');
+            $searchTerm = strtolower($this->search);
+            $query->where(function ($q) use ($searchTerm) {
+                $q->whereRaw('LOWER(pet_name) LIKE ?', ['%' . $searchTerm . '%'])
+                  ->orWhereRaw('LOWER(species) LIKE ?', ['%' . $searchTerm . '%'])
+                  ->orWhereRaw('LOWER(breed) LIKE ?', ['%' . $searchTerm . '%'])
+                  ->orWhereRaw('LOWER(gender) LIKE ?', ['%' . $searchTerm . '%'])
+                  ->orWhereRaw('LOWER(color_markings) LIKE ?', ['%' . $searchTerm . '%'])
+                  ->orWhereRaw('LOWER(description) LIKE ?', ['%' . $searchTerm . '%']);
             });
         }
 
@@ -92,7 +96,7 @@ class AdminPetRegistrationSearchFilter extends Component
             }
         }
 
-        $petRegistrations = $query->paginate(12);
+        $petRegistrations = $query->paginate(10);
 
         return view('livewire.admin-pet-registration-search-filter', [
             'petRegistrations' => $petRegistrations,

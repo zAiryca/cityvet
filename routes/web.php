@@ -27,15 +27,6 @@ Route::middleware('setlocale')->group(function () {
     // 💡 Security Fix: The 'pets.request' route is removed from here
     // to ensure it is only accessible to authenticated users (see line 100).
 
-    // Language switcher
-    Route::get('/lang/{locale}', function ($locale) {
-        if (in_array($locale, ['en', 'fil'])) {
-            session(['locale' => $locale]);
-            app()->setLocale($locale);
-        }
-        return redirect()->back();
-    })->name('lang.switch');
-
     // Public routes (no auth needed)
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/impounded', [PetController::class, 'impounded'])->name('pets.impounded');
@@ -46,8 +37,6 @@ Route::middleware('setlocale')->group(function () {
     Route::get('/posters/{poster}', [PosterController::class, 'show'])->name('posters.show');
     Route::get('/about', [PageController::class, 'about'])->name('about');
     Route::get('/contact', [PageController::class, 'contact'])->name('contact');
-    Route::get('/donate', [PageController::class, 'donate'])->name('donate');
-    Route::get('/faq', [PageController::class, 'faq'])->name('faq');
 
     Route::get('/location', [PageController::class, 'location'])->name('location');
 
@@ -72,8 +61,7 @@ Route::middleware('setlocale')->group(function () {
             return redirect()->route('profile.edit');
         })->name('user.dashboard');
 
-        // Pet registration (pre-register)
-        Route::post('/pets', [PetController::class, 'store'])->name('pets.store');
+
 
         // Lost & Found: Create poster
         Route::get('/lost-found/create', [PosterController::class, 'create'])->name('posters.create');
@@ -106,7 +94,7 @@ Route::middleware('setlocale')->group(function () {
                 $query->where('type', request('type'));
             }
 
-            $requests = $query->paginate(12)->appends(request()->query());
+            $requests = $query->paginate(10)->appends(request()->query());
             return view('user.requests', compact('requests'));
         })->name('user.requests');
 
@@ -193,6 +181,9 @@ Route::middleware('setlocale')->group(function () {
         // Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+        // Admin Profile
+        Route::get('/profile', [DashboardController::class, 'profile'])->name('profile');
+
         // Pets CRUD
         Route::resource('pets', AdminPetController::class);
         Route::post('/pets/{pet}/urgent', [AdminPetController::class, 'setUrgent'])->name('pets.set-urgent');
@@ -228,6 +219,10 @@ Route::middleware('setlocale')->group(function () {
             $posters = $query->paginate(10);
             return view('admin.posters.index', compact('posters'));
         })->name('posters.index');
+
+        Route::get('/posters/{poster}', function (\App\Models\Poster $poster) {
+            return view('admin.posters.show', compact('poster'));
+        })->name('posters.show');
 
         Route::delete('/posters/{poster}', [PosterController::class, 'destroy'])->name('posters.destroy');
 

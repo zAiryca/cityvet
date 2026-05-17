@@ -27,35 +27,75 @@ class GenerateReportSample extends Command
         $month = (int) $this->option('month') ?: (int)date('n');
         $year = (int) $this->option('year') ?: (int)date('Y');
 
-        $this->info("Generating report for $year-$month ...");
+        $this->info("Generating comprehensive report for $year-$month ...");
 
-        $impoundedPets = Pet::whereYear('impounded_date', $year)
-            ->whereMonth('impounded_date', $month)
+        // Get all pets that were created in this month, regardless of current status
+        $petsThisMonth = Pet::whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
             ->with('requests')
-            ->orderBy('impounded_date', 'desc')
+            ->orderBy('created_at', 'desc')
             ->get();
 
-        foreach ($impoundedPets as $pet) {
-            $completed = $pet->requests->where('status', 'completed')
+        // Get transition data for each pet (accounting for automatic transitions)
+        foreach ($petsThisMonth as $pet) {
+            $completedRequests = $pet->requests->where('status', 'completed')
                 ->whereIn('type', ['adopt', 'claim'])
-                ->sortByDesc('updated_at')
-                ->first();
-            $pet->adopted_date = $completed ? $completed->updated_at : null;
+                ->sortByDesc('updated_at');
+
+            $pet->completed_requests = $completedRequests;
+            $pet->latest_completion = $completedRequests->first();
+
+            // Determine transition dates based on status changes and automatic transitions
+            $transition_date = null;
+            if ($pet->latest_completion) {
+                $transition_date = $pet->latest_completion->updated_at;
+            } elseif ($pet->status === 'adoptable' && $pet->impounded_date) {
+                // Automatically transitioned from impounded to adoptable
+                $transition_date = $pet->impounded_date->copy()->addDays(3);
+            } elseif ($pet->status === 'unadopted' && $pet->decision_date) {
+                // Automatically transitioned from adoptable to unadopted
+                $transition_date = $pet->decision_date->copy()->addDays(4);
+            } elseif ($pet->status === 'unadopted' && $pet->impounded_date && !$pet->decision_date) {
+                // Directly to unadopted (no adoptable phase)
+                $transition_date = $pet->impounded_date->copy()->addDays(7);
+            }
+
+            $pet->transition_date = $transition_date;
+            $pet->final_status = $pet->status; // Current status at time of report
         }
 
-        $impoundedCount = $impoundedPets->count();
+        // Statistics
+        $totalPetsAdded = $petsThisMonth->count();
         $currentImpoundedTotal = Pet::where('status', 'impounded')->count();
         $currentAdoptableTotal = Pet::where('status', 'adoptable')->count();
-        $adoptedCount = $impoundedPets->filter(fn($p) => !is_null($p->adopted_date))->count();
+        $currentAdoptedTotal = Pet::where('status', 'adopted')->count();
+        $currentClaimedTotal = Pet::where('status', 'claimed')->count();
+        $currentUnclaimedTotal = Pet::where('status', 'unclaimed')->count();
+        $currentUnadoptedTotal = Pet::where('status', 'unadopted')->count();
+
+        // Monthly outcomes
+        $adoptedThisMonth = $petsThisMonth->filter(fn($p) => $p->final_status === 'adopted')->count();
+        $claimedThisMonth = $petsThisMonth->filter(fn($p) => $p->final_status === 'claimed')->count();
+        $unclaimedThisMonth = $petsThisMonth->filter(fn($p) => $p->final_status === 'unclaimed')->count();
+        $unadoptedThisMonth = $petsThisMonth->filter(fn($p) => $p->final_status === 'unadopted')->count();
+        $stillActiveThisMonth = $petsThisMonth->filter(fn($p) => in_array($p->final_status, ['impounded', 'adoptable']))->count();
 
         $data = [
-            'impoundedPets' => $impoundedPets,
+            'petsThisMonth' => $petsThisMonth,
             'month' => $month,
             'year' => $year,
-            'impoundedCount' => $impoundedCount,
+            'totalPetsAdded' => $totalPetsAdded,
             'currentImpoundedTotal' => $currentImpoundedTotal,
             'currentAdoptableTotal' => $currentAdoptableTotal,
-            'adoptedCount' => $adoptedCount,
+            'currentAdoptedTotal' => $currentAdoptedTotal,
+            'currentClaimedTotal' => $currentClaimedTotal,
+            'currentUnclaimedTotal' => $currentUnclaimedTotal,
+            'currentUnadoptedTotal' => $currentUnadoptedTotal,
+            'adoptedThisMonth' => $adoptedThisMonth,
+            'claimedThisMonth' => $claimedThisMonth,
+            'unclaimedThisMonth' => $unclaimedThisMonth,
+            'unadoptedThisMonth' => $unadoptedThisMonth,
+            'stillActiveThisMonth' => $stillActiveThisMonth,
         ];
 
         // Ensure directory
@@ -75,26 +115,38 @@ class GenerateReportSample extends Command
         // CSV
         $csvPath = $dir . DIRECTORY_SEPARATOR . sprintf('pets-report-%d-%02d.csv', $year, $month);
         $handle = fopen($csvPath, 'w');
-        fputcsv($handle, ['No.', 'Code Name', 'Species', 'Breed', 'Status', 'Impounded Date', 'Adopted Date']);
+        fputcsv($handle, ['No.', 'Code Name', 'Species', 'Breed', 'Current Status', 'Created Date', 'Transition Date', 'Final Status']);
         $i = 1;
-        foreach ($impoundedPets as $pet) {
+        foreach ($petsThisMonth as $pet) {
             fputcsv($handle, [
                 $i++,
                 $pet->display_code,
                 $pet->species,
-                $pet->breed,
+                $pet->breed ?: 'Unknown',
                 $pet->status,
-                $pet->impounded_date ? $pet->impounded_date->toDateString() : '',
-                $pet->adopted_date ? $pet->adopted_date->toDateString() : '',
+                $pet->created_at ? $pet->created_at->toDateString() : '',
+                $pet->transition_date ? $pet->transition_date->toDateString() : '',
+                $pet->final_status,
             ]);
         }
 
         // Summary rows
         fputcsv($handle, []);
         fputcsv($handle, ['Summary', 'Metric', 'Value']);
-        fputcsv($handle, ['', 'Impounded this month', $impoundedCount]);
-        fputcsv($handle, ['', 'Claimed this month', 'N/A']);
-        fputcsv($handle, ['', 'Adopted this month', $adoptedCount]);
+        fputcsv($handle, ['', 'Total Pets Added', $totalPetsAdded]);
+        fputcsv($handle, ['', 'Adopted', $adoptedThisMonth]);
+        fputcsv($handle, ['', 'Claimed', $claimedThisMonth]);
+        fputcsv($handle, ['', 'Unclaimed', $unclaimedThisMonth]);
+        fputcsv($handle, ['', 'Unadopted', $unadoptedThisMonth]);
+        fputcsv($handle, ['', 'Still Active', $stillActiveThisMonth]);
+        fputcsv($handle, []);
+        fputcsv($handle, ['Current System Totals', '', '']);
+        fputcsv($handle, ['', 'Impounded', $currentImpoundedTotal]);
+        fputcsv($handle, ['', 'Adoptable', $currentAdoptableTotal]);
+        fputcsv($handle, ['', 'Adopted', $currentAdoptedTotal]);
+        fputcsv($handle, ['', 'Claimed', $currentClaimedTotal]);
+        fputcsv($handle, ['', 'Unclaimed', $currentUnclaimedTotal]);
+        fputcsv($handle, ['', 'Unadopted', $currentUnadoptedTotal]);
 
         fclose($handle);
         $this->info("Saved CSV to: $csvPath");

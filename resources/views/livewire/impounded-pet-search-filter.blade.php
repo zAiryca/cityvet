@@ -1,6 +1,6 @@
 <div>
     <!-- Search and Filter Form -->
-    <div class="p-6 mb-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+    <form id="impoundedFilterForm" class="px-7 py-6 mb-6 bg-white border border-gray-200 rounded-lg shadow-sm">
         <!-- Single Row: Search, Species, Breed, Gender, Color (4 columns) -->
         <div class="grid grid-cols-1 gap-3 md:grid-cols-5 lg:grid-cols-5">
             <!-- Search -->
@@ -60,12 +60,12 @@
 
         <!-- Clear Filters Button -->
         <div class="mt-3">
-            <button wire:click="clearFilters"
+            <button type="button" wire:click="clearFilters" onclick="document.getElementById('impoundedFilterForm').reset()"
                     class="px-3 py-1.5 text-xs font-medium text-gray-700 transition duration-200 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200">
                 {{ __('Clear Filters') }}
             </button>
         </div>
-    </div>
+    </form>
 
     <!-- Results -->
     <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -125,9 +125,6 @@
 
                     <!-- Action Button -->
                     <a href="{{ route('pets.show', $pet) }}" class="block w-full px-4 py-2 font-bold text-center text-white transition-colors bg-red-600 rounded-lg shadow-sm hover:bg-red-700">
-                        <svg class="inline-block w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
                         Claim Pet
                     </a>
                 </div>

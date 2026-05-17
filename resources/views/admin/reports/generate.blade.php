@@ -34,10 +34,11 @@
                 <label class="block text-sm font-medium text-gray-700">Report Type / Scope</label>
                 <div class="mt-1">
                     <select name="report_scope" class="p-2 border rounded w-full">
-                        <option value="impounded">Impounded Pets </option>
-                        <option value="claimed">Claimed Pets</option>
+                        <option value="impounded">Impounded Pets</option>
+                        <option value="adoptable">Adoptable Pets</option>
                         <option value="adopted">Adopted Pets</option>
-                        <option value="all">All (claimed + adopted + impounded)</option>
+                        <option value="claimed">Claimed Pets</option>
+                        <option value="all">All Pets (complete monthly activity)</option>
                     </select>
                 </div>
             </div>

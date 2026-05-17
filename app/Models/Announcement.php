@@ -9,11 +9,17 @@ class Announcement extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'category', 'description', 'date_when', 'location'];
+    protected $fillable = ['title', 'category', 'description', 'date_when', 'location', 'photo'];
 
     protected $casts = [
         // 'date_when' => 'datetime', // Keep as string for flexibility
     ];
+
+    // Relationship with photos
+    public function photos()
+    {
+        return $this->hasMany(AnnouncementPhoto::class)->orderBy('order', 'asc');
+    }
 
     // Scope for upcoming events
     public function scopeUpcoming($query)
@@ -22,6 +28,5 @@ class Announcement extends Model
     }
 
     // No registration relationship needed - announcements are for viewing only
-
 
 }

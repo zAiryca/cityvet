@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Announcement;
+use App\Models\AnnouncementPhoto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -47,9 +49,29 @@ class AnnouncementController extends Controller
             'category' => 'required|in:Event,Trivia,Fun Fact,Holiday Notice',
             'date_when' => 'nullable|string',
             'location' => 'nullable|string|max:255',
+            'photos' => 'nullable|array',
+            'photos.*' => 'nullable|image|mimes:jpeg,png,jpg,gif',
         ]);
 
-        Announcement::create($validated);
+        // Remove photos from validated data (not stored directly in announcements table)
+        unset($validated['photos']);
+
+        $announcement = Announcement::create($validated);
+
+        // Handle multiple photo uploads
+        if ($request->hasFile('photos')) {
+            $order = 0;
+            foreach ($request->file('photos') as $photo) {
+                if ($photo) {
+                    $path = $photo->store('announcements', 'public');
+                    AnnouncementPhoto::create([
+                        'announcement_id' => $announcement->id,
+                        'photo_path' => $path,
+                        'order' => $order++,
+                    ]);
+                }
+            }
+        }
 
         return redirect()->route('admin.announcements.index')->with('success', 'Announcement created.');
     }
@@ -75,9 +97,50 @@ class AnnouncementController extends Controller
             'category' => 'required|in:Event,Trivia,Fun Fact,Holiday Notice',
             'date_when' => 'nullable|string',
             'location' => 'nullable|string|max:255',
+            'photos' => 'nullable|array',
+            'photos.*' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+            'deleted_photos' => 'nullable|string',
         ]);
 
+        // Remove photos and deleted_photos from validated data
+        $photos = $request->file('photos') ?? [];
+        $deletedPhotosJson = $validated['deleted_photos'] ?? '[]';
+
+        // Decode the JSON string to get the array
+        $deletedPhotos = json_decode($deletedPhotosJson, true) ?? [];
+
+        unset($validated['photos'], $validated['deleted_photos']);
+
+        // Delete specified photos
+        if (!empty($deletedPhotos)) {
+            foreach ($deletedPhotos as $photoId) {
+                $photo = AnnouncementPhoto::find($photoId);
+                if ($photo) {
+                    Storage::disk('public')->delete($photo->photo_path);
+                    $photo->delete();
+                }
+            }
+        }
+
         $announcement->update($validated);
+
+        // Handle new photo uploads
+        if (!empty($photos)) {
+            // Get the max order number
+            $maxOrder = $announcement->photos()->max('order') ?? -1;
+            $order = $maxOrder + 1;
+
+            foreach ($photos as $photo) {
+                if ($photo) {
+                    $path = $photo->store('announcements', 'public');
+                    AnnouncementPhoto::create([
+                        'announcement_id' => $announcement->id,
+                        'photo_path' => $path,
+                        'order' => $order++,
+                    ]);
+                }
+            }
+        }
 
         return redirect()->route('admin.announcements.index')->with('success', 'Announcement updated.');
     }
@@ -85,6 +148,12 @@ class AnnouncementController extends Controller
     public function destroy(Announcement $announcement)
     {
         if (!Auth::user()->isAdmin()) abort(403);
+
+        // Delete all associated photos from storage
+        foreach ($announcement->photos as $photo) {
+            Storage::disk('public')->delete($photo->photo_path);
+        }
+
         $announcement->delete();
         return back()->with('success', 'Announcement deleted.');
     }

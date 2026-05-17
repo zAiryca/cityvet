@@ -17,22 +17,25 @@
         @csrf
         @method('patch')
 
-        <div>
-            <x-input-label for="last_name" :value="__('Last Name')" />
-            <x-text-input id="last_name" name="last_name" type="text" class="block w-full mt-1" :value="old('last_name', $user->last_name)" required autofocus autocomplete="family-name" />
-            <x-input-error class="mt-2" :messages="$errors->get('last_name')" />
-        </div>
+        <!-- Name Fields - Grouped in 3 columns -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <x-input-label for="first_name" :value="__('First Name')" />
+                <x-text-input id="first_name" name="first_name" type="text" class="block w-full mt-1" :value="old('first_name', $user->first_name)" required autofocus autocomplete="given-name" />
+                <x-input-error class="mt-2" :messages="$errors->get('first_name')" />
+            </div>
 
-        <div>
-            <x-input-label for="middle_name" :value="__('Middle Name')" />
-            <x-text-input id="middle_name" name="middle_name" type="text" class="block w-full mt-1" :value="old('middle_name', $user->middle_name)" autocomplete="additional-name" />
-            <x-input-error class="mt-2" :messages="$errors->get('middle_name')" />
-        </div>
+            <div>
+                <x-input-label for="middle_name" :value="__('Middle Name')" />
+                <x-text-input id="middle_name" name="middle_name" type="text" class="block w-full mt-1" :value="old('middle_name', $user->middle_name)" autocomplete="additional-name" />
+                <x-input-error class="mt-2" :messages="$errors->get('middle_name')" />
+            </div>
 
-        <div>
-            <x-input-label for="first_name" :value="__('First Name')" />
-            <x-text-input id="first_name" name="first_name" type="text" class="block w-full mt-1" :value="old('first_name', $user->first_name)" required autocomplete="given-name" />
-            <x-input-error class="mt-2" :messages="$errors->get('first_name')" />
+            <div>
+                <x-input-label for="last_name" :value="__('Last Name')" />
+                <x-text-input id="last_name" name="last_name" type="text" class="block w-full mt-1" :value="old('last_name', $user->last_name)" required autocomplete="family-name" />
+                <x-input-error class="mt-2" :messages="$errors->get('last_name')" />
+            </div>
         </div>
 
         <div>
@@ -165,7 +168,8 @@
         </div>
 
         <div class="flex items-center gap-4 mt-6">
-            <x-primary-button id="profile-save-btn">{{ __('Save') }}</x-primary-button>
+            <x-primary-button id="profile-save-btn">{{ __('Save Changes') }}</x-primary-button>
+            <button type="button" id="cancel-edit-btn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded">{{ __('Cancel') }}</button>
 
             @if (session('status') === 'profile-updated')
                 <p

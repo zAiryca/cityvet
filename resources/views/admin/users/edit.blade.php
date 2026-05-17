@@ -101,7 +101,7 @@
                         </div>
 
                         <div class="flex justify-end">
-                            <a href="{{ route('admin.users.index') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-2">
+                            <a href="javascript:void(0)" onclick="history.back()" class="bg-gray-600 text-white hover:bg-gray-800 px-4 py-2 rounded">
                                 Cancel
                             </a>
                             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">

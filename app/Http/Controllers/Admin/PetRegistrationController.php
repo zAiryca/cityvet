@@ -116,6 +116,6 @@ class PetRegistrationController extends Controller
     {
         $pet_registration->delete();
 
-        return back()->with('success', 'Pet registration deleted successfully!');
+        return redirect()->route('admin.pet-registrations.index')->with('success', 'Pet registration deleted successfully!');
     }
 }

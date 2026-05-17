@@ -9,7 +9,7 @@
         </p>
     </header>
 
-    <form method="post" action="{{ route('password.update') }}" class="mt-6 space-y-6">
+    <form id="password-form" method="post" action="{{ route('password.update') }}" style="display: none;" class="mt-6 space-y-6">
         @csrf
         @method('put')
 
@@ -32,7 +32,8 @@
         </div>
 
         <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
+            <x-primary-button id="password-save-btn">{{ __('Save Password') }}</x-primary-button>
+            <button type="button" id="cancel-password-btn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded">{{ __('Cancel') }}</button>
 
             @if (session('status') === 'password-updated')
                 <p
@@ -45,4 +46,11 @@
             @endif
         </div>
     </form>
+
+    <!-- Change Password Button -->
+    <div id="change-password-btn-container" class="mt-6">
+        <button type="button" id="change-password-btn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Change Password
+        </button>
+    </div>
 </section>

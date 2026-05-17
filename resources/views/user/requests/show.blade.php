@@ -3,15 +3,14 @@
 @section('title', '| Request Details')
 
 @section('content')
-<div class="py-10 mx-auto max-w-7xl sm:px-6 lg:px-8 pt-24">
+<div class="py-10 pt-24 mx-auto max-w-7xl sm:px-6 lg:px-8">
 
     <div class="flex items-center justify-between pb-4 mb-8 border-b border-gray-200">
         <h1 class="text-4xl font-extrabold tracking-tight text-gray-900">
             {{ ucfirst($request->type) }} Request Details
         </h1>
-        <a href="{{ route('user.requests') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 transition duration-150 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"></path></svg>
-            Back to My Requests
+        <a href="{{ route('user.requests') }}" class="bg-gray-600 text-white hover:bg-gray-800 px-4 py-2 rounded">
+            Back
         </a>
     </div>
 
@@ -95,7 +94,7 @@
                     // Use the model-provided display code (now PET####)
                     $displayCode = $item->display_code ?? null;
                 @endphp
-                <div class="p-6 overflow-hidden bg-white border border-gray-100 shadow-lg rounded-xl sm:p-8">
+                <div class="{{ $request->type === 'claim' ? 'p-8 sm:p-10' : 'p-6 sm:p-8' }} overflow-hidden bg-white border border-gray-100 shadow-lg rounded-xl">
                     <h2 class="pb-3 mb-6 text-2xl font-bold text-gray-900 border-b">
                         @if($item_type === 'App\\Models\\Pet')
                             Associated Pet
@@ -109,22 +108,28 @@
                             <div class="flex items-start space-x-6">
                                 <div class="flex-shrink-0">
                                     @if(isset($item->photo) && $item->photo)
-                                        <img src="{{ asset('storage/' . $item->photo) }}" alt="{{ $displayCode ?? $item->name }}" class="object-cover w-40 h-40 rounded-lg shadow-md">
+                                        <img src="{{ asset('storage/' . $item->photo) }}" alt="{{ $displayCode ?? $item->name }}" class="object-cover w-64 h-64 rounded-lg shadow-md cursor-pointer hover:opacity-90" onclick="openPetPhotoModal()">
                                     @else
-                                        <div class="flex items-center justify-center w-40 h-40 text-gray-500 bg-gray-100 rounded-lg">No Photo</div>
+                                        <div class="flex items-center justify-center w-64 h-64 text-gray-500 bg-gray-100 rounded-lg">No Photo</div>
                                     @endif
                                 </div>
-                                <div class="grid grid-cols-2 text-sm text-gray-700 gap-x-6 gap-y-3">
+                                <div class="grid flex-1 min-w-0 grid-cols-2 text-sm text-gray-700 gap-x-6 gap-y-3">
                                     <p><strong class="block text-gray-500">ID Code:</strong> {{ $displayCode ?? 'N/A' }}</p>
-                                    <p><strong class="block text-gray-500">Name:</strong> {{ $item->name ?? 'N/A' }}</p>
                                     <p><strong class="block text-gray-500">Species:</strong> {{ ($item->species ?? '-') }} </p>
                                     <p><strong class="block text-gray-500">Breed:</strong> {{ ($item->breed ?? '-') }}</p>
-                                    <p><strong class="block text-gray-500">Age:</strong> {{ ($item->age ?? 'N/A') }}</p>
+                                    <p><strong class="block text-gray-500">Estimated Age:</strong> {{ ($item->age ?? 'N/A') }}</p>
                                     <p><strong class="block text-gray-500">Color:</strong> {{ ($item->color ?? 'N/A') }}</p>
-                                    <p><strong class="block text-gray-500">Weight:</strong> {{ ($item->weight ?? 'N/A') }} kg</p>
                                     <p><strong class="block text-gray-500">Status:</strong> {{ ucfirst($item->status ?? 'N/A') }}</p>
+
+                                    @if($item->description)
+                                        <div class="col-span-2 w-full p-4 rounded-lg bg-gray-50">
+                                            <p class="text-sm font-medium text-gray-600">Description</p>
+                                            <p class="mt-2 text-gray-900">{{ $item->description }}</p>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
+
                             @if($item->medical_notes)
                                 <div class="p-4 border border-blue-200 rounded-lg bg-blue-50">
                                     <p><strong class="block mb-1 text-gray-700">Medical Information:</strong></p>
@@ -147,16 +152,9 @@
                 </div>
             @endif
 
-            <div class="p-6 overflow-hidden bg-white border border-gray-100 shadow-lg rounded-xl sm:p-8">
-                <h2 class="pb-3 mb-6 text-2xl font-bold text-gray-900 border-b">
-                    Reason for Request
-                </h2>
-                <dd class="p-4 text-gray-700 whitespace-pre-wrap rounded-lg bg-gray-50">{{ $request->reason ?? 'N/A' }}</dd>
-            </div>
-
-            @if($request->additional_data)
+            @if($request->photos || $request->additional_data)
                 @php
-                    // Process additional_data safely
+                    // Process additional_data safely at the top
                     if (is_string($request->additional_data)) {
                         $additionalData = json_decode($request->additional_data, true) ?? [];
                     } elseif (is_array($request->additional_data)) {
@@ -165,6 +163,55 @@
                         $additionalData = (array) $request->additional_data;
                     }
                 @endphp
+                <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                    <!-- Reason/Proof Section -->
+                    <div class="p-4 overflow-hidden bg-white border border-gray-100 shadow-lg rounded-xl">
+                        <h2 class="pb-2 mb-3 text-lg font-semibold text-gray-900 border-b">
+                            @if($request->type === 'adopt')
+                                Reason for Adoption
+                            @else
+                                Pet Identification
+                            @endif
+                        </h2>
+                        <dd class="p-3 text-gray-700 rounded-lg bg-gray-50">
+                            @if($request->type === 'adopt')
+                                {{ $additionalData['reason'] ?? $request->reason ?? 'N/A' }}
+                            @else
+                                {{ $additionalData['proof_of_ownership_description'] ?? $request->reason ?? 'N/A' }}
+                            @endif
+                        </dd>
+                    </div>
+
+                    <!-- Supporting Details/Proof Section -->
+                    @if($request->photos)
+                        @php
+                            // Process photos safely
+                            if (is_string($request->photos)) {
+                                $photos = json_decode($request->photos, true) ?? [];
+                            } elseif (is_array($request->photos)) {
+                                $photos = $request->photos;
+                            } else {
+                                $photos = (array) $request->photos;
+                            }
+                        @endphp
+                        @if(is_array($photos) && count($photos) > 0)
+                            <div class="p-4 overflow-hidden bg-white border border-gray-100 shadow-lg rounded-xl">
+                                <h2 class="pb-2 mb-3 text-lg font-semibold text-gray-900 border-b">
+                                    Supporting Details/Proof
+                                </h2>
+                                <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                                    @foreach($photos as $index => $photo)
+                                        <div class="overflow-hidden border border-gray-200 rounded-lg">
+                                            <img src="{{ asset('storage/' . $photo) }}" alt="Request Photo {{ $index + 1 }}" class="object-cover w-full h-16 cursor-pointer hover:opacity-90" onclick="openUserRequestImageModal({{ $index }})">
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    @endif
+                </div>
+
+
 
                 <div class="p-6 overflow-hidden bg-white border border-gray-100 shadow-lg rounded-xl sm:p-8">
                     <h2 class="pb-3 mb-6 text-2xl font-bold text-gray-900 border-b">
@@ -196,6 +243,22 @@
                                     {{ date('M d, Y', strtotime($additionalData['date_of_birth'])) }}
                                 @else
                                     N/A
+                                @endif
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="font-medium text-gray-500">ID Photo</dt>
+                            <dd class="mt-1">
+                                @if($additionalData && isset($additionalData['id_photo_path']) && $additionalData['id_photo_path'])
+                                    <div onclick="document.getElementById('userRequestIdPhotoModal').classList.remove('hidden')"
+                                         class="inline-flex items-center p-2 transition-colors duration-200 bg-teal-100 rounded-lg cursor-pointer hover:bg-teal-200">
+                                        <svg class="w-5 h-5 mr-2 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                                        </svg>
+                                        <span class="text-sm font-medium">View ID Photo</span>
+                                    </div>
+                                @else
+                                    <span class="text-gray-500">Not provided</span>
                                 @endif
                             </dd>
                         </div>
@@ -249,72 +312,201 @@
                 </div>
             @endif
 
-            @if($additionalData && isset($additionalData['id_photo_path']) && $additionalData['id_photo_path'])
-            <div class="p-6 overflow-hidden bg-white border border-gray-100 shadow-lg rounded-xl sm:p-8">
-                <h2 class="pb-3 mb-6 text-2xl font-bold text-gray-900 border-b">
-                    ID Photo
-                </h2>
-                <div class="flex flex-col items-center space-y-4">
-                    <div onclick="document.getElementById('userRequestIdPhotoModal').classList.remove('hidden')"
-                         class="cursor-pointer transform transition duration-200 hover:scale-105">
-                        <img src="{{ asset('storage/' . $additionalData['id_photo_path']) }}"
-                             alt="ID Photo"
-                             class="object-cover w-40 h-56 border-2 border-gray-300 rounded-lg shadow-md hover:shadow-lg transition duration-200">
-                    </div>
-                    <p class="text-sm text-gray-600">Click to view full size</p>
-                </div>
-
-                <!-- Modal for Full Size ID Photo -->
-                <div id="userRequestIdPhotoModal" class="fixed inset-0 z-50 items-center justify-center hidden p-4 transition-opacity duration-300 bg-black bg-opacity-80" onclick="if(event.target.id === 'userRequestIdPhotoModal') this.classList.add('hidden')">
-                    <div class="relative max-w-3xl overflow-hidden bg-white rounded-lg shadow-2xl">
-                        <div class="sticky top-0 z-10 flex items-center justify-between p-3 bg-white border-b border-gray-200">
-                            <h3 class="text-xl font-semibold text-gray-800">Your ID Photo</h3>
-                            <button onclick="document.getElementById('userRequestIdPhotoModal').classList.add('hidden')" class="p-2 text-gray-500 transition duration-150 rounded-full hover:bg-gray-100 hover:text-gray-700 focus:outline-none">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="p-6 max-h-[80vh] overflow-y-auto">
-                            <img src="{{ asset('storage/' . $additionalData['id_photo_path']) }}" alt="Full Size ID Photo" class="w-full h-auto rounded-lg shadow-md">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @endif
-
-            @if($request->photos)
-                @php
-                    // Process photos safely
-                    if (is_string($request->photos)) {
-                        $photos = json_decode($request->photos, true) ?? [];
-                    } elseif (is_array($request->photos)) {
-                        $photos = $request->photos;
-                    } else {
-                        $photos = (array) $request->photos;
-                    }
-                @endphp
-                @if(is_array($photos) && count($photos) > 0)
-                    <div class="p-6 overflow-hidden bg-white border border-gray-100 shadow-lg rounded-xl sm:p-8">
-                        <h2 class="pb-3 mb-6 text-2xl font-bold text-gray-900 border-b">
-                            Supporting Details/Proof
-                        </h2>
-                        <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                            @foreach($photos as $photo)
-                                <a href="{{ asset('storage/' . $photo) }}" target="_blank" rel="noopener noreferrer" class="relative block overflow-hidden transition duration-300 rounded-lg shadow-md group hover:shadow-xl">
-                                    <img src="{{ asset('storage/' . $photo) }}" alt="Request Photo" class="object-cover w-full h-32 transition duration-500 sm:h-40 group-hover:scale-105">
-                                    <div class="absolute inset-0 flex items-center justify-center transition duration-300 bg-black opacity-0 bg-opacity-30 group-hover:opacity-100">
-                                        <span class="text-white text-xs font-semibold p-1.5 bg-black bg-opacity-60 rounded">View</span>
-                                    </div>
-                                </a>
-                            @endforeach
-                        </div>
-                    </div>
-                @endif
-            @endif
 
         </div>
     </div>
 </div>
-@endsection
 
+<!-- Pet Photo Modal -->
+@if($request->requestable && $request->requestable_type === 'App\\Models\\Pet' && $request->requestable->photo)
+<div id="petPhotoModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 bg-black/30 backdrop-blur-sm" onclick="closePetPhotoModal()">
+    <button onclick="closePetPhotoModal()" class="absolute text-gray-100 top-6 right-6 hover:text-white">
+        <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    </button>
+    <img src="{{ asset('storage/' . $request->requestable->photo) }}" alt="Full Size Pet Photo" class="max-w-4xl max-h-[85vh] rounded-lg shadow-2xl">
+</div>
+@endif
+
+<!-- ID Photo Modal -->
+@if($request->additional_data && isset($request->additional_data['id_photo_path']) && $request->additional_data['id_photo_path'])
+<div id="userRequestIdPhotoModal"
+     class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 transition-opacity duration-300 bg-black/50 backdrop-blur-sm"
+     onclick="if(event.target.id === 'userRequestIdPhotoModal') this.classList.add('hidden')">
+    <div class="relative max-w-3xl overflow-hidden bg-white shadow-2xl rounded-2xl">
+        <div class="sticky top-0 z-10 flex items-center justify-between p-4 bg-white border-b border-gray-200">
+            <h3 class="text-xl font-semibold text-gray-800">Owner ID Photo</h3>
+            <button onclick="document.getElementById('userRequestIdPhotoModal').classList.add('hidden')"
+                    class="p-2 text-gray-500 transition duration-150 rounded-full hover:bg-gray-100 hover:text-gray-700 focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <div class="p-6 max-h-[80vh] overflow-y-auto">
+            <img src="{{ asset('storage/' . $request->additional_data['id_photo_path']) }}"
+                 alt="Full Size ID Photo"
+                 class="w-full h-auto rounded-lg shadow-md">
+        </div>
+    </div>
+</div>
+@endif
+
+<!-- Image Modal (for supporting photo viewing) -->
+<div id="userRequestImageModal" class="fixed inset-0 z-50 hidden p-4 bg-black/30 backdrop-blur-sm" onclick="if(event.target.id === 'userRequestImageModal') closeUserRequestImageModal()">
+    <div class="flex items-center justify-center min-h-screen">
+        <div class="relative max-w-4xl max-h-full">
+            <button onclick="closeUserRequestImageModal()" class="absolute text-gray-100 top-4 right-4 hover:text-white">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+            <button id="userRequestPrevBtn" type="button" onclick="prevUserRequestImage()" class="absolute left-0 top-1/2 -translate-y-1/2 px-4 py-3 text-white rounded-r-lg bg-black/30 hover:bg-black/50" aria-label="Previous image">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+            <button id="userRequestNextBtn" type="button" onclick="nextUserRequestImage()" class="absolute right-0 top-1/2 -translate-y-1/2 px-4 py-3 text-white rounded-l-lg bg-black/30 hover:bg-black/50" aria-label="Next image">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+            <img id="userRequestModalImage" src="" alt="Enlarged view" class="max-w-full max-h-screen rounded-lg shadow-2xl">
+            <div class="mt-4 text-center">
+                <p id="userRequestImageCounter" class="text-sm text-white"></p>
+                <p id="userRequestImageCaption" class="mt-1 text-sm text-white"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+@php
+    $modalPhotos = [];
+    if ($request->photos) {
+        if (is_string($request->photos)) {
+            $modalPhotos = json_decode($request->photos, true) ?? [];
+        } elseif (is_array($request->photos)) {
+            $modalPhotos = $request->photos;
+        } else {
+            $modalPhotos = (array) $request->photos;
+        }
+    }
+@endphp
+
+const userRequestPhotoSources = [
+    @foreach($modalPhotos as $idx => $photo)
+        { src: "{{ asset('storage/' . $photo) }}", alt: "Request Photo {{ $idx + 1 }}" }@if(!$loop->last),@endif
+    @endforeach
+];
+let currentUserRequestImageIndex = 0;
+
+function openPetPhotoModal() {
+    document.getElementById('petPhotoModal').classList.remove('hidden');
+}
+
+function closePetPhotoModal() {
+    document.getElementById('petPhotoModal').classList.add('hidden');
+}
+
+function openUserRequestImageModal(index) {
+    if (!userRequestPhotoSources.length) {
+        return;
+    }
+
+    currentUserRequestImageIndex = index;
+    updateUserRequestImageModal();
+    document.getElementById('userRequestImageModal').classList.remove('hidden');
+}
+
+function updateUserRequestImageModal() {
+    const source = userRequestPhotoSources[currentUserRequestImageIndex];
+    const image = document.getElementById('userRequestModalImage');
+    image.src = source.src;
+    image.alt = source.alt;
+    document.getElementById('userRequestImageCaption').textContent = source.alt;
+    document.getElementById('userRequestImageCounter').textContent = `${currentUserRequestImageIndex + 1} / ${userRequestPhotoSources.length}`;
+    const showNav = userRequestPhotoSources.length > 1;
+    document.getElementById('userRequestPrevBtn').style.display = showNav ? 'block' : 'none';
+    document.getElementById('userRequestNextBtn').style.display = showNav ? 'block' : 'none';
+}
+
+function nextUserRequestImage() {
+    openUserRequestImageModal((currentUserRequestImageIndex + 1) % userRequestPhotoSources.length);
+}
+
+function prevUserRequestImage() {
+    openUserRequestImageModal((currentUserRequestImageIndex + userRequestPhotoSources.length - 1) % userRequestPhotoSources.length);
+}
+
+function closeUserRequestImageModal() {
+    document.getElementById('userRequestImageModal').classList.add('hidden');
+}
+
+// Enhanced keyboard event listener for backspace and arrow keys
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Backspace') {
+        const petModal = document.getElementById('petPhotoModal');
+        if (petModal && !petModal.classList.contains('hidden')) {
+            closePetPhotoModal();
+            return;
+        }
+
+        const idModal = document.getElementById('userRequestIdPhotoModal');
+        if (idModal && !idModal.classList.contains('hidden')) {
+            idModal.classList.add('hidden');
+            return;
+        }
+
+        const imageModal = document.getElementById('userRequestImageModal');
+        if (imageModal && !imageModal.classList.contains('hidden')) {
+            closeUserRequestImageModal();
+            return;
+        }
+    }
+
+    if (event.key === 'ArrowLeft') {
+        const imageModal = document.getElementById('userRequestImageModal');
+        if (imageModal && !imageModal.classList.contains('hidden') && userRequestPhotoSources.length > 1) {
+            prevUserRequestImage();
+            event.preventDefault();
+            return;
+        }
+    }
+
+    if (event.key === 'ArrowRight') {
+        const imageModal = document.getElementById('userRequestImageModal');
+        if (imageModal && !imageModal.classList.contains('hidden') && userRequestPhotoSources.length > 1) {
+            nextUserRequestImage();
+            event.preventDefault();
+            return;
+        }
+    }
+
+    if (event.key === 'Escape') {
+        closePetPhotoModal();
+        closeUserRequestImageModal();
+        if (document.getElementById('userRequestIdPhotoModal')) {
+            document.getElementById('userRequestIdPhotoModal').classList.add('hidden');
+        }
+    }
+});
+
+if (document.getElementById('petPhotoModal')) {
+    document.getElementById('petPhotoModal').addEventListener('click', function(event) {
+        if (event.target === this) {
+            closePetPhotoModal();
+        }
+    });
+}
+
+if (document.getElementById('userRequestImageModal')) {
+    document.getElementById('userRequestImageModal').addEventListener('click', function(event) {
+        if (event.target === this) {
+            closeUserRequestImageModal();
+        }
+    });
+}
+</script>
+@endsection

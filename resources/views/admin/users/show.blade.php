@@ -4,8 +4,8 @@
 <div class="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
     <!-- Back Button at Top -->
     <div class="mb-6">
-        <a href="{{ route('admin.users.index') }}" class="inline-flex items-center px-4 py-2 font-bold text-white bg-gray-500 rounded hover:bg-gray-700">
-            ← Back to Users
+        <a href="javascript:void(0)" onclick="history.back()" class="bg-gray-500 text-white hover:bg-gray-700 px-4 py-2 rounded">
+            Back
         </a>
     </div>
 
@@ -14,7 +14,7 @@
             <h2 class="mb-8 text-3xl font-bold text-gray-900">User Profile</h2>
 
             <!-- User Information Section -->
-            <div class="mb-12">
+            <div class="mb-8">
                 <h3 class="pb-3 mb-6 text-2xl font-bold text-gray-900 border-b-2 border-indigo-500">Profile Information</h3>
                 <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                     <!-- First Name -->
@@ -87,38 +87,38 @@
                 </div>
 
                 <!-- Address and ID Photo Row -->
-                <div class="grid grid-cols-1 gap-6 mt-6 lg:grid-cols-4">
-                    <!-- ID Photo (Left Side) -->
-                    <div class="p-4 border border-gray-200 rounded-lg shadow-sm bg-gray-50">
-                        <h4 class="mb-3 text-sm font-semibold tracking-wider text-gray-700 uppercase">Identity Verification</h4>
+                <div class="grid grid-cols-1 gap-6 mt-6 lg:grid-cols-5">
+                    <!-- ID Photo (Left Side - 1 column) -->
+                    <div class="p-3 border border-gray-200 rounded-lg shadow-sm bg-gray-50">
+                        <h4 class="mb-2 text-xs font-semibold tracking-wider text-gray-700 uppercase">Identity Verification</h4>
 
                         <div class="flex flex-col items-center justify-center">
 
                             @if($user->id_photo)
                                 <div onclick="document.getElementById('idPhotoModal').classList.remove('hidden')"
-                                     class="flex flex-col items-center justify-center w-32 h-32 transition duration-150 ease-in-out bg-black border-4 border-gray-400 rounded-lg cursor-pointer hover:bg-gray-900">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                     class="flex flex-col items-center justify-center w-24 h-24 transition duration-150 ease-in-out bg-black border-4 border-gray-400 rounded-lg cursor-pointer hover:bg-gray-900">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.75 4h2.5a2 2 0 011.664.89l.812 1.22a2 2 0 001.664.89H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                                     </svg>
                                 </div>
                             @else
-                                <div class="flex flex-col items-center justify-center w-32 h-32 transition duration-150 ease-in-out bg-gray-200 border-4 border-gray-400 rounded-lg cursor-pointer hover:bg-gray-300">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <div class="flex flex-col items-center justify-center w-24 h-24 transition duration-150 ease-in-out bg-gray-200 border-4 border-gray-400 rounded-lg cursor-pointer hover:bg-gray-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.75 4h2.5a2 2 0 011.664.89l.812 1.22a2 2 0 001.664.89H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                                     </svg>
-                                    <p class="mt-2 text-xs font-medium text-gray-700">No Photo</p>
+                                    <p class="mt-1 text-xs font-medium text-gray-700">No Photo</p>
                                 </div>
                             @endif
 
                             @if($user->id_photo)
-                                <p class="mt-3 text-sm font-medium text-indigo-600 cursor-pointer hover:text-indigo-800"
+                                <p class="mt-2 text-xs font-medium text-indigo-600 cursor-pointer hover:text-indigo-800"
                                    onclick="document.getElementById('idPhotoModal').classList.remove('hidden')">
                                    Click to Verify
                                 </p>
                             @else
-                                <p class="mt-3 text-sm font-medium text-gray-400">No ID Photo</p>
+                                <p class="mt-2 text-xs font-medium text-gray-400">No ID Photo</p>
                             @endif
                         </div>
                     </div>
@@ -151,8 +151,8 @@
                     </div>
                     @endif
 
-                    <!-- Full Address (Right Side - spans 3 columns) -->
-                    <div class="p-4 rounded-lg bg-gray-50 lg:col-span-3">
+                    <!-- Full Address (Right Side - spans 4 columns) -->
+                    <div class="p-4 rounded-lg bg-gray-50 lg:col-span-4">
                         <p class="mb-2 text-sm font-medium tracking-wide text-gray-600 uppercase">Full Address</p>
                         <p class="text-lg font-semibold text-gray-900">
                             {{ $user->street ?? 'N/A' }}<br>
@@ -170,13 +170,29 @@
                 </div>
             </div>
 
-            <!-- Action Buttons at Bottom -->
-            <div class="flex justify-start gap-3 pt-6 border-t border-gray-200">
-                <a href="{{ route('admin.users.index') }}" class="px-4 py-2 font-bold text-white bg-gray-500 rounded hover:bg-gray-700">
-                    ← Back to Users
-                </a>
-            </div>
+
         </div>
     </div>
 </div>
+
+<script>
+@if($user->id_photo)
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Backspace') {
+        const modal = document.getElementById('idPhotoModal');
+        if (modal && !modal.classList.contains('hidden')) {
+            modal.classList.add('hidden');
+            return;
+        }
+    }
+
+    if (event.key === 'Escape') {
+        const modal = document.getElementById('idPhotoModal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    }
+});
+@endif
+</script>
 @endsection

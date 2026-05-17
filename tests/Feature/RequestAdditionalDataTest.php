@@ -31,7 +31,7 @@ class RequestAdditionalDataTest extends TestCase
             'first_name' => 'FormFirst',
             'last_name' => 'FormLast',
             'middle_name' => 'Q',
-            'address' => '123 Form St, Barangay, City',
+            'address' => '123 Form St, e.g., Barangay Poblacion, Cpark',
             'contact_number' => '09119998877',
             'email' => 'form@example.com',
             'date_of_birth' => '1990-03-21',
@@ -68,14 +68,19 @@ class RequestAdditionalDataTest extends TestCase
         // Request show page should display form-submitted values and not the profile values
         $response = $this->actingAs($user)->get(route('user.requests.show', $petRequest));
         $response->assertOk();
+
+        // Check that navigation shows user's first name (our new feature)
+        $response->assertSee('ProfileFirst');
+
+        // Check that form-submitted values appear in the request details
         $response->assertSee('FormFirst');
         $response->assertSee('FormLast');
         $response->assertSee('09119998877');
         $response->assertSee('form@example.com');
         $response->assertSee('Mar 21, 1990'); // formatted DOB
 
-        // And ensure profile values do not appear in the request details
-        $response->assertDontSee('ProfileFirst');
+        // Ensure profile values don't appear in the request details content area
+        // (they can appear in navigation, but not in the main request data)
         $response->assertDontSee('ProfileLast');
         $response->assertDontSee('profile@example.com');
     }

@@ -3,8 +3,7 @@
 @section('title', 'Pet Registrations Management')
 
 @section('content')
-<div class="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
-
+<div class="px-4 py-4 mx-auto max-w-7xl" style="font-family: 'Poppins', sans-serif;">
     @php
         // Define the possible statuses for the navigation tabs
         $statuses = [
@@ -27,16 +26,14 @@
         }
     @endphp
 
-    <div class="p-6 bg-white rounded-lg shadow-md">
-
-        {{-- Dynamic Header --}}
-        <div class="flex items-center justify-between mb-6">
-            <h1 class="text-3xl font-bold text-gray-800">{{ $pageTitle }}</h1>
+    <div class="flex flex-col mb-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900" style="font-family: 'Poppins', sans-serif;">{{ $pageTitle }}</h1>
+            <p class="mt-1 text-sm text-gray-600" style="font-family: 'Poppins', sans-serif;">Manage pet registration requests and approvals</p>
         </div>
-
-        {{-- Admin Pet Registration Search Filter --}}
-        @livewire('admin-pet-registration-search-filter')
     </div>
 
+    {{-- Admin Pet Registration Search Filter --}}
+    @livewire('admin-pet-registration-search-filter')
 </div>
 @endsection

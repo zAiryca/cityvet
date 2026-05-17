@@ -3,278 +3,541 @@
 @section('title', '| ' . $pet->display_code)
 
 @section('content')
-<div class="pt-28 pb-12 bg-gradient-to-b from-blue-50 to-white">
-    <div class="px-4 mx-auto max-w-5xl">
+<style>
+    .pet-details-page {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: calc(100vh - 70px);
+    }
+
+    .pet-header-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border-radius: 12px;
+        padding: 24px;
+    }
+
+    .pet-main-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        padding: 24px;
+    }
+
+    .pet-info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    .pet-info-item {
+        margin-bottom: 16px;
+    }
+
+    .pet-info-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .pet-info-value {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-top: 4px;
+    }
+
+    .photo-container {
+        width: 280px;
+        height: 280px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+    .photo-container:hover {
+        transform: scale(1.05);
+    }
+
+    .photo-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+    }
+
+    .btn-action {
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+    }
+
+    .btn-adopt {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+    }
+
+    .btn-adopt:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-claim {
+        background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+        color: white;
+    }
+
+    .btn-claim:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 14px;
+    }
+
+    .status-adoptable {
+        background: #c6f6d5;
+        color: #059669;
+    }
+
+    .status-impounded {
+        background: #fecaca;
+        color: #dc2626;
+    }
+
+    .timeline-item {
+        display: flex;
+        gap: 12px;
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .timeline-item:last-child {
+        border-bottom: none;
+    }
+
+    .timeline-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-top: 4px;
+        flex-shrink: 0;
+    }
+
+    .timeline-content p {
+        margin: 0;
+        font-size: 13px;
+    }
+
+    .timeline-label {
+        font-weight: 600;
+        color: #64748b;
+        font-size: 11px;
+        text-transform: uppercase;
+    }
+
+    .timeline-value {
+        color: #1e293b;
+        font-weight: 600;
+        margin-top: 2px;
+    }
+
+    .alert-box {
+        padding: 16px;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        border-left: 4px solid;
+    }
+
+    .alert-warning {
+        background: #fef3c7;
+        border-color: #f59e0b;
+        color: #92400e;
+    }
+
+    .alert-danger {
+        background: #fee2e2;
+        border-color: #ef4444;
+        color: #7f1d1d;
+    }
+
+    .alert-title {
+        font-weight: 700;
+        font-size: 14px;
+        margin-bottom: 6px;
+    }
+
+    .alert-text {
+        font-size: 13px;
+        line-height: 1.4;
+    }
+
+    .section-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .section-divider {
+        height: 2px;
+        background: linear-gradient(90deg, #667eea, transparent);
+        margin: 20px 0;
+    }
+
+    @media (max-width: 768px) {
+        .pet-info-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .photo-container {
+            width: 140px;
+            height: 140px;
+        }
+
+        .btn-action {
+            flex: 1;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="pt-6 pb-12 pet-details-page">
+    <div class="max-w-5xl px-4 mx-auto">
         <!-- Header -->
-        <div class="flex items-start justify-between mb-8">
-            <div>
-                <h1 class="text-3xl md:text-4xl font-bold text-gray-900">{{ $pet->display_code }}</h1>
-                <p class="mt-2 text-gray-600">{{ ucfirst($pet->species) }} • {{ ucfirst($pet->breed) }}</p>
+        <div class="mb-6 pet-header-card">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-4xl font-bold text-white">{{ $pet->display_code }}</h1>
+                    <p class="mt-1 text-blue-100">Pet Details & Information</p>
+                </div>
+                <span class="status-badge {{ $pet->status === 'adoptable' ? 'status-adoptable' : 'status-impounded' }}">
+                    {{ ucfirst(str_replace('_', ' ', $pet->status)) }}
+                </span>
             </div>
-            <span class="px-4 py-2 text-sm font-semibold rounded-full whitespace-nowrap ml-4
-                {{ $pet->status === 'adoptable' ? 'bg-green-100 text-green-800' :
-                   ($pet->status === 'impounded' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800') }}">
-                {{ ucfirst($pet->status) }}
-            </span>
         </div>
 
-        <!-- Photo & Quick Info Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <!-- Photo Section -->
-            <div class="md:col-span-1">
-                <div class="overflow-hidden bg-white rounded-xl shadow-md h-64 flex items-center justify-center">
-                    @if($pet->photo)
-                        <img src="{{ asset('storage/' . $pet->photo) }}" alt="{{ $pet->display_code }}" class="w-full h-full object-cover">
-                    @else
-                        <div class="flex flex-col items-center justify-center w-full h-full">
-                            <svg class="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            <p class="mt-2 text-sm text-gray-400">No photo</p>
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-4">
+            <!-- Left Column: Pet Info + Actions -->
+            <div class="space-y-4 lg:col-span-3">
+                <!-- Pet Information Card -->
+                <div class="pet-main-card">
+                    <div class="flex gap-6 pb-6 border-b border-gray-200">
+                        <!-- Photo -->
+                        @if($pet->photo)
+                            <div class="photo-container" onclick="openPetPhotoModal()" title="Click to enlarge">
+                                <img src="{{ asset('storage/' . $pet->photo) }}" alt="{{ $pet->display_code }}">
+                            </div>
+                        @else
+                            <div class="photo-container" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;">
+                                <div class="text-center">
+                                    <span class="text-5xl font-bold text-white">{{ substr($pet->display_code, 0, 1) }}</span>
+                                    <p class="mt-2 text-xs text-blue-100">No Photo</p>
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Quick Info Grid -->
+                        <div class="flex-1">
+                            <div class="pet-info-grid">
+                                <div class="pet-info-item">
+                                    <p class="pet-info-label">Species</p>
+                                    <p class="pet-info-value">{{ $pet->species }}</p>
+                                </div>
+                                <div class="pet-info-item">
+                                    <p class="pet-info-label">Breed</p>
+                                    <p class="pet-info-value">{{ $pet->breed }}</p>
+                                </div>
+                                <div class="pet-info-item">
+                                    <p class="pet-info-label">Gender</p>
+                                    <p class="pet-info-value">{{ ucfirst($pet->gender) }}</p>
+                                </div>
+                                <div class="pet-info-item">
+                                    <p class="pet-info-label">Estimated Age</p>
+                                    <p class="pet-info-value">{{ $pet->estimated_age }}</p>
+                                </div>
+                                <div class="pet-info-item">
+                                    <p class="pet-info-label">Color</p>
+                                    <p class="pet-info-value">{{ $pet->color_markings ?: 'N/A' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    @if($pet->description)
+                        <div class="p-4 mt-4 border-l-4 border-blue-500 bg-blue-50 rounded-8px">
+                            <p class="pet-info-label">Description</p>
+                            <p class="mt-2 text-sm text-gray-700">{{ $pet->description }}</p>
+                        </div>
+                    @endif
+
+                    <!-- Adoption Info -->
+                    @if($pet->status === 'adoptable')
+                        @php
+                            $adoptionReasonLabels = [
+                                'surrendered_by_owner' => 'Surrendered by Owner',
+                                'remained_unclaimed' => 'Remained Unclaimed',
+                                'found_by_citizen' => 'Found by Citizen',
+                            ];
+                            if (!empty($pet->adoption_reason_other)) {
+                                $adoptionLabel = $pet->adoption_reason_other;
+                            } else {
+                                $adoptionLabel = $adoptionReasonLabels[$pet->adoption_reason] ?? $pet->adoption_reason;
+                            }
+                        @endphp
+                        <div class="p-4 mt-4 border-l-4 border-green-500 bg-green-50 rounded-8px">
+                            <p class="text-green-700 pet-info-label">Adoption Information</p>
+                            @if($pet->adoption_reason)
+                                <p class="mt-2 text-sm text-gray-700"><strong>Reason:</strong> {{ $adoptionLabel }}</p>
+                            @endif
+                            @if($pet->adoption_notes)
+                                <p class="mt-1 text-sm text-gray-700"><strong>Notes:</strong> {{ $pet->adoption_notes }}</p>
+                            @endif
                         </div>
                     @endif
                 </div>
-            </div>
 
-            <!-- Quick Info Cards -->
-            <div class="md:col-span-2 space-y-3">
-                <div class="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
-                    <p class="text-xs text-gray-500 font-semibold uppercase">Species & Breed</p>
-                    <p class="text-lg font-bold text-gray-900 mt-1">{{ ucfirst($pet->species) }} — {{ ucfirst($pet->breed) }}</p>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
-                        <p class="text-xs text-gray-500 font-semibold uppercase">Gender</p>
-                        <p class="text-lg font-bold text-gray-900 mt-1">{{ ucfirst($pet->gender) }}</p>
-                    </div>
-                    <div class="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
-                        <p class="text-xs text-gray-500 font-semibold uppercase">Estimated Age</p>
-                        <p class="text-lg font-bold text-gray-900 mt-1">{{ $pet->estimated_age }}</p>
-                    </div>
-                </div>
-                <div class="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
-                    <p class="text-xs text-gray-500 font-semibol
-                    d uppercase">Markings</p>
-                    <p class="text-base font-semibold text-gray-900 mt-1">{{ $pet->color_markings ?? 'Not specified' }}</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Status & Timeline -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <!-- Status Alert -->
-            <div class="md:col-span-2">
-                @if($pet->status === 'impounded')
-                    <div class="bg-gradient-to-r from-red-50 to-red-100 border border-red-200 rounded-xl p-6">
-                        <div class="flex items-start gap-4">
-                            <div class="flex-shrink-0">
-                                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <!-- Action Buttons -->
+                <div class="pet-main-card">
+                    <p class="mb-4 section-title">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                        Quick Actions
+                    </p>
+                    <div class="action-buttons">
+                        @auth
+                            @if($pet->status === 'adoptable')
+                                <button id="adoptBtn" type="button" class="btn-action btn-adopt" onclick="openAdoptModal()">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Start Adoption
+                                </button>
+                                <button id="claimAdoptableBtn" type="button" class="btn-action btn-claim" onclick="openClaimModalFromAdoptable()">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                    </svg>
+                                    Claim This Pet
+                                </button>
+                            @elseif($pet->status === 'impounded')
+                                <button type="button" onclick="openClaimModal()" class="btn-action" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white;">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                    </svg>
+                                    Submit Claim
+                                </button>
+                            @endif
+                        @else
+                            <a href="{{ route('login') }}" class="btn-action" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; text-decoration: none; display: flex; align-items: center; justify-content: center;">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                                 </svg>
+                                Login to Continue
+                            </a>
+                        @endauth
+                    </div>
+                </div>
+
+                <!-- Back Button -->
+                <a href="javascript:history.back()" class="block w-full px-6 py-3 text-center font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition">
+                    <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    Back to Previous
+                </a>
+            </div>
+
+            <!-- Right Column: Timeline & Status -->
+            <div class="space-y-4">
+                <!-- Timeline Card -->
+                <div class="pet-main-card">
+                    <p class="mb-4 section-title">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Timeline
+                    </p>
+
+                    <div class="space-y-2">
+                        @if($pet->impounded_date)
+                            <div class="timeline-item">
+                                <div class="bg-red-500 timeline-dot"></div>
+                                <div class="timeline-content">
+                                    <p class="timeline-label">Impounded</p>
+                                    <p class="timeline-value">{{ $pet->impounded_date->format('M d, Y') }}</p>
+                                </div>
                             </div>
-                            <div class="flex-1">
-                                <h3 class="text-lg font-bold text-red-900">Currently Impounded</h3>
-                                <p class="text-red-800 text-sm mt-1">
-                                    <strong>{{ $pet->remaining_days ? (int)$pet->remaining_days : '0' }} days</strong> remaining to claim this pet
-                                </p>
-                                <p class="text-red-800 text-xs mt-2">If you're the owner, submit a claim with proof of ownership. After the deadline, this pet becomes available for adoption only.</p>
-                                <p class="text-red-700 text-xs font-semibold mt-2">Claim Fee: ₱1,025 + ₱150/day if late</p>
+                        @endif
+
+                        @if($pet->decision_date)
+                            <div class="timeline-item">
+                                <div class="bg-green-500 timeline-dot"></div>
+                                <div class="timeline-content">
+                                    <p class="timeline-label">Made Available</p>
+                                    <p class="timeline-value">{{ $pet->decision_date->format('M d, Y') }}</p>
+                                </div>
+                            </div>
+                        @endif
+
+                        @if($pet->remaining_days !== null)
+                            @php $days = max(0, (int)floor($pet->remaining_days)); @endphp
+                            <div class="timeline-item">
+                                <div class="timeline-dot {{ $days <= 1 ? 'bg-red-500' : 'bg-yellow-500' }}"></div>
+                                <div class="timeline-content">
+                                    <p class="timeline-label">Time Remaining</p>
+                                    <p class="timeline-value {{ $days <= 1 ? 'text-red-600' : 'text-gray-900' }}">
+                                        {{ $days }} day{{ $days !== 1 ? 's' : '' }}
+                                    </p>
+                                </div>
+                            </div>
+                        @endif
+
+                        <div class="timeline-item">
+                            <div class="bg-gray-400 timeline-dot"></div>
+                            <div class="timeline-content">
+                                <p class="timeline-label">Last Updated</p>
+                                <p class="timeline-value">{{ $pet->updated_at->format('M d, Y') }}</p>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Quick Process -->
-                    <div class="mt-4 bg-white rounded-xl p-4 shadow-sm border border-gray-200">
-                        <p class="text-xs font-bold text-gray-700 mb-3">CLAIM PROCESS</p>
-                        <div class="flex items-center justify-between gap-2">
-                            <div class="flex flex-col items-center flex-1">
-                                <div class="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-sm font-bold">1</div>
-                                <p class="text-xs text-gray-600 mt-1 text-center">Submit Form</p>
-                            </div>
-                            <svg class="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                <!-- Status Alert -->
+                @if($pet->status === 'impounded')
+                    <div class="alert-box alert-danger">
+                        <div class="alert-title">
+                            <svg class="inline w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
                             </svg>
-                            <div class="flex flex-col items-center flex-1">
-                                <div class="w-8 h-8 rounded-full bg-yellow-500 text-white flex items-center justify-center text-sm font-bold">2</div>
-                                <p class="text-xs text-gray-600 mt-1 text-center">Review</p>
+                            Currently Impounded
+                        </div>
+                        <div class="alert-text">
+                            <strong>{{ $pet->remaining_days ? (int)$pet->remaining_days : '0' }} days</strong> remaining to claim this pet
+                        </div>
+                        <div class="mt-2 alert-text">
+                            Claim Fee: ₱1,025 + ₱150/day if late
+                        </div>
+                    </div>
+
+                    <!-- Claim Process -->
+                    <div class="pet-main-card">
+                        <p class="mb-4 text-xs font-bold text-gray-700 uppercase">Claim Process</p>
+                        <div class="space-y-3">
+                            <div class="flex gap-3">
+                                <div class="flex items-center justify-center flex-shrink-0 w-8 h-8 text-sm font-bold text-red-700 bg-red-100 rounded-full">1</div>
+                                <div>
+                                    <p class="text-sm text-gray-900 font-600">Submit Claim</p>
+                                    <p class="mt-1 text-xs text-gray-600">Fill out your claim form with proof</p>
+                                </div>
                             </div>
-                            <svg class="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                            </svg>
-                            <div class="flex flex-col items-center flex-1">
-                                <div class="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center text-sm font-bold">3</div>
-                                <p class="text-xs text-gray-600 mt-1 text-center">Pickup</p>
+                            <div class="flex gap-3">
+                                <div class="flex items-center justify-center flex-shrink-0 w-8 h-8 text-sm font-bold text-yellow-700 bg-yellow-100 rounded-full">2</div>
+                                <div>
+                                    <p class="text-sm text-gray-900 font-600">Under Review</p>
+                                    <p class="mt-1 text-xs text-gray-600">Vet department verifies your claim</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-3">
+                                <div class="flex items-center justify-center flex-shrink-0 w-8 h-8 text-sm font-bold text-green-700 bg-green-100 rounded-full">3</div>
+                                <div>
+                                    <p class="text-sm text-gray-900 font-600">Ready for Pickup</p>
+                                    <p class="mt-1 text-xs text-gray-600">Come claim your pet once approved</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 @elseif($pet->status === 'adoptable')
-                    <div class="bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-xl p-6">
-                        <div class="flex items-start gap-4">
-                            <div class="flex-shrink-0">
-                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h-2m0 0H10m2 0v2m0-2v-2m7 7h-4m0 0h-4m4 0v2m0-2v-2" />
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <h3 class="text-lg font-bold text-green-900">Ready for Adoption</h3>
-                                <p class="text-green-800 text-sm mt-1">This sweet pet is looking for a loving home! Complete the adoption application to get started.</p>
-                                <p class="text-green-700 text-xs font-semibold mt-2">5-Step Adoption Process</p>
-                            </div>
+                    <div class="alert-box alert-warning">
+                        <div class="alert-title">
+                            <svg class="inline w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Available for Adoption
+                        </div>
+                        <div class="alert-text">
+                            Ready to find this pet a loving home. Start your adoption process today!
                         </div>
                     </div>
 
-                    <!-- Quick Process -->
-                    <div class="mt-4 bg-white rounded-xl p-4 shadow-sm border border-gray-200">
-                        <div class="flex items-center justify-between gap-1 text-xs">
-                            <div class="flex flex-col items-center flex-1">
-                                <div class="w-7 h-7 rounded-full bg-green-600 text-white flex items-center justify-center text-xs font-bold">1</div>
-                                <p class="text-gray-600 mt-1 text-center">Apply</p>
+                    <!-- Adoption Process -->
+                    <div class="pet-main-card">
+                        <p class="mb-4 text-xs font-bold text-gray-700 uppercase">Adoption Steps</p>
+                        <div class="space-y-3">
+                            <div class="flex gap-3">
+                                <div class="flex items-center justify-center flex-shrink-0 w-8 h-8 text-sm font-bold text-green-700 bg-green-100 rounded-full">1</div>
+                                <div>
+                                    <p class="text-sm text-gray-900 font-600">Submit Application</p>
+                                    <p class="mt-1 text-xs text-gray-600">Complete adoption form</p>
+                                </div>
                             </div>
-                            <svg class="w-3 h-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-                            <div class="flex flex-col items-center flex-1">
-                                <div class="w-7 h-7 rounded-full bg-green-600 text-white flex items-center justify-center text-xs font-bold">2</div>
-                                <p class="text-gray-600 mt-1 text-center">Review</p>
+                            <div class="flex gap-3">
+                                <div class="flex items-center justify-center flex-shrink-0 w-8 h-8 text-sm font-bold text-green-700 bg-green-100 rounded-full">2</div>
+                                <div>
+                                    <p class="text-sm text-gray-900 font-600">Review & Approval</p>
+                                    <p class="mt-1 text-xs text-gray-600">Vet reviews your application</p>
+                                </div>
                             </div>
-                            <svg class="w-3 h-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-                            <div class="flex flex-col items-center flex-1">
-                                <div class="w-7 h-7 rounded-full bg-yellow-500 text-white flex items-center justify-center text-xs font-bold">3</div>
-                                <p class="text-gray-600 mt-1 text-center">Meet</p>
-                            </div>
-                            <svg class="w-3 h-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-                            <div class="flex flex-col items-center flex-1">
-                                <div class="w-7 h-7 rounded-full bg-green-600 text-white flex items-center justify-center text-xs font-bold">4</div>
-                                <p class="text-gray-600 mt-1 text-center">Verify</p>
-                            </div>
-                            <svg class="w-3 h-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-                            <div class="flex flex-col items-center flex-1">
-                                <div class="w-7 h-7 rounded-full bg-green-600 text-white flex items-center justify-center text-xs font-bold">5</div>
-                                <p class="text-gray-600 mt-1 text-center">Adopt!</p>
+                            <div class="flex gap-3">
+                                <div class="flex items-center justify-center flex-shrink-0 w-8 h-8 text-sm font-bold text-green-700 bg-green-100 rounded-full">3</div>
+                                <div>
+                                    <p class="text-sm text-gray-900 font-600">Finalization</p>
+                                    <p class="mt-1 text-xs text-gray-600">Sign documents & adopt</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 @endif
             </div>
-
-            <!-- Timeline Sidebar -->
-            <div class="bg-white rounded-xl p-6 shadow-md h-fit">
-                <p class="text-xs font-bold text-gray-700 mb-4 uppercase">Timeline</p>
-                <div class="space-y-3">
-                    @if($pet->impounded_date)
-                        <div class="flex gap-3">
-                            <div class="w-2 h-2 rounded-full bg-red-500 mt-1.5 flex-shrink-0"></div>
-                            <div>
-                                <p class="text-xs text-gray-500">Impounded</p>
-                                <p class="text-sm font-semibold text-gray-900">{{ $pet->impounded_date->format('M d, Y') }}</p>
-                            </div>
-                        </div>
-                    @endif
-
-                    @if($pet->decision_date)
-                        <div class="flex gap-3">
-                            <div class="w-2 h-2 rounded-full bg-green-500 mt-1.5 flex-shrink-0"></div>
-                            <div>
-                                <p class="text-xs text-gray-500">Available</p>
-                                <p class="text-sm font-semibold text-gray-900">{{ $pet->decision_date->format('M d, Y') }}</p>
-                            </div>
-                        </div>
-                    @endif
-
-                    @if($pet->remaining_days !== null)
-                        @php $days = max(0, (int)floor($pet->remaining_days)); @endphp
-                        <div class="flex gap-3">
-                            <div class="w-2 h-2 rounded-full {{ $days <= 1 ? 'bg-red-500' : 'bg-yellow-500' }} mt-1.5 flex-shrink-0"></div>
-                            <div>
-                                <p class="text-xs text-gray-500">Remaining</p>
-                                <p class="text-sm font-semibold {{ $days <= 1 ? 'text-red-600' : 'text-gray-900' }}">{{ $days }} day{{ $days !== 1 ? 's' : '' }}</p>
-                            </div>
-                        </div>
-                    @endif
-
-                    <div class="pt-2 border-t border-gray-200 flex gap-3">
-                        <div class="w-2 h-2 rounded-full bg-gray-400 mt-1.5 flex-shrink-0"></div>
-                        <div>
-                            <p class="text-xs text-gray-500">Updated</p>
-                            <p class="text-sm font-semibold text-gray-900">{{ $pet->updated_at->format('M d') }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
-
-        <!-- Description Section -->
-        <div class="bg-white rounded-xl p-6 shadow-md mb-8">
-            <h2 class="text-lg font-bold text-gray-900 mb-3">Description</h2>
-            <p class="text-gray-700 leading-relaxed text-sm">{{ $pet->description ?? 'No description available.' }}</p>
-
-            @if($pet->status === 'adoptable' && !$pet->impounded_date && $pet->adoption_reason)
-                @php
-                    $reasons = [
-                        'surrendered_by_owner' => 'Surrendered by Owner',
-                        'remained_unclaimed' => 'Remained Unclaimed',
-                        'found_by_citizen' => 'Found by Citizen',
-                    ];
-                    $reason = $reasons[$pet->adoption_reason] ?? $pet->adoption_reason;
-                @endphp
-                <div class="mt-4 pt-4 border-t border-gray-200">
-                    <p class="text-xs text-gray-500 font-semibold">How Available</p>
-                    <p class="text-sm font-semibold text-gray-900 mt-1">{{ $reason }}</p>
-                </div>
-            @endif
-        </div>
-
-        <!-- Action Button -->
-        <div class="mb-8 flex flex-wrap gap-3">
-            @auth
-                @if($pet->status === 'adoptable')
-                    <button onclick="openAdoptModal()" class="px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg transition-colors shadow-md">
-                        <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        Start Adoption Application
-                    </button>
-                    <button onclick="openClaimModalFromAdoptable()" class="px-8 py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-lg transition-colors shadow-md">
-                        <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        This is My Pet - Claim It
-                    </button>
-                @elseif($pet->status === 'impounded')
-                    <button onclick="openClaimModal()" class="px-8 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors shadow-md">
-                        <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        Submit Claim Request
-                    </button>
-                @endif
-            @else
-                <a href="{{ route('login') }}" class="inline-block px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors shadow-md text-center">
-                    <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                    </svg>
-                    Log In to Continue
-                </a>
-            @endauth
-        </div>
-
-        <!-- Back Link -->
-        <a href="{{ route('pets.' . $pet->status) }}" class="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold text-sm">
-            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-            </svg>
-            Back to {{ ucfirst($pet->status) }} Pets
-        </a>
     </div>
 </div>
 
 @auth
-{{-- ADOPT MODAL (Retained, but for adoptable pets) --}}
+{{-- ADOPT MODAL (Compact design for better UX) --}}
 @if($pet->status === 'adoptable')
-<div id="adoptModal" class="fixed inset-0 z-50 hidden w-full h-full overflow-y-auto bg-gray-600 bg-opacity-50">
-    <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-4/5 lg:w-3/4 shadow-lg rounded-md bg-white max-h-[90vh] overflow-y-auto">
-        <div class="mt-3">
-            <h3 class="mb-4 text-xl font-bold text-center text-gray-900">City of Alaminos - City Veterinary Department</h3>
-            <h4 class="mb-6 text-lg font-semibold text-center text-gray-800">Pet Adoption Application Form</h4>
-            <p class="mb-6 text-sm text-center text-gray-600">Thank you for your interest in adopting! Please fill out this form completely and honestly.</p>
+<div id="adoptModal" class="fixed inset-0 z-[9999] p-4 bg-black/30 backdrop-blur-sm flex items-center justify-center" style="display: none;">
+    <div class="relative mx-auto p-4 border w-full max-w-2xl shadow-xl rounded-lg bg-white max-h-[95vh] overflow-y-auto">
+        <div class="mb-2">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="text-lg font-bold text-gray-900">Pet Adoption Application</h3>
+                <button onclick="closeAdoptModal()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <p class="mb-4 text-sm text-gray-600">Complete this form to start the adoption process for {{ $pet->display_code }}.</p>
 
             <form action="{{ route('pets.request', $pet) }}" method="POST" enctype="multipart/form-data">
                 @csrf
@@ -300,7 +563,7 @@
                         </div>
                     </div>
                     <div class="mb-4">
-                        <label class="block mb-1 text-sm font-medium text-gray-700">Complete Address (House No., Street, Barangay, City)</label>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Complete Address (House No., Street, e.g., Barangay Poblacion, Cpark)</label>
                         <input name="address" type="text" value="{{ (auth()->user()->street ?? '') . ', ' . (auth()->user()->barangay ?? '') . ', ' . (auth()->user()->city_municipality ?? '') }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
                     </div>
                     <div class="grid grid-cols-1 gap-4 mb-4 md:grid-cols-2">
@@ -312,44 +575,34 @@
                             <label class="block mb-1 text-sm font-medium text-gray-700">Email Address</label>
                             <input name="email" type="email" value="{{ auth()->user()->email ?? '' }}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" readonly>
                         </div>
-
-
-                </div>
                     </div>
-                    {{-- Previously hidden fields removed: visible inputs now have names so values are submitted from profile fields. --}}
 
-                    {{-- ID photo block moved below Date of Birth to match impounded form layout --}}
-                    {{-- <div class="mb-4">
+                    <div class="mb-4">
                         <label class="block mb-1 text-sm font-medium text-gray-700">Date of Birth (MM/DD/YYYY)</label>
-                        <input type="date" name="date_of_birth" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <input
+                            type="date"
+                            name="date_of_birth"
+                            value="{{ auth()->user()->birthday ? auth()->user()->birthday->format('Y-m-d') : '' }}"
+                            required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50"
+                            readonly
+                        >
                     </div>
-                </div> --}}
-                <div>
-    <label class="block mb-1 text-sm font-medium text-gray-700">Date of Birth (MM/DD/YYYY)</label>
-    <input
-        type="date"
-        name="date_of_birth"
-        value="{{ auth()->user()->birthday ? auth()->user()->birthday->format('Y-m-d') : '' }}"
-        required
-        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50"
-        readonly
-    >
-</div>
 
-                                    @if(auth()->user()->id_photo)
+                    @if(auth()->user()->id_photo)
                                         <div class="mb-4">
                                             <label class="block mb-1 text-sm font-medium text-gray-700">ID Photo</label>
                                             <div onclick="document.getElementById('petsShowIdPhotoModal').classList.remove('hidden')"
                                                  class="flex flex-col items-center justify-center w-24 h-16 transition duration-150 ease-in-out bg-black border-2 border-gray-400 rounded cursor-pointer hover:bg-gray-900">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.75 4h2.5a2 2 0 011.664.89l.812 1.22a2 2 0 001.664.89H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.75 4h2.5a2 2 0 011.664.89l.812 1.22a2 2 0 001.664.89H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
                                                 </svg>
                                             </div>
 
                                             <!-- Modal for Full Size ID Photo -->
                                             <div id="petsShowIdPhotoModal"
-                                                 class="fixed inset-0 z-50 items-center justify-center hidden p-4 transition-opacity duration-300 bg-black bg-opacity-80"
+                                                 class="fixed inset-0 z-[9999] flex items-center justify-center hidden p-4 transition-opacity duration-300 bg-black/30 backdrop-blur-sm"
                                                  onclick="if(event.target.id === 'petsShowIdPhotoModal') this.classList.add('hidden')">
                                                 <div class="relative max-w-3xl overflow-hidden bg-white rounded-lg shadow-2xl">
                                                     <div class="sticky top-0 z-10 flex items-center justify-between p-3 bg-white border-b border-gray-200">
@@ -375,6 +628,7 @@
                                             <p class="text-sm text-yellow-800"><strong>Note:</strong> You haven't uploaded an ID photo yet. Please upload one in your <a href="{{ route('profile.edit') }}" class="text-blue-600 underline hover:text-blue-800">profile settings</a> for faster verification.</p>
                                         </div>
                                     @endif
+                </div>
 
                 <div class="mb-8">
                     <h5 class="pb-2 mb-4 text-lg font-semibold text-gray-800 border-b">Section 2: Household Information</h5>
@@ -526,8 +780,20 @@
 
                 <div class="mb-6">
                     <label class="block mb-2 text-sm font-medium text-gray-700">Home Environment Photos (Optional - 2-3 photos)</label>
-                    <input type="file" name="photos[]" multiple accept="image/*" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-                    <p class="mt-1 text-sm text-gray-500">Upload photos of your home environment to help us assess suitability.</p>
+                    <div id="adoptPhoto-dropzone" class="p-6 text-center transition-colors duration-200 border-2 border-gray-300 border-dashed cursor-pointer rounded-xl hover:border-green-400 hover:bg-green-50">
+                        <input type="file" name="photos[]" multiple accept="image/*" class="hidden" id="adoptPhotoUpload">
+                        <label for="adoptPhotoUpload" class="block cursor-pointer">
+                            <svg class="w-10 h-10 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            <p class="font-medium text-green-600">Drag and drop or click to upload</p>
+                            <p class="mt-1 text-sm text-gray-500">PNG, JPG up to 50MB</p>
+                        </label>
+                    </div>
+                    <div id="adoptPhotoPreview" class="mt-4" style="display: none;">
+                        <p class="mb-2 text-sm font-medium text-gray-700">Uploaded Photos:</p>
+                        <div id="adoptPhotoGrid" class="grid grid-cols-3 gap-3"></div>
+                    </div>
                 </div>
 
                 <div class="flex justify-end space-x-3">
@@ -538,24 +804,52 @@
         </div>
     </div>
 </div>
+
+<!-- Adopt Photo Carousel Modal -->
+<div id="adoptPhotoCarousel" class="fixed inset-0 z-[9999] p-4 bg-black/30 backdrop-blur-sm flex items-center justify-center" style="display: none;" onclick="if(event.target.id === 'adoptPhotoCarousel') closeAdoptPhotoCarousel()">
+    <div class="relative w-full max-w-2xl max-h-[85vh]">
+        <button onclick="closeAdoptPhotoCarousel()" class="absolute right-0 z-10 text-gray-100 -top-10 hover:text-white">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+        <button id="adoptCarouselPrev" type="button" onclick="prevAdoptPhoto()" class="absolute px-3 py-2 text-white -translate-y-1/2 rounded-lg -left-12 top-1/2 bg-black/30 hover:bg-black/50">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+        <button id="adoptCarouselNext" type="button" onclick="nextAdoptPhoto()" class="absolute px-3 py-2 text-white -translate-y-1/2 rounded-lg -right-12 top-1/2 bg-black/30 hover:bg-black/50">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </button>
+        <img id="adoptCarouselImage" src="" alt="Photo" class="w-full h-auto rounded-lg shadow-2xl">
+        <div class="mt-3 text-center">
+            <p id="adoptCarouselCounter" class="text-sm text-white"></p>
+        </div>
+    </div>
+</div>
 @endif
 
-{{-- CLAIM MODAL FOR ADOPTABLE PETS (when user saw it late and wants to claim it) --}}
+{{-- CLAIM MODAL FOR ADOPTABLE PETS (Compact design) --}}
 @if($pet->status === 'adoptable')
-<div id="claimModalFromAdoptable" class="fixed inset-0 z-50 hidden w-full h-full overflow-y-auto bg-gray-600 bg-opacity-50">
-    <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-4/5 lg:w-3/4 shadow-lg rounded-md bg-white max-h-[90vh] overflow-y-auto">
-        <div class="mt-3">
-            <h3 class="mb-4 text-xl font-bold text-center text-gray-900">City of Alaminos - City Veterinary Department</h3>
-            <h4 class="mb-6 text-lg font-semibold text-center text-gray-800">Claim Request Form</h4>
-            <p class="mb-6 text-sm text-center text-gray-600">If this is your pet, please submit a claim with proof of ownership.</p>
-
-            <div class="p-3 mb-4 border border-orange-200 rounded-lg bg-orange-50">
-                <p class="text-xs text-orange-700 text-center"><strong>⏰ Late Discovery:</strong> This pet is now in our adoptable collection. Submit your claim with proof of ownership and the vet department will help sort this out.</p>
+<div id="claimModalFromAdoptable" class="fixed inset-0 z-[9999] p-4 bg-black/30 backdrop-blur-sm flex items-center justify-center" style="display: none;">
+    <div class="relative mx-auto p-4 border w-full max-w-2xl shadow-xl rounded-lg bg-white max-h-[95vh] overflow-y-auto">
+        <div class="mb-2">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="text-lg font-bold text-gray-900">Claim Request Form</h3>
+                <button onclick="closeClaimModalFromAdoptable()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
             </div>
-            <div class="p-3 mb-4 border border-blue-200 rounded-lg bg-blue-50">
-                <p class="text-xs text-blue-700 text-center"><strong>⚡ Quick Process:</strong> Submit this form (takes just 2 minutes!) and visit the vet department with your proofs for instant review.</p>
+            <div class="mb-4 space-y-3">
+                <div class="p-3 border border-orange-200 rounded-lg bg-orange-50">
+                    <p class="text-xs text-orange-700"><strong>Late Discovery:</strong> This pet is now adoptable. Submit your claim with proof of ownership.</p>
+                </div>
+                <p class="text-sm text-gray-600">Complete this form to claim {{ $pet->display_code }} as your pet.</p>
             </div>
-            <p class="mb-4 text-sm text-center text-gray-600">Use the website to register your claim, then visit with your proofs for verification and resolution.</p>
 
             <form action="{{ route('pets.request', $pet) }}" method="POST" enctype="multipart/form-data">
                 @csrf
@@ -601,7 +895,7 @@
                         <div class="mb-3">
                             <label class="block mb-1 text-xs font-medium text-gray-700">ID Photo</label>
                             <div onclick="document.getElementById('petsClaimIdPhotoModalAdoptable').classList.remove('hidden')"
-                                 class="flex flex-col items-center justify-center w-20 h-14 transition duration-150 ease-in-out bg-black border-2 border-gray-400 rounded cursor-pointer hover:bg-gray-900">
+                                 class="flex flex-col items-center justify-center w-20 transition duration-150 ease-in-out bg-black border-2 border-gray-400 rounded cursor-pointer h-14 hover:bg-gray-900">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.75 4h2.5a2 2 0 011.664.89l.812 1.22a2 2 0 001.664.89H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -610,7 +904,7 @@
 
                             <!-- Modal for Full Size ID Photo -->
                             <div id="petsClaimIdPhotoModalAdoptable"
-                                 class="fixed inset-0 z-50 items-center justify-center hidden p-4 transition-opacity duration-300 bg-black bg-opacity-80"
+                                 class="fixed inset-0 z-[9999] flex items-center justify-center hidden p-4 transition-opacity duration-300 bg-black/30 backdrop-blur-sm"
                                  onclick="if(event.target.id === 'petsClaimIdPhotoModalAdoptable') this.classList.add('hidden')">
                                 <div class="relative max-w-3xl overflow-hidden bg-white rounded-lg shadow-2xl">
                                     <div class="sticky top-0 z-10 flex items-center justify-between p-3 bg-white border-b border-gray-200">
@@ -643,7 +937,20 @@
 
                     <div class="mb-3">
                         <label class="block mb-1 text-xs font-medium text-gray-700">Upload proof (vet records, photos, barangay reg, etc.)</label>
-                        <input type="file" name="photos[]" multiple accept="image/*, .pdf" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500">
+                        <div id="adoptableClaimPhoto-dropzone" class="p-4 text-center transition-colors duration-200 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:border-orange-400 hover:bg-orange-50">
+                            <input type="file" name="photos[]" multiple accept="image/*, .pdf" class="hidden" id="adoptableClaimPhotoUpload">
+                            <label for="adoptableClaimPhotoUpload" class="block cursor-pointer">
+                                <svg class="w-8 h-8 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <p class="text-sm font-medium text-orange-600">Drag and drop or click to upload</p>
+                                <p class="mt-0.5 text-xs text-gray-500">PNG, JPG, PDF up to 50MB</p>
+                            </label>
+                        </div>
+                        <div id="adoptableClaimPhotoPreview" class="mt-3" style="display: none;">
+                            <p class="mb-2 text-xs font-medium text-gray-700">Uploaded Files:</p>
+                            <div id="adoptableClaimPhotoGrid" class="grid grid-cols-3 gap-2"></div>
+                        </div>
                     </div>
 
                     <div class="space-y-2 text-xs">
@@ -666,22 +973,52 @@
         </div>
     </div>
 </div>
+
+<!-- Adoptable Claim Photo Carousel Modal -->
+<div id="adoptableClaimPhotoCarousel" class="fixed inset-0 z-[9999] p-4 bg-black/30 backdrop-blur-sm flex items-center justify-center" style="display: none;" onclick="if(event.target.id === 'adoptableClaimPhotoCarousel') closeAdoptableClaimPhotoCarousel()">
+    <div class="relative w-full max-w-2xl max-h-[85vh]">
+        <button onclick="closeAdoptableClaimPhotoCarousel()" class="absolute right-0 z-10 text-gray-100 -top-10 hover:text-white">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+        <button id="adoptableClaimCarouselPrev" type="button" onclick="prevAdoptableClaimPhoto()" class="absolute px-3 py-2 text-white -translate-y-1/2 rounded-lg -left-12 top-1/2 bg-black/30 hover:bg-black/50">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+        <button id="adoptableClaimCarouselNext" type="button" onclick="nextAdoptableClaimPhoto()" class="absolute px-3 py-2 text-white -translate-y-1/2 rounded-lg -right-12 top-1/2 bg-black/30 hover:bg-black/50">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </button>
+        <img id="adoptableClaimCarouselImage" src="" alt="Photo" class="w-full h-auto rounded-lg shadow-2xl">
+        <div class="mt-3 text-center">
+            <p id="adoptableClaimCarouselCounter" class="text-sm text-white"></p>
+        </div>
+    </div>
+</div>
 @endif
 
-{{-- CLAIM MODAL (Revised to be much simpler and only for claiming) --}}
+{{-- CLAIM MODAL (Compact design for impounded pets) --}}
 @if($pet->status === 'impounded')
-<div id="claimModal" class="fixed inset-0 z-50 hidden w-full h-full overflow-y-auto bg-gray-600 bg-opacity-50">
-    <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/5 lg:w-1/2 shadow-lg rounded-md bg-white max-h-[90vh] overflow-y-auto">
-        <div class="mt-3">
-            <h3 class="mb-4 text-xl font-bold text-center text-gray-900">City of Alaminos - City Veterinary Department</h3>
-            <h4 class="mb-2 text-lg font-semibold text-center text-gray-800">Quick Pet Claim Request</h4>
-            <div class="p-3 mb-4 border border-red-200 rounded-lg bg-red-50">
-                <p class="text-xs text-red-700 text-center"><strong>💰 Claim Fees:</strong> ₱1,025 base fine + ₱150/day if delayed beyond the deadline</p>
+<div id="claimModal" class="fixed inset-0 z-[9999] p-4 bg-black/30 backdrop-blur-sm flex items-center justify-center" style="display: none;">
+    <div class="relative mx-auto p-4 border w-full max-w-2xl shadow-xl rounded-lg bg-white max-h-[95vh] overflow-y-auto">
+        <div class="mb-2">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="text-lg font-bold text-gray-900">Pet Claim Request</h3>
+                <button onclick="closeClaimModal()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
             </div>
-            <div class="p-3 mb-4 border border-blue-200 rounded-lg bg-blue-50">
-                <p class="text-xs text-blue-700 text-center"><strong>⚡ Quick Process:</strong> Submit this form (takes just 2 minutes!) and you can bring your proofs directly to the vet department. Admin will approve your request instantly.</p>
+            <div class="mb-4 space-y-3">
+                <div class="p-3 border border-red-200 rounded-lg bg-red-50">
+                    <p class="text-xs text-red-700"><strong>Claim Fees:</strong> ₱1,025 base fine + ₱150/day if delayed beyond the deadline</p>
+                </div>
+                <p class="text-sm text-gray-600">Complete this form to claim {{ $pet->display_code }} as your pet.</p>
             </div>
-            <p class="mb-4 text-sm text-center text-gray-600">No need to wait - use the website to register your claim, then visit with your proofs for instant approval and pet release.</p>
 
                 <form action="{{ route('pets.request', $pet) }}" method="POST" enctype="multipart/form-data">
                 @csrf
@@ -728,7 +1065,7 @@
                         <div class="mb-3">
                             <label class="block mb-1 text-xs font-medium text-gray-700">ID Photo</label>
                             <div onclick="document.getElementById('petsShowIdPhotoModal2').classList.remove('hidden')"
-                                 class="flex flex-col items-center justify-center w-20 h-14 transition duration-150 ease-in-out bg-black border-2 border-gray-400 rounded cursor-pointer hover:bg-gray-900">
+                                 class="flex flex-col items-center justify-center w-20 transition duration-150 ease-in-out bg-black border-2 border-gray-400 rounded cursor-pointer h-14 hover:bg-gray-900">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.75 4h2.5a2 2 0 011.664.89l.812 1.22a2 2 0 001.664.89H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -737,7 +1074,7 @@
 
                             <!-- Modal for Full Size ID Photo -->
                             <div id="petsShowIdPhotoModal2"
-                                 class="fixed inset-0 z-50 items-center justify-center hidden p-4 transition-opacity duration-300 bg-black bg-opacity-80"
+                                 class="fixed inset-0 z-[9999] flex items-center justify-center hidden p-4 transition-opacity duration-300 bg-black/30 backdrop-blur-sm"
                                  onclick="if(event.target.id === 'petsShowIdPhotoModal2') this.classList.add('hidden')">
                                 <div class="relative max-w-3xl overflow-hidden bg-white rounded-lg shadow-2xl">
                                     <div class="sticky top-0 z-10 flex items-center justify-between p-3 bg-white border-b border-gray-200">
@@ -770,7 +1107,20 @@
 
                     <div class="mb-3">
                         <label class="block mb-1 text-xs font-medium text-gray-700">Upload proof (vet records, photos, barangay reg, etc.)</label>
-                        <input type="file" name="photos[]" multiple accept="image/*, .pdf" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                        <div id="impoundedClaimPhoto-dropzone" class="p-4 text-center transition-colors duration-200 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:border-red-400 hover:bg-red-50">
+                            <input type="file" name="photos[]" multiple accept="image/*, .pdf" class="hidden" id="impoundedClaimPhotoUpload">
+                            <label for="impoundedClaimPhotoUpload" class="block cursor-pointer">
+                                <svg class="w-8 h-8 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <p class="text-sm font-medium text-red-600">Drag and drop or click to upload</p>
+                                <p class="mt-0.5 text-xs text-gray-500">PNG, JPG, PDF up to 50MB</p>
+                            </label>
+                        </div>
+                        <div id="impoundedClaimPhotoPreview" class="mt-3" style="display: none;">
+                            <p class="mb-2 text-xs font-medium text-gray-700">Uploaded Files:</p>
+                            <div id="impoundedClaimPhotoGrid" class="grid grid-cols-3 gap-2"></div>
+                        </div>
                     </div>
 
                     <div class="space-y-2 text-xs">
@@ -793,28 +1143,569 @@
         </div>
     </div>
 </div>
+
+<!-- Impounded Claim Photo Carousel Modal -->
+<div id="impoundedClaimPhotoCarousel" class="fixed inset-0 z-[9999] p-4 bg-black/30 backdrop-blur-sm flex items-center justify-center" style="display: none;" onclick="if(event.target.id === 'impoundedClaimPhotoCarousel') closeImpoundedClaimPhotoCarousel()">
+    <div class="relative w-full max-w-2xl max-h-[85vh]">
+        <button onclick="closeImpoundedClaimPhotoCarousel()" class="absolute right-0 z-10 text-gray-100 -top-10 hover:text-white">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+        <button id="impoundedClaimCarouselPrev" type="button" onclick="prevImpoundedClaimPhoto()" class="absolute px-3 py-2 text-white -translate-y-1/2 rounded-lg -left-12 top-1/2 bg-black/30 hover:bg-black/50">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+        <button id="impoundedClaimCarouselNext" type="button" onclick="nextImpoundedClaimPhoto()" class="absolute px-3 py-2 text-white -translate-y-1/2 rounded-lg -right-12 top-1/2 bg-black/30 hover:bg-black/50">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </button>
+        <img id="impoundedClaimCarouselImage" src="" alt="Photo" class="w-full h-auto rounded-lg shadow-2xl">
+        <div class="mt-3 text-center">
+            <p id="impoundedClaimCarouselCounter" class="text-sm text-white"></p>
+        </div>
+    </div>
+</div>
 @endif
 @endauth
+
+@if($pet->photo)
+<!-- Pet Photo Modal -->
+<div id="petPhotoModal" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm" style="display: none;" onclick="closePetPhotoModal()">
+    <button onclick="closePetPhotoModal()" class="absolute text-white top-6 right-6 hover:text-gray-100">
+        <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    </button>
+    <img src="{{ asset('storage/' . $pet->photo) }}" alt="Full Size Pet Photo" class="max-w-4xl max-h-[85vh] rounded-lg shadow-2xl">
+</div>
+@endif
 
 <script>
     // Assuming you have these JavaScript functions to control the modals
     function openAdoptModal() {
-        document.getElementById('adoptModal').classList.remove('hidden');
+        const modal = document.getElementById('adoptModal');
+        if (modal) modal.style.display = 'flex';
     }
     function closeAdoptModal() {
-        document.getElementById('adoptModal').classList.add('hidden');
+        const modal = document.getElementById('adoptModal');
+        if (modal) modal.style.display = 'none';
     }
     function openClaimModal() {
-        document.getElementById('claimModal').classList.remove('hidden');
+        const modal = document.getElementById('claimModal');
+        if (modal) modal.style.display = 'flex';
     }
     function openClaimModalFromAdoptable() {
-        document.getElementById('claimModalFromAdoptable').classList.remove('hidden');
+        try {
+            console.log('openClaimModalFromAdoptable called');
+            const modal = document.getElementById('claimModalFromAdoptable');
+            console.log('Modal element:', modal);
+            if (modal) {
+                modal.style.display = 'flex';
+                console.log('Modal display set to flex');
+            } else {
+                console.error('Modal element not found!');
+            }
+        } catch(e) {
+            console.error('Error in openClaimModalFromAdoptable:', e);
+        }
     }
     function closeClaimModal() {
-        document.getElementById('claimModal').classList.add('hidden');
+        const modal = document.getElementById('claimModal');
+        if (modal) modal.style.display = 'none';
     }
     function closeClaimModalFromAdoptable() {
-        document.getElementById('claimModalFromAdoptable').classList.add('hidden');
+        const modal = document.getElementById('claimModalFromAdoptable');
+        if (modal) {
+            modal.style.display = 'none';
+        }
     }
+
+    // Button event listeners
+    // Simple handlers for adoptable pet buttons
+    function handleAdoptBtnClick(event) {
+        console.log('Adopt button clicked');
+        // Close claim modal if it's open
+        const claimModal = document.getElementById('claimModalFromAdoptable');
+        if (claimModal) {
+            claimModal.style.display = 'none';
+        }
+        // Open adoption modal
+        const adoptModal = document.getElementById('adoptModal');
+        if (adoptModal) {
+            adoptModal.style.display = 'flex';
+        }
+    }
+
+    function handleClaimAdoptableBtnClick(event) {
+        console.log('=== Claim Button Click Handler ===');
+        console.log('Claim adoptable button clicked');
+        console.log('Event:', event);
+
+        // Close adoption modal if it's open
+        const adoptModal = document.getElementById('adoptModal');
+        console.log('Adopt modal found:', adoptModal);
+        if (adoptModal) {
+            console.log('Closing adopt modal');
+            adoptModal.style.display = 'none';
+        }
+
+        // Open claim modal
+        console.log('About to call openClaimModalFromAdoptable()');
+        openClaimModalFromAdoptable();
+        console.log('=== End Claim Click Handler ===');
+    }
+
+    function openPetPhotoModal() {
+        const modal = document.getElementById('petPhotoModal');
+        if (modal) modal.style.display = 'flex';
+    }
+
+    function closePetPhotoModal() {
+        const modal = document.getElementById('petPhotoModal');
+        if (modal) modal.style.display = 'none';
+    }
+
+    // Close modal when clicking outside the image
+    const petPhotoModalElement = document.getElementById('petPhotoModal');
+    if (petPhotoModalElement) {
+        petPhotoModalElement.addEventListener('click', function(event) {
+            if (event.target === this) {
+                closePetPhotoModal();
+            }
+        });
+    }
+
+    // Enhanced keyboard event listener for backspace key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Backspace') {
+            // Check pet photo modal first
+            const petModal = document.getElementById('petPhotoModal');
+            if (petModal && !petModal.classList.contains('hidden')) {
+                closePetPhotoModal();
+                return;
+            }
+
+            // Check ID photo modals
+            const idPhotoModal1 = document.getElementById('petsShowIdPhotoModal');
+            if (idPhotoModal1 && !idPhotoModal1.classList.contains('hidden')) {
+                idPhotoModal1.classList.add('hidden');
+                return;
+            }
+
+            const idPhotoModal2 = document.getElementById('petsClaimIdPhotoModalAdoptable');
+            if (idPhotoModal2 && !idPhotoModal2.classList.contains('hidden')) {
+                idPhotoModal2.classList.add('hidden');
+                return;
+            }
+
+            const idPhotoModal3 = document.getElementById('petsShowIdPhotoModal2');
+            if (idPhotoModal3 && !idPhotoModal3.classList.contains('hidden')) {
+                idPhotoModal3.classList.add('hidden');
+                return;
+            }
+
+            // Check adoption modal
+            const adoptModal = document.getElementById('adoptModal');
+            if (adoptModal && !adoptModal.classList.contains('hidden')) {
+                closeAdoptModal();
+                return;
+            }
+
+            // Check claim modal for adoptable
+            const claimModalAdoptable = document.getElementById('claimModalFromAdoptable');
+            if (claimModalAdoptable && !claimModalAdoptable.classList.contains('hidden')) {
+                closeClaimModalFromAdoptable();
+                return;
+            }
+
+            // Check claim modal for impounded
+            const claimModal = document.getElementById('claimModal');
+            if (claimModal && !claimModal.classList.contains('hidden')) {
+                closeClaimModal();
+                return;
+            }
+        }
+
+        // Also handle escape key
+        if (event.key === 'Escape') {
+            closePetPhotoModal();
+            // Close ID photo modals
+            const idPhotoModal1 = document.getElementById('petsShowIdPhotoModal');
+            if (idPhotoModal1) idPhotoModal1.classList.add('hidden');
+
+            const idPhotoModal2 = document.getElementById('petsClaimIdPhotoModalAdoptable');
+            if (idPhotoModal2) idPhotoModal2.classList.add('hidden');
+
+            const idPhotoModal3 = document.getElementById('petsShowIdPhotoModal2');
+            if (idPhotoModal3) idPhotoModal3.classList.add('hidden');
+
+            closeAdoptModal();
+            closeClaimModalFromAdoptable();
+            closeClaimModal();
+        }
+    });
+
+    // Photo upload handlers for all three forms
+    const adoptPhotoUpload = document.getElementById('adoptPhotoUpload');
+    const adoptableClaimPhotoUpload = document.getElementById('adoptableClaimPhotoUpload');
+    const impoundedClaimPhotoUpload = document.getElementById('impoundedClaimPhotoUpload');
+
+    // Store uploaded photos for each form
+    let adoptPhotos = [];
+    let adoptableClaimPhotos = [];
+    let impoundedClaimPhotos = [];
+
+    // Adoption form photo handlers
+    if (adoptPhotoUpload) {
+        const adoptDropzone = document.getElementById('adoptPhoto-dropzone');
+        if (adoptDropzone) {
+        adoptDropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            adoptDropzone.style.backgroundColor = '#f0fdf4';
+            adoptDropzone.style.borderColor = '#4ade80';
+        });
+        adoptDropzone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            adoptDropzone.style.backgroundColor = '';
+            adoptDropzone.style.borderColor = '#d1d5db';
+        });
+        adoptDropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            adoptDropzone.style.backgroundColor = '';
+            adoptDropzone.style.borderColor = '#d1d5db';
+            handleAdoptPhotoSelect(e.dataTransfer.files);
+        });
+        adoptPhotoUpload.addEventListener('change', (e) => {
+            handleAdoptPhotoSelect(e.target.files);
+        });
+        }
+    }
+
+    function handleAdoptPhotoSelect(files) {
+        adoptPhotos = Array.from(files);
+        const dataTransfer = new DataTransfer();
+        adoptPhotos.forEach(f => dataTransfer.items.add(f));
+        adoptPhotoUpload.files = dataTransfer.files;
+        updateAdoptPhotoPreview();
+    }
+
+    function updateAdoptPhotoPreview() {
+        if (adoptPhotos.length === 0) {
+            document.getElementById('adoptPhotoPreview').style.display = 'none';
+            return;
+        }
+        document.getElementById('adoptPhotoPreview').style.display = 'block';
+        const grid = document.getElementById('adoptPhotoGrid');
+        grid.innerHTML = '';
+        adoptPhotos.forEach((file, index) => {
+            const div = document.createElement('div');
+            div.className = 'relative overflow-hidden border border-gray-200 rounded-lg cursor-pointer';
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                div.innerHTML = `<img src="${e.target.result}" alt="Photo ${index+1}" class="object-cover w-full h-24 hover:opacity-75" onclick="openAdoptPhotoCarousel(${index})">
+                    <button type="button" onclick="removeAdoptPhoto(${index})" class="absolute flex items-center justify-center w-6 h-6 text-sm text-white bg-red-500 rounded-full top-1 right-1 hover:bg-red-600">×</button>`;
+            };
+            reader.readAsDataURL(file);
+            grid.appendChild(div);
+        });
+    }
+
+    function removeAdoptPhoto(index) {
+        adoptPhotos.splice(index, 1);
+        const dataTransfer = new DataTransfer();
+        adoptPhotos.forEach(f => dataTransfer.items.add(f));
+        adoptPhotoUpload.files = dataTransfer.files;
+        updateAdoptPhotoPreview();
+    }
+
+    // Adoptable claim form photo handlers
+    if (adoptableClaimPhotoUpload) {
+        const dropzone = document.getElementById('adoptableClaimPhoto-dropzone');
+        if (dropzone) {
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.style.backgroundColor = '#fffbeb';
+            dropzone.style.borderColor = '#fb923c';
+        });
+        dropzone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropzone.style.backgroundColor = '';
+            dropzone.style.borderColor = '#d1d5db';
+        });
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.style.backgroundColor = '';
+            dropzone.style.borderColor = '#d1d5db';
+            handleAdoptableClaimPhotoSelect(e.dataTransfer.files);
+        });
+        adoptableClaimPhotoUpload.addEventListener('change', (e) => {
+            handleAdoptableClaimPhotoSelect(e.target.files);
+        });
+        }
+    }
+
+    function handleAdoptableClaimPhotoSelect(files) {
+        adoptableClaimPhotos = Array.from(files);
+        const dataTransfer = new DataTransfer();
+        adoptableClaimPhotos.forEach(f => dataTransfer.items.add(f));
+        adoptableClaimPhotoUpload.files = dataTransfer.files;
+        updateAdoptableClaimPhotoPreview();
+    }
+
+    function updateAdoptableClaimPhotoPreview() {
+        if (adoptableClaimPhotos.length === 0) {
+            document.getElementById('adoptableClaimPhotoPreview').style.display = 'none';
+            return;
+        }
+        document.getElementById('adoptableClaimPhotoPreview').style.display = 'block';
+        const grid = document.getElementById('adoptableClaimPhotoGrid');
+        grid.innerHTML = '';
+        adoptableClaimPhotos.forEach((file, index) => {
+            const div = document.createElement('div');
+            div.className = 'relative overflow-hidden border border-gray-200 rounded-lg cursor-pointer';
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                div.innerHTML = `<img src="${e.target.result}" alt="File ${index+1}" class="object-cover w-full h-16 hover:opacity-75" onclick="openAdoptableClaimPhotoCarousel(${index})">
+                    <button type="button" onclick="removeAdoptableClaimPhoto(${index})" class="absolute top-0.5 right-0.5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600">×</button>`;
+            };
+            reader.readAsDataURL(file);
+            grid.appendChild(div);
+        });
+    }
+
+    function removeAdoptableClaimPhoto(index) {
+        adoptableClaimPhotos.splice(index, 1);
+        const dataTransfer = new DataTransfer();
+        adoptableClaimPhotos.forEach(f => dataTransfer.items.add(f));
+        adoptableClaimPhotoUpload.files = dataTransfer.files;
+        updateAdoptableClaimPhotoPreview();
+    }
+
+    // Impounded claim form photo handlers
+    if (impoundedClaimPhotoUpload) {
+        const dropzone = document.getElementById('impoundedClaimPhoto-dropzone');
+        if (dropzone) {
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.style.backgroundColor = '#fef2f2';
+            dropzone.style.borderColor = '#f87171';
+        });
+        dropzone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropzone.style.backgroundColor = '';
+            dropzone.style.borderColor = '#d1d5db';
+        });
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.style.backgroundColor = '';
+            dropzone.style.borderColor = '#d1d5db';
+            handleImpoundedClaimPhotoSelect(e.dataTransfer.files);
+        });
+        impoundedClaimPhotoUpload.addEventListener('change', (e) => {
+            handleImpoundedClaimPhotoSelect(e.target.files);
+        });
+        }
+    }
+
+    function handleImpoundedClaimPhotoSelect(files) {
+        impoundedClaimPhotos = Array.from(files);
+        const dataTransfer = new DataTransfer();
+        impoundedClaimPhotos.forEach(f => dataTransfer.items.add(f));
+        impoundedClaimPhotoUpload.files = dataTransfer.files;
+        updateImpoundedClaimPhotoPreview();
+    }
+
+    function updateImpoundedClaimPhotoPreview() {
+        if (impoundedClaimPhotos.length === 0) {
+            document.getElementById('impoundedClaimPhotoPreview').style.display = 'none';
+            return;
+        }
+        document.getElementById('impoundedClaimPhotoPreview').style.display = 'block';
+        const grid = document.getElementById('impoundedClaimPhotoGrid');
+        grid.innerHTML = '';
+        impoundedClaimPhotos.forEach((file, index) => {
+            const div = document.createElement('div');
+            div.className = 'relative overflow-hidden border border-gray-200 rounded-lg cursor-pointer';
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                div.innerHTML = `<img src="${e.target.result}" alt="File ${index+1}" class="object-cover w-full h-16 hover:opacity-75" onclick="openImpoundedClaimPhotoCarousel(${index})">
+                    <button type="button" onclick="removeImpoundedClaimPhoto(${index})" class="absolute top-0.5 right-0.5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600">×</button>`;
+            };
+            reader.readAsDataURL(file);
+            grid.appendChild(div);
+        });
+    }
+
+    function removeImpoundedClaimPhoto(index) {
+        impoundedClaimPhotos.splice(index, 1);
+        const dataTransfer = new DataTransfer();
+        impoundedClaimPhotos.forEach(f => dataTransfer.items.add(f));
+        impoundedClaimPhotoUpload.files = dataTransfer.files;
+        updateImpoundedClaimPhotoPreview();
+    }
+
+    // Carousel functions
+    let adoptCurrentIndex = 0;
+    let adoptableClaimCurrentIndex = 0;
+    let impoundedClaimCurrentIndex = 0;
+
+    function openAdoptPhotoCarousel(index) {
+        if (adoptPhotos.length === 0) return;
+        adoptCurrentIndex = index;
+        updateAdoptCarousel();
+        const modal = document.getElementById('adoptPhotoCarousel');
+        if (modal) modal.style.display = 'flex';
+    }
+
+    function updateAdoptCarousel() {
+        const file = adoptPhotos[adoptCurrentIndex];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            document.getElementById('adoptCarouselImage').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+        document.getElementById('adoptCarouselCounter').textContent = `${adoptCurrentIndex + 1} / ${adoptPhotos.length}`;
+        document.getElementById('adoptCarouselPrev').style.display = adoptPhotos.length > 1 ? 'block' : 'none';
+        document.getElementById('adoptCarouselNext').style.display = adoptPhotos.length > 1 ? 'block' : 'none';
+    }
+
+    function nextAdoptPhoto() {
+        adoptCurrentIndex = (adoptCurrentIndex + 1) % adoptPhotos.length;
+        updateAdoptCarousel();
+    }
+
+    function prevAdoptPhoto() {
+        adoptCurrentIndex = (adoptCurrentIndex - 1 + adoptPhotos.length) % adoptPhotos.length;
+        updateAdoptCarousel();
+    }
+
+    function closeAdoptPhotoCarousel() {
+        const modal = document.getElementById('adoptPhotoCarousel');
+        if (modal) modal.style.display = 'none';
+    }
+
+    function openAdoptableClaimPhotoCarousel(index) {
+        if (adoptableClaimPhotos.length === 0) return;
+        adoptableClaimCurrentIndex = index;
+        updateAdoptableClaimCarousel();
+        const modal = document.getElementById('adoptableClaimPhotoCarousel');
+        if (modal) modal.style.display = 'flex';
+    }
+
+    function updateAdoptableClaimCarousel() {
+        const file = adoptableClaimPhotos[adoptableClaimCurrentIndex];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            document.getElementById('adoptableClaimCarouselImage').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+        document.getElementById('adoptableClaimCarouselCounter').textContent = `${adoptableClaimCurrentIndex + 1} / ${adoptableClaimPhotos.length}`;
+        document.getElementById('adoptableClaimCarouselPrev').style.display = adoptableClaimPhotos.length > 1 ? 'block' : 'none';
+        document.getElementById('adoptableClaimCarouselNext').style.display = adoptableClaimPhotos.length > 1 ? 'block' : 'none';
+    }
+
+    function nextAdoptableClaimPhoto() {
+        adoptableClaimCurrentIndex = (adoptableClaimCurrentIndex + 1) % adoptableClaimPhotos.length;
+        updateAdoptableClaimCarousel();
+    }
+
+    function prevAdoptableClaimPhoto() {
+        adoptableClaimCurrentIndex = (adoptableClaimCurrentIndex - 1 + adoptableClaimPhotos.length) % adoptableClaimPhotos.length;
+        updateAdoptableClaimCarousel();
+    }
+
+    function closeAdoptableClaimPhotoCarousel() {
+        const modal = document.getElementById('adoptableClaimPhotoCarousel');
+        if (modal) modal.style.display = 'none';
+    }
+
+    function openImpoundedClaimPhotoCarousel(index) {
+        if (impoundedClaimPhotos.length === 0) return;
+        impoundedClaimCurrentIndex = index;
+        updateImpoundedClaimCarousel();
+        const modal = document.getElementById('impoundedClaimPhotoCarousel');
+        if (modal) modal.style.display = 'flex';
+    }
+
+    function updateImpoundedClaimCarousel() {
+        const file = impoundedClaimPhotos[impoundedClaimCurrentIndex];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            document.getElementById('impoundedClaimCarouselImage').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+        document.getElementById('impoundedClaimCarouselCounter').textContent = `${impoundedClaimCurrentIndex + 1} / ${impoundedClaimPhotos.length}`;
+        document.getElementById('impoundedClaimCarouselPrev').style.display = impoundedClaimPhotos.length > 1 ? 'block' : 'none';
+        document.getElementById('impoundedClaimCarouselNext').style.display = impoundedClaimPhotos.length > 1 ? 'block' : 'none';
+    }
+
+    function nextImpoundedClaimPhoto() {
+        impoundedClaimCurrentIndex = (impoundedClaimCurrentIndex + 1) % impoundedClaimPhotos.length;
+        updateImpoundedClaimCarousel();
+    }
+
+    function prevImpoundedClaimPhoto() {
+        impoundedClaimCurrentIndex = (impoundedClaimCurrentIndex - 1 + impoundedClaimPhotos.length) % impoundedClaimPhotos.length;
+        updateImpoundedClaimCarousel();
+    }
+
+    function closeImpoundedClaimPhotoCarousel() {
+        const modal = document.getElementById('impoundedClaimPhotoCarousel');
+        if (modal) modal.style.display = 'none';
+    }
+
+    // Keyboard navigation for carousels
+    document.addEventListener('keydown', function(event) {
+        // Adopt photo carousel
+        const adoptCarousel = document.getElementById('adoptPhotoCarousel');
+        if (adoptCarousel && !adoptCarousel.classList.contains('hidden')) {
+            if (event.key === 'ArrowLeft') {
+                prevAdoptPhoto();
+                event.preventDefault();
+            } else if (event.key === 'ArrowRight') {
+                nextAdoptPhoto();
+                event.preventDefault();
+            } else if (event.key === 'Escape') {
+                closeAdoptPhotoCarousel();
+                event.preventDefault();
+            }
+            return;
+        }
+
+        // Adoptable claim photo carousel
+        const adoptableClaimCarousel = document.getElementById('adoptableClaimPhotoCarousel');
+        if (adoptableClaimCarousel && !adoptableClaimCarousel.classList.contains('hidden')) {
+            if (event.key === 'ArrowLeft') {
+                prevAdoptableClaimPhoto();
+                event.preventDefault();
+            } else if (event.key === 'ArrowRight') {
+                nextAdoptableClaimPhoto();
+                event.preventDefault();
+            } else if (event.key === 'Escape') {
+                closeAdoptableClaimPhotoCarousel();
+                event.preventDefault();
+            }
+            return;
+        }
+
+        // Impounded claim photo carousel
+        const impoundedClaimCarousel = document.getElementById('impoundedClaimPhotoCarousel');
+        if (impoundedClaimCarousel && !impoundedClaimCarousel.classList.contains('hidden')) {
+            if (event.key === 'ArrowLeft') {
+                prevImpoundedClaimPhoto();
+                event.preventDefault();
+            } else if (event.key === 'ArrowRight') {
+                nextImpoundedClaimPhoto();
+                event.preventDefault();
+            } else if (event.key === 'Escape') {
+                closeImpoundedClaimPhotoCarousel();
+                event.preventDefault();
+            }
+            return;
+        }
+    });
 </script>
 @endsection

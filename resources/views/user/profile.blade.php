@@ -3,334 +3,420 @@
 @section('title', '| Profile')
 
 @section('content')
-<div class="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8 pt-24">
-    <h1 class="mb-8 text-3xl font-extrabold text-gray-900">My Profile Settings</h1>
+<div class="max-w-4xl px-4 py-6 pt-24 mx-auto">
+    <h1 class="mb-6 text-3xl font-bold text-gray-900">My Profile Settings</h1>
 
-    @php
-        // Toggle variables based on URL query parameters
-        $isEditingInfo = request('edit') === 'true';
-        $isChangingPassword = request('password') === 'true';
-    @endphp
+    <!-- Profile Information Section -->
+    <div class="mb-6 bg-white rounded-lg shadow-sm">
+        <div class="flex items-center justify-between p-4 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-900">Personal Information</h2>
+            <button onclick="toggleEditMode()" id="edit-btn"
+                    class="inline-flex items-center px-4 py-2 text-sm font-medium text-white transition-colors rounded-md bg-blue-600 hover:bg-blue-700">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L15.232 5.232z"></path>
+                </svg>
+                Edit Profile
+            </button>
+        </div>
 
-    <div class="p-6 mb-8 overflow-hidden bg-white shadow-xl sm:rounded-lg lg:p-8">
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-semibold text-gray-900">Personal Information</h2>
+        <!-- View Mode -->
+        <div id="view-mode" class="p-4">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <!-- Personal Information -->
+                <div class="space-y-3">
+                    <h4 class="text-sm font-semibold tracking-wide text-gray-700 uppercase">Personal Info</h4>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500">Full Name</label>
+                        <p class="text-sm text-gray-900">{{ $user->first_name ?? $user->name }} {{ $user->middle_name ?? '' }} {{ $user->last_name ?? '' }}</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500">Gender</label>
+                        <p class="text-sm text-gray-900">{{ ucfirst($user->gender ?? 'Not specified') }}</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500">Birthday</label>
+                        <p class="text-sm text-gray-900">{{ $user->birthday ? $user->birthday->format('M d, Y') : 'Not specified' }}</p>
+                    </div>
+                </div>
 
-            <div class="flex space-x-4">
-                {{-- CHANGE PASSWORD BUTTON (New Location) --}}
-                @if (!$isChangingPassword)
-                    <a href="{{ route('profile.edit', ['password' => 'true']) }}"
-                       class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-red-600 border border-transparent rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
-                        Change Password
-                    </a>
-                @else
-                    <a href="{{ route('profile.edit') }}"
-                       class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-gray-800 uppercase transition duration-150 ease-in-out bg-gray-200 border border-gray-300 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
-                        Cancel Password Change
-                    </a>
-                @endif
+                <!-- Contact Information -->
+                <div class="space-y-3">
+                    <h4 class="text-sm font-semibold tracking-wide text-gray-700 uppercase">Contact</h4>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500">Email</label>
+                        <p class="text-sm text-gray-900">{{ $user->email }}</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500">Contact Number</label>
+                        <p class="text-sm text-gray-900">{{ $user->contact_number ?? 'Not specified' }}</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500">Emergency Contact</label>
+                        <p class="text-sm text-gray-900">{{ $user->emergency_contact ?? 'Not specified' }}</p>
+                    </div>
+                </div>
 
-                {{-- EDIT PROFILE BUTTON --}}
-                @if (!$isEditingInfo)
-                    <a href="{{ route('profile.edit', ['edit' => 'true']) }}"
-                       class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L15.232 5.232z"></path></svg>
-                        Edit Profile
-                    </a>
-                @else
-                    <a href="{{ route('profile.edit') }}"
-                       class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-gray-800 uppercase transition duration-150 ease-in-out bg-gray-200 border border-gray-300 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
-                        Cancel Edit
-                    </a>
-                @endif
+                <!-- Address Information -->
+                <div class="space-y-3">
+                    <h4 class="text-sm font-semibold tracking-wide text-gray-700 uppercase">Address</h4>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500">Street</label>
+                        <p class="text-sm text-gray-900">{{ $user->street ?? 'Not specified' }}</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500">Barangay</label>
+                        <p class="text-sm text-gray-900">{{ $user->barangay ?? 'Not specified' }}</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500">City/Municipality</label>
+                        <p class="text-sm text-gray-900">{{ $user->city_municipality ?? 'Not specified' }}</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500">Province</label>
+                            <p class="text-sm text-gray-900">{{ $user->province ?? 'N/A' }}</p>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500">ZIP Code</label>
+                            <p class="text-sm text-gray-900">{{ $user->zip_code ?? 'N/A' }}</p>
+                        </div>
+                    </div>
+                    @if($user->id_photo)
+                    <div class="pt-2 border-t border-gray-200">
+                        <label class="block text-xs font-medium text-gray-500">ID Photo</label>
+                        <div onclick="openIdPhotoModal()"
+                             class="inline-flex items-center p-2 mt-2 transition-colors duration-200 bg-orange-100 rounded-lg cursor-pointer hover:bg-orange-200">
+                            <svg class="w-6 h-6 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                            </svg>
+                            <span class="font-medium">View ID Photo</span>
+                        </div>
+                    </div>
+                    @endif
+                </div>
             </div>
         </div>
 
-        @if ($isEditingInfo)
-            <div class="mt-4">
-                @include('profile.partials.update-profile-information-form')
-            </div>
-        @else
-            <div class="pt-4 mt-4 border-t border-gray-200 divide-y divide-gray-100">
-                <dl>
-                    <div class="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                        <dt class="text-sm font-medium text-gray-500">Full Name</dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                            {{ $user->first_name ?? $user->name }}
-                            {{ $user->middle_name ?? '' }}
-                            {{ $user->last_name ?? '' }}
-                        </dd>
+        <!-- Edit Mode -->
+        <div id="edit-mode" class="hidden p-4 border-t border-gray-200">
+            <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="space-y-4">
+                @csrf
+                @method('patch')
+
+                <!-- Name Fields -->
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">First Name *</label>
+                        <input type="text" name="first_name" value="{{ $user->first_name ?? $user->name }}" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
                     </div>
-                    <div class="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                        <dt class="text-sm font-medium text-gray-500">Email Address</dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ $user->email }}</dd>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Middle Name</label>
+                        <input type="text" name="middle_name" value="{{ $user->middle_name }}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
                     </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Last Name *</label>
+                        <input type="text" name="last_name" value="{{ $user->last_name }}" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+                    </div>
+                </div>
+
+                <!-- Personal Info -->
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Gender</label>
+                        <select name="gender" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+                            <option value="">Select Gender</option>
+                            <option value="male" {{ $user->gender === 'male' ? 'selected' : '' }}>Male</option>
+                            <option value="female" {{ $user->gender === 'female' ? 'selected' : '' }}>Female</option>
+                            <option value="other" {{ $user->gender === 'other' ? 'selected' : '' }}>Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Birthday *</label>
+                        <input type="date" name="birthday" value="{{ $user->birthday ? $user->birthday->format('Y-m-d') : '' }}" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Email Address *</label>
+                        <input type="email" name="email" value="{{ $user->email }}" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+                    </div>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Contact Number *</label>
+                        <input type="tel" name="contact_number" value="{{ $user->contact_number }}" required placeholder="09123456789"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Emergency Contact</label>
+                        <input type="tel" name="emergency_contact" value="{{ $user->emergency_contact }}" placeholder="09123456789"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+                    </div>
+                </div>
+
+                <!-- Address -->
+                <div class="space-y-3">
+                    <h4 class="text-sm font-semibold tracking-wide text-gray-700 uppercase">Address Information</h4>
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <div>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Province</label>
+                            <select name="province" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                <option value="Pangasinan" selected>Pangasinan</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">City/Municipality</label>
+                            <select name="city_municipality" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                <option value="Alaminos City" selected>Alaminos City</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Barangay</label>
+                            <select name="barangay" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                <option value="">Select Barangay</option>
+                                <option value="Alos" {{ $user->barangay === 'Alos' ? 'selected' : '' }}>Alos</option>
+                                <option value="Amandiego" {{ $user->barangay === 'Amandiego' ? 'selected' : '' }}>Amandiego</option>
+                                <option value="Amangbangan" {{ $user->barangay === 'Amangbangan' ? 'selected' : '' }}>Amangbangan</option>
+                                <option value="Balangobong" {{ $user->barangay === 'Balangobong' ? 'selected' : '' }}>Balangobong</option>
+                                <option value="Balayang" {{ $user->barangay === 'Balayang' ? 'selected' : '' }}>Balayang</option>
+                                <option value="Baleyadaan" {{ $user->barangay === 'Baleyadaan' ? 'selected' : '' }}>Baleyadaan</option>
+                                <option value="Bisocol" {{ $user->barangay === 'Bisocol' ? 'selected' : '' }}>Bisocol</option>
+                                <option value="Bolaney" {{ $user->barangay === 'Bolaney' ? 'selected' : '' }}>Bolaney</option>
+                                <option value="Bued" {{ $user->barangay === 'Bued' ? 'selected' : '' }}>Bued</option>
+                                <option value="Cabatuan" {{ $user->barangay === 'Cabatuan' ? 'selected' : '' }}>Cabatuan</option>
+                                <option value="Cayucay" {{ $user->barangay === 'Cayucay' ? 'selected' : '' }}>Cayucay</option>
+                                <option value="Dulacac" {{ $user->barangay === 'Dulacac' ? 'selected' : '' }}>Dulacac</option>
+                                <option value="Inerangan" {{ $user->barangay === 'Inerangan' ? 'selected' : '' }}>Inerangan</option>
+                                <option value="Landoc" {{ $user->barangay === 'Landoc' ? 'selected' : '' }}>Landoc</option>
+                                <option value="Linmansangan" {{ $user->barangay === 'Linmansangan' ? 'selected' : '' }}>Linmansangan</option>
+                                <option value="Lucap" {{ $user->barangay === 'Lucap' ? 'selected' : '' }}>Lucap</option>
+                                <option value="Maawi" {{ $user->barangay === 'Maawi' ? 'selected' : '' }}>Maawi</option>
+                                <option value="Macatiw" {{ $user->barangay === 'Macatiw' ? 'selected' : '' }}>Macatiw</option>
+                                <option value="Magsaysay" {{ $user->barangay === 'Magsaysay' ? 'selected' : '' }}>Magsaysay</option>
+                                <option value="Mona" {{ $user->barangay === 'Mona' ? 'selected' : '' }}>Mona</option>
+                                <option value="Palamis" {{ $user->barangay === 'Palamis' ? 'selected' : '' }}>Palamis</option>
+                                <option value="Pandan" {{ $user->barangay === 'Pandan' ? 'selected' : '' }}>Pandan</option>
+                                <option value="Pangapisan" {{ $user->barangay === 'Pangapisan' ? 'selected' : '' }}>Pangapisan</option>
+                                <option value="Pocal-pocal" {{ $user->barangay === 'Pocal-pocal' ? 'selected' : '' }}>Pocal-pocal</option>
+                                <option value="Poblacion" {{ $user->barangay === 'Poblacion' ? 'selected' : '' }}>Poblacion</option>
+                                <option value="Pogo" {{ $user->barangay === 'Pogo' ? 'selected' : '' }}>Pogo</option>
+                                <option value="Polo" {{ $user->barangay === 'Polo' ? 'selected' : '' }}>Polo</option>
+                                <option value="Quibuar" {{ $user->barangay === 'Quibuar' ? 'selected' : '' }}>Quibuar</option>
+                                <option value="Sabangan" {{ $user->barangay === 'Sabangan' ? 'selected' : '' }}>Sabangan</option>
+                                <option value="San Antonio" {{ $user->barangay === 'San Antonio' ? 'selected' : '' }}>San Antonio</option>
+                                <option value="San Jose" {{ $user->barangay === 'San Jose' ? 'selected' : '' }}>San Jose</option>
+                                <option value="San Roque" {{ $user->barangay === 'San Roque' ? 'selected' : '' }}>San Roque</option>
+                                <option value="San Vicente" {{ $user->barangay === 'San Vicente' ? 'selected' : '' }}>San Vicente</option>
+                                <option value="Sta Maria" {{ $user->barangay === 'Sta Maria' ? 'selected' : '' }}>Sta Maria</option>
+                                <option value="Tanaytay" {{ $user->barangay === 'Tanaytay' ? 'selected' : '' }}>Tanaytay</option>
+                                <option value="Tangcarang" {{ $user->barangay === 'Tangcarang' ? 'selected' : '' }}>Tangcarang</option>
+                                <option value="Tawin-tawin" {{ $user->barangay === 'Tawin-tawin' ? 'selected' : '' }}>Tawin-tawin</option>
+                                <option value="Telbang" {{ $user->barangay === 'Telbang' ? 'selected' : '' }}>Telbang</option>
+                                <option value="Victoria" {{ $user->barangay === 'Victoria' ? 'selected' : '' }}>Victoria</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Street</label>
+                            <input type="text" name="street" value="{{ $user->street }}"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        </div>
+                    </div>
+                    <div class="md:w-1/2">
+                        <label class="block mb-1 text-sm font-medium text-gray-700">ZIP Code</label>
+                        <select name="zip_code" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+                            <option value="2404" selected>2404</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- ID Photo Upload -->
+                <div>
+                    <label class="block mb-1 text-sm font-medium text-gray-700">ID Photo</label>
+                    <input type="file" name="id_photo" accept="image/*"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+                    <p class="mt-1 text-xs text-gray-500">Upload a clear photo of your government-issued ID (max 50MB)</p>
                     @if($user->id_photo)
-                    <div class="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                        <dt class="text-sm font-medium text-gray-500">ID Photo</dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                            <div onclick="document.getElementById('userIdPhotoModal').classList.remove('hidden')"
-                                 class="flex flex-col items-center justify-center w-48 h-32 transition duration-150 ease-in-out bg-black border-2 border-gray-400 rounded-lg cursor-pointer hover:bg-gray-900">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.75 4h2.5a2 2 0 011.664.89l.812 1.22a2 2 0 001.664.89H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                                <p class="mt-2 text-xs font-medium text-gray-500">Click to View</p>
-                            </div>
-
-                            <!-- Modal for Full Size ID Photo -->
-                            <div id="userIdPhotoModal"
-                                 class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 transition-opacity duration-300 bg-black bg-opacity-80"
-                                 onclick="if(event.target.id === 'userIdPhotoModal') this.classList.add('hidden')">
-                                <div class="relative max-w-3xl overflow-hidden bg-white rounded-lg shadow-2xl">
-                                    <div class="sticky top-0 z-10 flex items-center justify-between p-3 bg-white border-b border-gray-200">
-                                        <h3 class="text-xl font-semibold text-gray-800">Your ID Photo</h3>
-                                        <button onclick="document.getElementById('userIdPhotoModal').classList.add('hidden')"
-                                                class="p-2 text-gray-500 transition duration-150 rounded-full hover:bg-gray-100 hover:text-gray-700 focus:outline-none">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <div class="p-6 max-h-[80vh] overflow-y-auto">
-                                        <img src="{{ asset('storage/' . $user->id_photo) }}"
-                                             alt="Full Size ID Photo"
-                                             class="w-full h-auto rounded-lg shadow-md">
-                                    </div>
-                                </div>
-                            </div>
-                        </dd>
-                    </div>
+                        <div class="mt-2">
+                            <p class="mb-2 text-xs text-green-600">✓ Current ID photo:</p>
+                            <img src="{{ asset('storage/' . $user->id_photo) }}" alt="Current ID Photo"
+                                 class="h-auto max-w-xs border border-gray-300 rounded">
+                        </div>
+                    @else
+                        <p class="mt-1 text-xs text-gray-500">No ID photo uploaded yet.</p>
                     @endif
-                </dl>
-            </div>
-        @endif
+                </div>
+
+                <div class="flex gap-3 pt-4">
+                    <button type="submit"
+                            class="px-6 py-2 font-medium text-white transition-colors rounded-md bg-blue-600 hover:bg-blue-700">
+                        Save Changes
+                    </button>
+                    <button type="button" onclick="toggleEditMode()"
+                            class="px-6 py-2 font-medium text-white transition-colors bg-gray-600 hover:bg-gray-700">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    @if ($isChangingPassword)
-    <div class="p-6 overflow-hidden bg-white shadow-xl sm:rounded-lg lg:p-8" id="change-password">
-        <h2 class="mb-6 text-2xl font-semibold text-gray-900">Change Account Password</h2>
-        <form id="password-update-form" method="post" action="{{ route('password.update') }}" class="space-y-6">
-            @csrf
-            @method('put')
-
+    <!-- Password Change Section -->
+    <div class="bg-white rounded-lg shadow-sm">
+        <div class="flex items-center justify-between p-4 border-b border-gray-200">
             <div>
-                <x-input-label for="current_password" :value="__('Current Password')" />
-                <div class="relative">
-                    <x-text-input id="current_password" name="current_password" type="password" class="block w-full mt-1 pr-10" autocomplete="current-password" />
-                    <button type="button" id="toggle-current-password" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                    </button>
-                </div>
-                <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
+                <h2 class="text-xl font-semibold text-gray-900">Change Password</h2>
+                <p class="mt-1 text-sm text-gray-600">Update your account password for security</p>
             </div>
+            <button onclick="togglePasswordMode()" id="password-btn"
+                    class="inline-flex items-center px-4 py-2 text-sm font-medium text-white transition-colors rounded-md bg-red-600 hover:bg-red-700">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L15.232 5.232z"></path>
+                </svg>
+                Change Password
+            </button>
+        </div>
 
-            <div>
-                <x-input-label for="password" :value="__('New Password')" />
-                <div class="relative">
-                    <x-text-input id="password" name="password" type="password" class="block w-full mt-1 pr-10" autocomplete="new-password" />
-                    <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                    </button>
-                </div>
+        <div id="password-mode" class="hidden p-4">
+            <form method="post" action="{{ route('password.update') }}" class="space-y-4">
+                @csrf
+                @method('put')
 
-                <!-- Password Requirements -->
-                <div id="password-requirements" class="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-xs text-gray-600 p-3 bg-gray-50 rounded-lg">
-                    <p id="req-length" class="flex items-center">
-                        <span class="inline-block w-3 h-3 mr-2 text-red-500">❌</span> 8+ characters
-                    </p>
-                    <p id="req-uppercase" class="flex items-center">
-                        <span class="inline-block w-3 h-3 mr-2 text-red-500">❌</span> Uppercase letter
-                    </p>
-                    <p id="req-lowercase" class="flex items-center">
-                        <span class="inline-block w-3 h-3 mr-2 text-red-500">❌</span> Lowercase letter
-                    </p>
-                    <p id="req-number" class="flex items-center">
-                        <span class="inline-block w-3 h-3 mr-2 text-red-500">❌</span> Number (0-9)
-                    </p>
-                    <p id="req-special" class="flex items-center">
-                        <span class="inline-block w-3 h-3 mr-2 text-red-500">❌</span> Special character
-                    </p>
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Current Password *</label>
+                        <input type="password" name="current_password" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                    </div>
+                    <div></div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">New Password *</label>
+                        <input type="password" name="password" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Confirm New Password *</label>
+                        <input type="password" name="password_confirmation" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                    </div>
                 </div>
 
-                <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
-            </div>
-
-            <div>
-                <x-input-label for="password_confirmation" :value="__('Confirm New Password')" />
-                <div class="relative">
-                    <x-text-input id="password_confirmation" name="password_confirmation" type="password" class="block w-full mt-1 pr-10" autocomplete="new-password" />
-                    <button type="button" id="toggle-password-confirmation" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                    </button>
-                </div>
-                <p id="confirm_password_warning" class="hidden mt-2 text-xs text-red-500">⚠️ Passwords do not match.</p>
-                <p id="confirm_password_success" class="hidden mt-2 text-xs text-green-600">✅ Passwords match.</p>
-                <x-input-error :messages="$errors->updatePassword->get('password_confirmation')" class="mt-2" />
-            </div>
-
-            <div class="flex items-center gap-4">
-                <x-primary-button id="password-update-btn" class="bg-red-600 hover:bg-red-700">Update Password</x-primary-button>
-            </div>
-        </form>
+                <button type="submit"
+                        class="px-6 py-2 font-medium text-white transition-colors bg-red-600 rounded-md hover:bg-red-700">
+                    Update Password
+                </button>
+            </form>
+        </div>
     </div>
-    @endif
 </div>
 
+<!-- ID Photo Modal -->
+@if($user->id_photo)
+<div id="idPhotoModal"
+     class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 transition-opacity duration-300 bg-black bg-opacity-80"
+     onclick="if(event.target.id === 'idPhotoModal') this.classList.add('hidden')">
+
+    <div class="relative max-w-3xl overflow-hidden bg-white rounded-lg shadow-2xl">
+
+        <div class="sticky top-0 z-10 flex items-center justify-between p-3 bg-white border-b border-gray-200">
+            <h3 class="text-xl font-semibold text-gray-800">Your ID Photo</h3>
+            <button onclick="document.getElementById('idPhotoModal').classList.add('hidden')"
+                    class="p-2 text-gray-500 transition duration-150 rounded-full hover:bg-gray-100 hover:text-gray-700 focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="p-6 max-h-[80vh] overflow-y-auto">
+            <img src="{{ asset('storage/' . $user->id_photo) }}"
+                 alt="Full Size ID Photo"
+                 class="w-full h-auto rounded-lg shadow-md">
+        </div>
+
+    </div>
+</div>
+@endif
+
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Toggle password visibility for current password
-        const toggleCurrentPassword = document.getElementById('toggle-current-password');
-        const currentPasswordInput = document.getElementById('current_password');
-
-        if (toggleCurrentPassword && currentPasswordInput) {
-            toggleCurrentPassword.addEventListener('click', function (e) {
-                e.preventDefault();
-                const type = currentPasswordInput.type === 'password' ? 'text' : 'password';
-                currentPasswordInput.type = type;
-            });
+@if($user->id_photo)
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Backspace') {
+        const modal = document.getElementById('idPhotoModal');
+        if (modal && !modal.classList.contains('hidden')) {
+            modal.classList.add('hidden');
+            return;
         }
+    }
 
-        // Toggle password visibility for new password
-        const togglePassword = document.getElementById('toggle-password');
-        const passwordInput = document.getElementById('password');
-
-        if (togglePassword && passwordInput) {
-            togglePassword.addEventListener('click', function (e) {
-                e.preventDefault();
-                const type = passwordInput.type === 'password' ? 'text' : 'password';
-                passwordInput.type = type;
-            });
+    if (event.key === 'Escape') {
+        const modal = document.getElementById('idPhotoModal');
+        if (modal) {
+            modal.classList.add('hidden');
         }
+    }
+});
+@endif
 
-        // Toggle password visibility for confirm password
-        const togglePasswordConfirmation = document.getElementById('toggle-password-confirmation');
-        const passwordConfirmationInput = document.getElementById('password_confirmation');
+function toggleEditMode() {
+    const viewMode = document.getElementById('view-mode');
+    const editMode = document.getElementById('edit-mode');
+    const editBtn = document.getElementById('edit-btn');
 
-        if (togglePasswordConfirmation && passwordConfirmationInput) {
-            togglePasswordConfirmation.addEventListener('click', function (e) {
-                e.preventDefault();
-                const type = passwordConfirmationInput.type === 'password' ? 'text' : 'password';
-                passwordConfirmationInput.type = type;
-            });
-        }
+    if (viewMode.classList.contains('hidden')) {
+        viewMode.classList.remove('hidden');
+        editMode.classList.add('hidden');
+        editBtn.innerHTML = `
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L15.232 5.232z"></path>
+            </svg>
+            Edit Profile
+        `;
+    } else {
+        viewMode.classList.add('hidden');
+        editMode.classList.remove('hidden');
+        editBtn.innerHTML = `
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+            Cancel Edit
+        `;
+    }
+}
 
-        // Real-time password validation
-        if (passwordInput) {
-            passwordInput.addEventListener('input', function () {
-                const password = this.value;
+function openIdPhotoModal() {
+    document.getElementById('idPhotoModal').classList.remove('hidden');
+}
 
-                // Check length (8+ characters)
-                const lengthValid = password.length >= 8;
-                updateRequirement('req-length', lengthValid);
+function closeIdPhotoModal() {
+    document.getElementById('idPhotoModal').classList.add('hidden');
+}
 
-                // Check uppercase
-                const uppercaseValid = /[A-Z]/.test(password);
-                updateRequirement('req-uppercase', uppercaseValid);
+function togglePasswordMode() {
+    const passwordMode = document.getElementById('password-mode');
+    const passwordBtn = document.getElementById('password-btn');
 
-                // Check lowercase
-                const lowercaseValid = /[a-z]/.test(password);
-                updateRequirement('req-lowercase', lowercaseValid);
-
-                // Check number
-                const numberValid = /[0-9]/.test(password);
-                updateRequirement('req-number', numberValid);
-
-                // Check special character
-                const specialValid = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
-                updateRequirement('req-special', specialValid);
-
-                // Check password match
-                validatePasswordMatch();
-            });
-        }
-
-        // Real-time password match validation
-        if (passwordConfirmationInput) {
-            passwordConfirmationInput.addEventListener('input', validatePasswordMatch);
-        }
-
-        function validatePasswordMatch() {
-            const password = passwordInput.value;
-            const confirmPassword = passwordConfirmationInput.value;
-            const warningElement = document.getElementById('confirm_password_warning');
-            const successElement = document.getElementById('confirm_password_success');
-
-            if (confirmPassword) {
-                if (password === confirmPassword) {
-                    warningElement.classList.add('hidden');
-                    successElement.classList.remove('hidden');
-                } else {
-                    warningElement.classList.remove('hidden');
-                    successElement.classList.add('hidden');
-                }
-            } else {
-                warningElement.classList.add('hidden');
-                successElement.classList.add('hidden');
-            }
-        }
-
-        function updateRequirement(elementId, isValid) {
-            const element = document.getElementById(elementId);
-            if (element) {
-                const icon = element.querySelector('span');
-                if (isValid) {
-                    icon.textContent = '✅';
-                    icon.className = 'inline-block w-3 h-3 mr-2 text-green-600';
-                } else {
-                    icon.textContent = '❌';
-                    icon.className = 'inline-block w-3 h-3 mr-2 text-red-500';
-                }
-            }
-        }
-
-        // Handle password update form confirmation
-        const passwordForm = document.getElementById('password-update-form');
-        const passwordUpdateBtn = document.getElementById('password-update-btn');
-
-        if (passwordForm && passwordUpdateBtn) {
-            passwordUpdateBtn.addEventListener('click', function (e) {
-                e.preventDefault();
-
-                // Check if all requirements are met
-                const allRequirementsMet = checkAllPasswordRequirements();
-                const passwordsMatch = document.getElementById('password').value === document.getElementById('password_confirmation').value;
-
-                if (!allRequirementsMet) {
-                    alert('❌ Your password does not meet all requirements. Please review the password requirements above.');
-                    return;
-                }
-
-                if (!passwordsMatch) {
-                    alert('❌ Passwords do not match. Please ensure both password fields are identical.');
-                    return;
-                }
-
-                const confirmChange = confirm('Are you sure you want to change your password? This action cannot be undone.');
-                if (confirmChange) {
-                    passwordForm.submit();
-                }
-            });
-        }
-
-        function checkAllPasswordRequirements() {
-            const password = document.getElementById('password').value;
-            return password.length >= 8 &&
-                   /[A-Z]/.test(password) &&
-                   /[a-z]/.test(password) &&
-                   /[0-9]/.test(password) &&
-                   /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
-        }
-    });
+    if (passwordMode.classList.contains('hidden')) {
+        passwordMode.classList.remove('hidden');
+        passwordBtn.innerHTML = `
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+            Cancel
+        `;
+    } else {
+        passwordMode.classList.add('hidden');
+        passwordBtn.innerHTML = `
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L15.232 5.232z"></path>
+            </svg>
+            Change Password
+        `;
+    }
+}
 </script>
 @endsection
-

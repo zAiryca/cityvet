@@ -57,7 +57,7 @@ class PetController extends Controller
             'color_markings' => 'nullable|array',
             'color_markings.*' => 'string',
             'description' => 'nullable|string',
-            'photo' => 'nullable|image|max:10240',
+            'photo' => 'nullable|image|max:51200',
             'status' => 'required|in:impounded,adoptable',
             'impounded_date' => 'nullable|date|required_if:status,impounded',
             'caught_location' => 'nullable|string|max:255',
@@ -138,7 +138,7 @@ class PetController extends Controller
             'color_markings' => 'nullable|array',
             'color_markings.*' => 'string',
             'description' => 'nullable|string',
-            'photo' => 'nullable|image|max:10240',
+            'photo' => 'nullable|image|max:51200',
             'status' => 'required|in:impounded,adoptable,adopted,claimed,unclaimed,unadopted',
             'impounded_date' => 'nullable|date|required_if:status,impounded',
             'decision_date' => 'nullable|date|required_if:status,adoptable',
@@ -204,7 +204,7 @@ class PetController extends Controller
             \Illuminate\Support\Facades\Storage::disk('public')->delete($pet->photo);
         }
         $pet->delete();
-        return back()->with('success', 'Pet deleted.');
+        return redirect()->route('admin.pets.index')->with('success', 'Pet deleted.');
     }
 
     // Custom: Set urgent deadline (from routes)
@@ -300,30 +300,14 @@ class PetController extends Controller
         return back()->with('success', 'Pet claimed and ownership transferred to claimant. Other requests have been automatically denied.');
     }
 
-    // Display adoption & claim history (only pets with completed requests)
+    // Display adoption & claim history (pets with completed requests or expired without)
     public function adoptionClaimHistory(Request $request)
     {
         if (!Auth::user()->isAdmin()) abort(403);
 
         $status = $request->get('status');
 
-        // Base query: only pets that have at least one completed request
-        $petsQuery = Pet::whereHas('requests', function ($q) use ($status) {
-            $q->where('status', 'completed');
-            // Filter by request type based on status param
-            if ($status === 'adopted') {
-                $q->where('type', 'adopt');
-            } elseif ($status === 'claimed') {
-                $q->where('type', 'claim');
-            } elseif ($status === 'unclaimed') {
-                // For unclaimed tab: show only claim requests (pets that couldn't be claimed)
-                $q->where('type', 'claim');
-            } elseif ($status === 'unadopted') {
-                // For unadopted tab: show only adoption requests (pets that couldn't be adopted)
-                $q->where('type', 'adopt');
-            }
-        })
-        ->with([
+        $petsQuery = Pet::with([
             'user',
             'requests' => function ($q) use ($status) {
                 $q->where('status', 'completed')->orderBy('updated_at', 'desc');
@@ -341,15 +325,38 @@ class PetController extends Controller
             'requests.user',
         ]);
 
-        // Filter by pet status - only show if the pet is still in the unclaimed/unadopted state
+        // Filter by status
         if ($status === 'unclaimed') {
-            $petsQuery->where('status', 'unclaimed');
-        } elseif ($status === 'unadopted') {
-            $petsQuery->where('status', 'unadopted');
+            // Show both unclaimed and unadopted pets (no owner pets)
+            $petsQuery->where(function ($q) {
+                $q->where('status', 'unclaimed')
+                  ->whereHas('requests', function ($subq) {
+                      $subq->where('status', 'completed')->where('type', 'claim');
+                  })
+                  ->orWhere('status', 'unadopted');
+            });
         } elseif ($status === 'adopted') {
-            $petsQuery->where('status', 'adopted');
+            $petsQuery->where('status', 'adopted')
+                      ->whereHas('requests', function ($q) {
+                          $q->where('status', 'completed')->where('type', 'adopt');
+                      });
         } elseif ($status === 'claimed') {
-            $petsQuery->where('status', 'claimed');
+            $petsQuery->where('status', 'claimed')
+                      ->whereHas('requests', function ($q) {
+                          $q->where('status', 'completed')->where('type', 'claim');
+                      });
+        } elseif ($status === 'all') {
+            // For "All History" tab: pets with any completed requests or unadopted
+            $petsQuery->where(function ($q) {
+                $q->whereHas('requests', function ($subq) {
+                    $subq->where('status', 'completed');
+                })->orWhere('status', 'unadopted');
+            });
+        } else {
+            // Default: all with completed requests
+            $petsQuery->whereHas('requests', function ($q) {
+                $q->where('status', 'completed');
+            });
         }
 
         $petsQuery->orderBy('updated_at', 'desc');

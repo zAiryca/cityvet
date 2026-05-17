@@ -8,14 +8,14 @@
     <title>{{ config('app.name', 'Laravel') }} @yield('title')</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=poppins:400,500,600,700&display=swap" rel="stylesheet" />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased">
     <div class="flex min-h-screen bg-slate-50">
         <!-- Sidebar Navigation -->
-        <aside class="flex-shrink-0 w-64 text-white shadow-xl bg-gradient-to-b from-slate-900 to-slate-800">
+        <aside class="fixed left-0 top-0 w-64 h-screen flex flex-col text-white shadow-xl bg-gradient-to-b from-slate-900 to-slate-800">
             <!-- Logo Section -->
             <div class="px-6 py-6 border-b border-slate-700">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 transition-opacity duration-200 group hover:opacity-90">
@@ -31,7 +31,7 @@
                 </a>
             </div>
             <!-- Navigation -->
-            <nav class="flex flex-col px-3 mt-6 space-y-1">
+            <nav class="flex flex-col flex-1 px-3 mt-6 space-y-1 overflow-y-auto">
                 @php
                 function nav_link($route, $text, $svg) {
                     $active = request()->routeIs($route . '*') ? 'bg-slate-700 text-white shadow-md' : 'text-slate-300 hover:bg-slate-700/50 hover:text-white';
@@ -40,7 +40,7 @@
                 @endphp
 
                 {!! nav_link('admin.dashboard', 'Dashboard', '<svg class="flex-shrink-0 w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>') !!}
-                {!! nav_link('admin.pets.index', 'Pets', '<svg class="flex-shrink-0 w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v11.494m-9-5.494h18" /></svg>') !!}
+                {!! nav_link('admin.pets.index', 'Impounded / Adoptable Pet', '<svg class="flex-shrink-0 w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>') !!}
                 {!! nav_link('admin.pet-registrations.index', 'Pet Registrations', '<svg class="flex-shrink-0 w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>') !!}
                 {!! nav_link('admin.announcements.index', 'Announcements', '<svg class="flex-shrink-0 w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>') !!}
                 {!! nav_link('admin.posters.index', 'Posters', '<svg class="flex-shrink-0 w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" /></svg>') !!}
@@ -49,13 +49,26 @@
                     <svg class="flex-shrink-0 w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     <span>Adoption & Claim History</span>
                 </a>
-                {!! nav_link('admin.users.index', 'Users', '<svg class="flex-shrink-0 w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 8.048M7.707 9.172A4 4 0 1016.9 8.172M15.75 12.75H8.25m6 2.25a2 2 0 110-4 2 2 0 010 4z" /></svg>') !!}
+                {!! nav_link('admin.users.index', 'Users', '<svg class="flex-shrink-0 w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>') !!}
                 {!! nav_link('admin.reports.generate', 'Reports', '<svg class="flex-shrink-0 w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V7a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>') !!}
             </nav>
+
+            <!-- Logout Button -->
+            <div class="px-3 py-4 border-t border-slate-700">
+                <form method="POST" action="{{ route('logout') }}" class="w-full" id="sidebarLogoutForm">
+                    @csrf
+                    <button type="submit" onclick="if(!confirm('Are you sure you want to log out?')) { event.preventDefault(); }" class="flex items-center w-full px-4 py-3 text-sm font-medium text-slate-300 rounded-lg transition-all duration-200 hover:bg-slate-700/50 hover:text-white">
+                        <svg class="flex-shrink-0 w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        <span>Log Out</span>
+                    </button>
+                </form>
+            </div>
         </aside>
 
         <!-- Main Content -->
-        <div class="flex flex-col flex-1">
+        <div class="flex flex-col flex-1 ml-64">
             <!-- Header -->
             <header class="bg-white border-b shadow-sm border-slate-200">
                 <div class="flex items-center justify-end px-6 py-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -77,7 +90,7 @@
                             </button>
                         </x-slot>
                         <x-slot name="content">
-                            <x-dropdown-link :href="route('profile.edit')" class="text-slate-700 hover:bg-slate-50">
+                            <x-dropdown-link :href="route('admin.profile')" class="text-slate-700 hover:bg-slate-50">
                                 <svg class="inline w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                 </svg>
@@ -86,8 +99,7 @@
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <x-dropdown-link :href="route('logout')"
-                                        onclick="event.preventDefault();
-                                                    this.closest('form').submit();" class="text-slate-700 hover:bg-slate-50">
+                                        onclick="if(!confirm('Are you sure you want to log out?')) { event.preventDefault(); } else { event.preventDefault(); this.closest('form').submit(); }" class="text-slate-700 hover:bg-slate-50">
                                     <svg class="inline w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                     </svg>

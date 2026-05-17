@@ -109,7 +109,7 @@ class AdminPosterSearchFilter extends Component
             $query->where('date_lost_found', '<=', $this->date_to);
         }
 
-        $posters = $query->latest()->paginate(15);
+        $posters = $query->latest()->paginate(10);
 
         return view('livewire.admin-poster-search-filter', compact('posters'));
     }

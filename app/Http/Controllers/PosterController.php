@@ -34,7 +34,7 @@ class PosterController extends Controller
             'uploader_comments' => 'nullable|string',
             'last_seen' => 'nullable|string',
             'found_at' => 'nullable|string',
-            'photo' => 'required|image|max:10240',
+            'photo' => 'required|image|max:51200',
             'contact_info' => 'required|string|max:255',
             'reward' => 'nullable|numeric|min:0',
         ]);
@@ -89,7 +89,7 @@ class PosterController extends Controller
             'uploader_comments' => 'nullable|string',
             'last_seen' => 'nullable|string',
             'found_at' => 'nullable|string',
-            'photo' => 'nullable|image|max:10240',
+            'photo' => 'nullable|image|max:51200',
             'contact_info' => 'required|string|max:255',
             'reward' => 'nullable|numeric|min:0',
         ]);
@@ -128,6 +128,12 @@ class PosterController extends Controller
             abort(403);
         }
         $poster->delete();
-        return back()->with('success', 'Poster deleted.');
+
+        // Redirect based on user role
+        if (Auth::user()->isAdmin()) {
+            return redirect()->route('admin.posters.index')->with('success', 'Poster deleted.');
+        } else {
+            return back()->with('success', 'Poster deleted.');
+        }
     }
 }
