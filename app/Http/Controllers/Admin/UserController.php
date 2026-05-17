@@ -12,15 +12,47 @@ class UserController extends Controller
 {
     public function index()
     {
+        // Security Check
         if (!auth()->user()->isAdmin()) abort(403);
-        $users = User::withCount(['adoptedPets', 'claimedPets', 'requests', 'eventRegistrations'])->paginate(10);
-        return view('admin.users.index', compact('users'));
+
+        $filter = request('filter', 'all');
+        $search = request('search', ''); // 'first_name', 'middle_name', 'last_name', or empty
+        $query = User::query();
+
+        // Apply filter based on verification status
+        if ($filter === 'verified') {
+            $query->whereNotNull('email_verified_at');
+        } elseif ($filter === 'not_verified') {
+            $query->whereNull('email_verified_at');
+        }
+
+        // Apply search filter - filter by specific name field
+        if ($search === 'first_name') {
+            $query->orderBy('first_name', 'asc');
+        } elseif ($search === 'middle_name') {
+            $query->orderBy('middle_name', 'asc');
+        } elseif ($search === 'last_name') {
+            $query->orderBy('last_name', 'asc');
+        }
+
+        $users = $query->paginate(10)->appends(request()->query());
+
+        return view('admin.users.index', compact('users', 'filter', 'search'));
     }
 
     public function show(User $user)
     {
+        // Security Check
         if (!auth()->user()->isAdmin()) abort(403);
-        $user->load(['adoptedPets', 'claimedPets', 'posters', 'requests.requestable', 'eventRegistrations.event']);
+
+        // Load all required relationships for admin profile view
+        $user->load([
+            'petRegistrations',  // Pet registrations
+            'requests',          // All requests (adoption, claims, etc.)
+            'posters',           // Lost & found posters
+            'pets'               // Pets (for adopted/claimed status)
+        ]);
+
         return view('admin.users.show', compact('user'));
     }
 
@@ -45,7 +77,7 @@ class UserController extends Controller
             'city_municipality' => 'nullable|string|max:255',
             'province' => 'nullable|string|max:255',
             'emergency_contact' => 'nullable|string|max:255',
-            'role' => 'required|in:user,admin',
+            'role' => 'required|in:user,admin', // Admin can assign roles
             'password' => 'nullable|string|min:8|confirmed',
         ]);
 

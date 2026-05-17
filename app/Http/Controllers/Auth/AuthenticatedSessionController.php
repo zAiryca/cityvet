@@ -28,8 +28,17 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // Redirect based on user role
         $user = Auth::user();
+
+        // Check if email is verified
+        if (!$user->hasVerifiedEmail()) {
+            \Log::debug('Login attempted with unverified email: ' . $user->email);
+            // Keep user logged in but redirect to verification notice
+            // Don't logout - they need auth to access /verify-email route
+            return redirect()->route('verification.notice')->with('unverified', 'Please verify your email address before logging in.');
+        }
+
+        // Redirect based on user role
         if ($user->isAdmin()) {
             return redirect()->intended(route('admin.dashboard', absolute: false));
         } else {
@@ -48,6 +57,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect()->route('home')->with('success', 'You have been logged out successfully.');
     }
 }

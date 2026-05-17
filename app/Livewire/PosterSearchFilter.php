@@ -3,33 +3,68 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use Livewire\WithPagination;
 use App\Models\Poster;
 
 class PosterSearchFilter extends Component
 {
+    use WithPagination;
+
     public $search = '';
     public $type = '';
     public $species = '';
     public $breed = '';
     public $gender = '';
-    public $color = '';
+    public $selectedColors = [];
     public $date_from = '';
     public $date_to = '';
 
     public $breeds = [
-        'Canine' => ['Aspin', 'Puspin', 'Shih Tzu', 'Poodle', 'Golden Retriever', 'Labrador', 'German Shepherd', 'Bulldog', 'Beagle', 'Chihuahua'],
-        'Feline' => ['Persian', 'Siamese', 'Maine Coon', 'British Shorthair', 'Ragdoll', 'Bengal', 'Sphynx', 'Abyssinian', 'Scottish Fold', 'Russian Blue']
+        'Canine' => [
+            'Aspin',
+            'Poodle',
+            'Shih Tzu',
+            'Maltese',
+            'Pug',
+            'Beagle',
+            'Cocker Spaniel',
+            'Labrador Retriever',
+            'German Shepherd',
+            'Golden Retriever'
+        ],
+        'Feline' => [
+            'Philippine Domestic Cat',
+            'Siamese',
+            'Persian',
+            'Maine Coon',
+            'British Shorthair',
+            'Ragdoll',
+            'Bengal',
+            'Scottish Fold',
+            'Abyssinian',
+            'Russian Blue'
+        ]
     ];
 
-    public $colors = ['Black', 'White', 'Brown', 'Gray', 'Orange', 'Cream', 'Blue', 'Red'];
+    public $colors = ['Black', 'White', 'Brown', 'Gray', 'Orange', 'Cream', 'Tabby'];
 
     public function render()
     {
-        $query = Poster::where('approved', true);
+        $query = Poster::where('approved', true)->where('status', 'active');
 
-        // Apply filters
+        // Apply filters - search across all relevant fields
         if ($this->search) {
-            $query->where('pet_name', 'like', '%' . $this->search . '%');
+            $query->where(function($q) {
+                $q->where('pet_name', 'like', '%' . $this->search . '%')
+                  ->orWhere('species', 'like', '%' . $this->search . '%')
+                  ->orWhere('breed', 'like', '%' . $this->search . '%')
+                  ->orWhere('gender', 'like', '%' . $this->search . '%')
+                  ->orWhere('color_markings', 'like', '%' . $this->search . '%')
+                  ->orWhere(function($subQ) {
+                      $subQ->where('type', 'found')
+                           ->whereRaw("CONCAT('FND', LPAD(id, 4, '0')) LIKE ?", ['%' . $this->search . '%']);
+                  });
+            });
         }
 
         if ($this->type) {
@@ -41,15 +76,17 @@ class PosterSearchFilter extends Component
         }
 
         if ($this->breed) {
-            $query->where('breed', 'like', '%' . $this->breed . '%');
+            $query->where('breed', $this->breed);
         }
 
         if ($this->gender) {
             $query->where('gender', $this->gender);
         }
 
-        if ($this->color) {
-            $query->where('color_markings', 'like', '%' . $this->color . '%');
+        if (!empty($this->selectedColors)) {
+            foreach ($this->selectedColors as $color) {
+                $query->where('color_markings', 'like', '%' . $color . '%');
+            }
         }
 
         if ($this->date_from) {
@@ -67,6 +104,11 @@ class PosterSearchFilter extends Component
 
     public function updated($property)
     {
+        // If species changes, reset breed
+        if ($property === 'species') {
+            $this->breed = '';
+        }
+
         // Reset pagination when filters change
         $this->resetPage();
     }
@@ -78,7 +120,7 @@ class PosterSearchFilter extends Component
         $this->species = '';
         $this->breed = '';
         $this->gender = '';
-        $this->color = '';
+        $this->selectedColors = [];
         $this->date_from = '';
         $this->date_to = '';
         $this->resetPage();

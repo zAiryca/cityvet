@@ -3,74 +3,58 @@
 @section('title', '| Admin - Reports')
 
 @section('content')
-<div class="max-w-7xl mx-auto py-6 px-4">
-    <h1 class="text-3xl font-bold mb-6">Generate Reports</h1>
-    <p class="mb-6">View key metrics and export data for analysis.</p>
+<div class="px-4 py-6 mx-auto max-w-7xl">
+    <h1 class="mb-6 text-3xl font-bold">Generate Reports</h1>
+    <p class="mb-6">Generate monthly reports for impounded/adoptable pets and export as PDF or CSV.</p>
 
-    <!-- Quick Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div class="bg-blue-50 p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold text-blue-800">Total Pets</h3>
-            <p class="text-3xl font-bold">{{ $stats['total_pets'] ?? Pet::count() }}</p>
-        </div>
-        <div class="bg-green-50 p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold text-green-800">Adoptions This Month</h3>
-            <p class="text-3xl font-bold">{{ $stats['monthly_adoptions'] ?? Pet::whereMonth('adoptable_date', now())->count() }}</p>
-        </div>
-        <div class="bg-purple-50 p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold text-purple-800">Total Announcements</h3>
-            <p class="text-3xl font-bold">{{ $stats['total_announcements'] ?? \App\Models\Announcement::count() }}</p>
-        </div>
-        <div class="bg-yellow-50 p-6 rounded-lg shadow">
-            <h3 class="text-lg font-semibold text-yellow-800">Pending Requests</h3>
-            <p class="text-3xl font-bold">{{ $stats['pending_requests'] ?? PetRequest::where('status', 'pending')->count() }}</p>
-        </div>
-    </div>
+    <div class="bg-white p-6 rounded-lg shadow mb-6">
+        <form action="{{ route('admin.reports.export') }}" method="POST" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+            @csrf
 
-    <!-- Monthly Stats Table -->
-    <div class="bg-white rounded-lg shadow mb-8">
-        <h2 class="p-6 text-xl font-bold border-b">Monthly Adoption Trends</h2>
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Month</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Impounded</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Adopted</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Announcements Held</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    @foreach($stats['monthly_data'] ?? [] as $month => $data)
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $month }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $data['impounded'] ?? 0 }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $data['adopted'] ?? 0 }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $data['announcements'] ?? 0 }}</td>
-                        </tr>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Month</label>
+                <select name="month" required class="mt-1 block w-full p-2 border rounded">
+                    @foreach(range(1,12) as $m)
+                        <option value="{{ $m }}" {{ (int)date('n') === $m ? 'selected' : '' }}>{{ DateTime::createFromFormat('!m', $m)->format('F') }}</option>
                     @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
+                </select>
+            </div>
 
-    <!-- Chart Placeholder -->
-    <div class="bg-white p-6 rounded-lg shadow mb-8">
-        <h2 class="text-xl font-bold mb-4">Adoption Chart</h2>
-        <div class="bg-gray-200 h-64 rounded flex items-center justify-center">
-            <p class="text-gray-500">Chart.js or Google Charts Embed Here<br>(e.g., Bar chart of monthly adoptions)</p>
-        </div>
-    </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Year</label>
+                <select name="year" required class="mt-1 block w-full p-2 border rounded">
+                    @php $current = date('Y'); @endphp
+                    @for($y = $current; $y >= $current - 5; $y--)
+                        <option value="{{ $y }}" {{ $y == $current ? 'selected' : '' }}>{{ $y }}</option>
+                    @endfor
+                </select>
+            </div>
 
-    <!-- Export -->
-    <form action="{{ route('admin.reports.export') }}" method="POST" class="inline">  <!-- Add this route for PDF/CSV -->
-        @csrf
-        <select name="format" class="border p-2 rounded mr-2">
-            <option value="pdf">PDF</option>
-            <option value="csv">CSV</option>
-        </select>
-        <button type="submit" class="bg-gray-600 text-white px-6 py-2 rounded hover:bg-gray-700">Export Report</button>
-    </form>
-    <a href="{{ route('admin.dashboard') }}" class="ml-4 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Back to Dashboard</a>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Report Type / Scope</label>
+                <div class="mt-1">
+                    <select name="report_scope" class="p-2 border rounded w-full">
+                        <option value="impounded">Impounded Pets</option>
+                        <option value="adoptable">Adoptable Pets</option>
+                        <option value="adopted">Adopted Pets</option>
+                        <option value="claimed">Claimed Pets</option>
+                        <option value="all">All Pets (complete monthly activity)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="md:col-span-3">
+                <label class="block text-sm font-medium text-gray-700">Export Format</label>
+                <div class="mt-1 flex items-center space-x-2">
+                    <select name="format" class="p-2 border rounded">
+                        <option value="pdf">PDF</option>
+                        <option value="csv">CSV</option>
+                    </select>
+                    <button type="submit" class="px-6 py-2 ml-2 text-white bg-gray-600 rounded hover:bg-gray-700">Generate & Export</button>
+                    <a href="{{ route('admin.dashboard') }}" class="px-6 py-2 ml-4 text-white bg-blue-600 rounded hover:bg-blue-700">Back to Dashboard</a>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
 @endsection

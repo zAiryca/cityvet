@@ -28,8 +28,19 @@ class ProfileTest extends TestCase
         $response = $this
             ->actingAs($user)
             ->patch('/profile', [
-                'name' => 'Test User',
-                'email' => 'test@example.com',
+                'first_name' => 'Updated',
+                'middle_name' => 'Middle',
+                'last_name' => 'User',
+                'gender' => 'male',
+                'birthday' => '1990-01-01',
+                'contact_number' => '09124567890',  // FIXED: 11 digits (09 + 9 digits)
+                'emergency_contact' => '09876543210',  // FIXED: 11 digits (09 + 9 digits)
+                'email' => 'updated@test.com',  // FIXED: Use a real domain
+                'street' => '123 Main Street',
+                'barangay' => 'Barangay 1',
+                'city_municipality' => 'Dagupan',
+                'province' => 'Pangasinan',
+                'zip_code' => '2400',
             ]);
 
         $response
@@ -38,8 +49,8 @@ class ProfileTest extends TestCase
 
         $user->refresh();
 
-        $this->assertSame('Test User', $user->name);
-        $this->assertSame('test@example.com', $user->email);
+        $this->assertSame('Updated', $user->first_name);
+        $this->assertSame('updated@test.com', $user->email);
         $this->assertNull($user->email_verified_at);
     }
 
@@ -50,8 +61,19 @@ class ProfileTest extends TestCase
         $response = $this
             ->actingAs($user)
             ->patch('/profile', [
-                'name' => 'Test User',
+                'first_name' => $user->first_name,
+                'middle_name' => $user->middle_name,
+                'last_name' => $user->last_name,
+                'gender' => $user->gender ?? 'male',
+                'birthday' => $user->birthday ?? '1990-01-01',
+                'contact_number' => $user->contact_number ?? '09123456789',
+                'emergency_contact' => $user->emergency_contact ?? '09987654321',
                 'email' => $user->email,
+                'street' => $user->street ?? '123 Main Street',
+                'barangay' => $user->barangay ?? 'Barangay 1',
+                'city_municipality' => $user->city_municipality ?? 'Dagupan',
+                'province' => $user->province ?? 'Pangasinan',
+                'zip_code' => $user->zip_code ?? '2400',
             ]);
 
         $response

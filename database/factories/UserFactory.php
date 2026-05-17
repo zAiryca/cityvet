@@ -27,15 +27,20 @@ class UserFactory extends Factory
             'first_name' => fake()->firstName(),
             'middle_name' => fake()->optional()->firstName(),
             'last_name' => fake()->lastName(),
-            'contact_number' => fake()->optional()->phoneNumber(),
+            'gender' => fake()->randomElement(['male', 'female', 'other']),  // ADDED
+            'birthday' => fake()->date('Y-m-d', '-18 years'),  // ADDED: At least 18 years old
+            'contact_number' => '09' . fake()->numerify('#########'),  // FIXED: 11 digits format (09 + 10 digits)
+            'emergency_contact' => '09' . fake()->numerify('#########'),  // ADDED: 11 digits format
             'street' => fake()->streetAddress(),
             'barangay' => fake()->cityPrefix(),
             'city_municipality' => fake()->city(),
             'province' => fake()->state(),
+            'zip_code' => fake()->postcode(),  // ADDED
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'role' => 'user',  // ADDED: Default role
         ];
     }
 

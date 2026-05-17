@@ -13,21 +13,11 @@ class PageController extends Controller
 
     public function contact()
     {
-        return view('pages.contact');  // Includes location, FAQ, donate sections
-    }
-
-    public function faq()
-    {
-        return view('pages.faq');
+        return view('pages.contact');  // Includes location section
     }
 
     public function location()
     {
         return view('pages.location');
-    }
-
-    public function donate()
-    {
-        return view('pages.donate');
     }
 }

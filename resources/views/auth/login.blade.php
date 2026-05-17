@@ -1,79 +1,81 @@
 <x-guest-layout>
-    <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-md w-full space-y-8">
-            <!-- Hero/Welcome (Figma-style: Add pet image or text) -->
-            <div class="text-center">
-                <div class="mx-auto h-24 w-24 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                    <!-- Placeholder icon; replace with SVG or img for paw print -->
-                    <svg class="h-12 w-12 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-                <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                    Welcome to CityVet
-                </h2>
-                <p class="mt-2 text-center text-sm text-gray-600">
-                    Sign in to access your account.
-                </p>
-            </div>
+    <div class="min-h-screen bg-slate-900 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+        <div class="w-full max-w-md">
+            <!-- Header -->
+         <div class="mb-8 text-center">
 
-            <div class="bg-white py-8 px-6 shadow rounded-lg sm:px-10">
-                <form class="space-y-6" method="POST" action="{{ route('login') }}">
-                    @csrf
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
-                        <input id="email" name="email" type="email" autocomplete="email" required
-                               value="{{ old('email') }}"
-                               class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm @error('email') border-red-500 @enderror"
-                               placeholder="your.email@example.com">
-                        @error('email')
-                            <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
-                        @enderror
-                    </div>
+    <div class="flex justify-center mx-auto mb-4">
+        <img src="{{ asset('storage/logo/Logos.png') }}" alt="Logo" class="w-2/5 max-w-25 h-auto">
+    </div>
 
-                    <div>
-                        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                        <div class="relative">
-                            <input id="password" name="password" type="password" autocomplete="current-password" required
-                                   class="mt-1 appearance-none relative block w-full px-3 py-2 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm @error('password') border-red-500 @enderror"
-                                   placeholder="Enter your password">
-                            <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
-                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                </svg>
-                            </button>
+    <h1 class="text-3xl font-bold text-white mb-2">City Vet</h1>
+
+    <p class="text-slate-400 text-sm">Pet Recovery & Adoption System</p>
+</div>
+
+            <!-- Login Form -->
+            <div class="bg-slate-800 rounded-lg border border-slate-700 shadow-xl p-8">
+                <h2 class="text-2xl font-bold text-white mb-1">Sign In</h2>
+                <p class="text-slate-400 text-sm mb-6">Access your account to continue</p>
+
+                    <form class="space-y-5" method="POST" action="{{ route('login') }}">
+                        @csrf
+
+                        <!-- Email -->
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-slate-300 mb-2">Email Address</label>
+                            <input id="email" name="email" type="email" autocomplete="email" required value="{{ old('email') }}"
+                                   class="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent @error('email') border-red-500 @enderror"
+                                   placeholder="you@example.com">
+                            @error('email')
+                                <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
+                            @enderror
                         </div>
-                        @error('password')
-                            <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
-                        @enderror
-                    </div>
 
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <input id="remember" name="remember" type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                            <label for="remember" class="ml-2 block text-sm text-gray-900">Remember me</label>
+                        <!-- Password -->
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-slate-300 mb-2">Password</label>
+                            <div class="relative">
+                                <input id="password" name="password" type="password" autocomplete="current-password" required
+                                       class="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent @error('password') border-red-500 @enderror"
+                                       placeholder="Enter your password">
+                                <button type="button" id="toggle-password" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-300">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            @error('password')
+                                <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
+                            @enderror
                         </div>
-                    </div>
 
-                    @if (Route::has('password.request'))
-                        <div class="text-sm text-center">
-                            <a href="{{ route('password.request') }}" class="font-medium text-blue-600 hover:text-blue-500">Forgot your password?</a>
+                        <!-- Remember & Forgot -->
+                        <div class="flex items-center justify-between">
+                            <label for="remember" class="flex items-center text-sm text-slate-300">
+                                <input id="remember" name="remember" type="checkbox" class="w-4 h-4 rounded bg-slate-700 border-slate-600 text-emerald-600 focus:ring-emerald-600">
+                                <span class="ml-2">Remember me</span>
+                            </label>
+                            @if (Route::has('password.request'))
+                                <a href="{{ route('password.request') }}" class="text-sm text-emerald-400 hover:text-emerald-300">Forgot password?</a>
+                            @endif
                         </div>
-                    @endif
 
-                    <div>
-                        <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <!-- Submit -->
+                        <button type="submit" class="w-full px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:ring-offset-slate-900">
                             Sign In
                         </button>
-                    </div>
+                    </form>
 
-                    <div class="text-center">
-                        <p class="text-sm text-gray-600">Don't have an account?
-                            <a href="{{ route('register') }}" class="font-medium text-blue-600 hover:text-blue-500">Sign up here</a>
+                    <!-- Sign Up Link -->
+                    <div class="mt-6 pt-6 border-t border-slate-700">
+                        <p class="text-center text-slate-400 text-sm">
+                            New to City Vet?
+                            <a href="{{ route('register') }}" class="text-emerald-400 hover:text-emerald-300 font-medium">Create an account</a>
                         </p>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
@@ -93,3 +95,4 @@
         });
     </script>
 </x-guest-layout>
+
