@@ -83,21 +83,8 @@
                         >
                     </div>
 
+                    @if(auth()->user()->id_photo)
                     <div>
-                        <label for="address_display" class="block text-sm font-medium text-gray-700">Complete Address</label>
-                        <textarea
-                            id="address_display"
-                            rows="3"
-                            readonly
-                            class="block w-full p-3 mt-1 text-gray-600 bg-gray-100 border border-gray-200 rounded-lg shadow-sm cursor-not-allowed resize-none"
-                        >{{ (auth()->user()->street ?? '') . ', ' . (auth()->user()->barangay ?? '') . ', ' . (auth()->user()->city_municipality ?? '') }}</textarea>
-                    </div>
-                </div>
-
-                <input type="hidden" name="contact_number" value="{{ auth()->user()->contact_number ?? '' }}">
-                <input type="hidden" name="address" value="{{ (auth()->user()->street ?? '') . ', ' . (auth()->user()->barangay ?? '') . ', ' . (auth()->user()->city_municipality ?? '') }}">
-                @if(auth()->user()->id_photo)
-                    <div class="mb-4">
                         <label class="block mb-1 text-sm font-medium text-gray-700">ID Photo</label>
                         <div onclick="document.getElementById('petCreateIdPhotoModal').classList.remove('hidden')"
                              tabindex="0"
@@ -131,13 +118,31 @@
                                 </div>
                             </div>
                         </div>
+                        <input type="hidden" name="id_photo_path" value="{{ auth()->user()->id_photo }}">
                     </div>
-                    <input type="hidden" name="id_photo_path" value="{{ auth()->user()->id_photo }}">
-                @else
-                    <div class="p-3 mb-4 border border-yellow-200 rounded bg-yellow-50">
-                        <p class="text-sm text-yellow-800"><strong>Note:</strong> You haven't uploaded an ID photo yet. Please upload one in your <a href="{{ route('profile.edit') }}" class="text-blue-600 underline hover:text-blue-800">profile settings</a> for faster verification.</p>
+                    @else
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">ID Photo</label>
+                        <div class="p-3 border border-yellow-200 rounded bg-yellow-50">
+                            <p class="text-xs text-yellow-800"><strong>Note:</strong> You haven't uploaded an ID photo yet. Please upload one in your <a href="{{ route('profile.edit') }}" class="text-blue-600 underline hover:text-blue-800">profile settings</a> for faster verification.</p>
+                        </div>
                     </div>
-                @endif
+                    @endif
+
+                    <div class="md:col-span-2">
+                        <label for="address_display" class="block text-sm font-medium text-gray-700">Complete Address</label>
+                        <input
+                            type="text"
+                            id="address_display"
+                            value="{{ (auth()->user()->street ?? '') . ', ' . (auth()->user()->barangay ?? '') . ', ' . (auth()->user()->city_municipality ?? '') }}"
+                            readonly
+                            class="block w-full p-3 mt-1 text-gray-600 bg-gray-100 border border-gray-200 rounded-lg shadow-sm cursor-not-allowed"
+                        >
+                    </div>
+                </div>
+
+                <input type="hidden" name="contact_number" value="{{ auth()->user()->contact_number ?? '' }}">
+                <input type="hidden" name="address" value="{{ (auth()->user()->street ?? '') . ', ' . (auth()->user()->barangay ?? '') . ', ' . (auth()->user()->city_municipality ?? '') }}"
 
             </div>
 
