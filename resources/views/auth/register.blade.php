@@ -1,128 +1,262 @@
 <x-guest-layout>
     <style>
-        /* 3D Sphere Styles */
+        /* Premium Color Palette */
+        :root {
+            --bg-primary: #080c14;
+            --bg-card: #111c2a;
+            --bg-form: #1d2a3a;
+            --border-subtle: #2a3b50;
+            --accent-primary: #00b880;
+            --accent-hover: #02a170;
+            --glass-blur: 12px;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+        }
+
+        /* Animated 3D Glass Spheres */
         .sphere {
             border-radius: 50%;
             position: absolute;
-            filter: blur(0.5px);
+            filter: blur(0.4px);
+            box-shadow: 0 8px 32px rgba(0, 184, 128, 0.15), inset -2px -2px 8px rgba(0, 0, 0, 0.3);
         }
 
         .sphere-1 {
-            width: 140px;
-            height: 140px;
-            background: radial-gradient(circle at 35% 35%, rgba(34, 197, 94, 0.8), rgba(20, 83, 78, 0.4) 50%, rgba(15, 23, 42, 0.9));
-            top: 15%;
-            left: 10%;
-            animation: float 6s ease-in-out infinite;
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle at 30% 30%, rgba(0, 184, 128, 0.4), rgba(0, 100, 70, 0.15) 50%, transparent);
+            top: 10%;
+            left: 5%;
+            animation: float-slow 8s ease-in-out infinite;
         }
 
         .sphere-2 {
-            width: 90px;
-            height: 90px;
-            background: radial-gradient(circle at 30% 30%, rgba(45, 212, 191, 0.7), rgba(13, 110, 107, 0.3) 50%, rgba(15, 23, 42, 0.95));
-            bottom: 20%;
-            right: 15%;
-            animation: float 8s ease-in-out infinite reverse;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle at 35% 35%, rgba(0, 200, 140, 0.35), rgba(0, 110, 80, 0.1) 50%, transparent);
+            bottom: 15%;
+            left: 12%;
+            animation: float-fast 6s ease-in-out infinite reverse;
         }
 
         .sphere-3 {
-            width: 160px;
-            height: 160px;
-            background: radial-gradient(circle at 40% 40%, rgba(34, 197, 94, 0.6), rgba(20, 83, 78, 0.25) 50%, rgba(15, 23, 42, 0.95));
-            bottom: -50px;
-            right: 5%;
-            z-index: 10;
-            animation: float 7s ease-in-out infinite;
+            width: 280px;
+            height: 280px;
+            background: radial-gradient(circle at 40% 40%, rgba(0, 184, 128, 0.25), rgba(0, 90, 60, 0.08) 50%, transparent);
+            bottom: -80px;
+            right: 8%;
+            animation: float-medium 7s ease-in-out infinite;
+            box-shadow: 0 12px 48px rgba(0, 184, 128, 0.2), inset -3px -3px 12px rgba(0, 0, 0, 0.4);
         }
 
         .sphere-4 {
-            width: 80px;
-            height: 80px;
-            background: radial-gradient(circle at 35% 35%, rgba(45, 212, 191, 0.6), rgba(13, 110, 107, 0.2) 50%, rgba(15, 23, 42, 0.9));
-            top: 40%;
-            right: 8%;
-            animation: float 5s ease-in-out infinite reverse;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle at 32% 32%, rgba(0, 200, 140, 0.3), rgba(0, 120, 85, 0.1) 50%, transparent);
+            top: 35%;
+            right: 5%;
+            animation: float-slow 9s ease-in-out infinite reverse;
         }
 
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-30px);
-            }
+        @keyframes float-slow {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            50% { transform: translateY(-40px) translateX(10px); }
         }
 
+        @keyframes float-fast {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-35px); }
+        }
+
+        @keyframes float-medium {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            50% { transform: translateY(-45px) translateX(-15px); }
+        }
+
+        /* Premium Input Fields */
         .input-field {
-            background-color: #243249;
-            border: 1.5px solid #2d3f52;
+            background-color: var(--bg-form);
+            border: 1px solid var(--border-subtle);
             color: white;
-            padding: 0.6rem 0.75rem;
-            border-radius: 0.75rem;
-            font-size: 0.85rem;
+            padding: 0.7rem 0.9rem;
+            border-radius: 0.625rem;
+            font-size: 0.9rem;
             transition: all 0.3s ease;
         }
 
         .input-field::placeholder {
-            color: #94a3b8;
+            color: #6b7280;
         }
 
         .input-field:focus {
             outline: none;
-            border-color: #10b981;
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(0, 184, 128, 0.15), inset 0 1px 2px rgba(0, 184, 128, 0.1);
+            background-color: rgba(29, 42, 58, 0.8);
         }
 
         .input-field.error {
             border-color: #ef4444;
         }
 
+        /* Premium Button */
         .btn-submit {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-hover) 100%);
             color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 9999px;
+            padding: 0.8rem 1.8rem;
+            border-radius: 0.625rem;
             font-weight: 600;
-            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             border: none;
             cursor: pointer;
-            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(0, 184, 128, 0.25);
         }
 
         .btn-submit:hover {
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+            background: linear-gradient(135deg, var(--accent-hover) 0%, #00905f 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 184, 128, 0.35);
+        }
+
+        .btn-submit:active {
+            transform: translateY(-1px);
+        }
+
+        /* Toast Notification */
+        .toast-notification {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(17, 28, 42, 0.95);
+            backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--border-subtle);
+            border-left: 3px solid var(--accent-primary);
+            border-radius: 0.625rem;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            animation: slide-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 50;
+            max-width: 320px;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        @keyframes slide-in {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Paw Icon */
+        .paw-icon {
+            display: inline-block;
+            width: 1.5rem;
+            height: 1.5rem;
+            margin-right: 0.5rem;
+            color: var(--accent-primary);
+        }
+
+        /* Premium Card Container */
+        .card-container {
+            background: linear-gradient(135deg, rgba(17, 28, 42, 0.9) 0%, rgba(17, 28, 42, 0.85) 100%);
+            backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid rgba(42, 59, 80, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 1px rgba(0, 184, 128, 0.1);
+        }
+
+        .brand-accent {
+            color: var(--accent-primary);
+        }
+
+        /* View Transition Animation */
+        .fade-transition {
+            animation: fade-in 0.3s ease-out;
+        }
+
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 
-    <div class="relative flex items-center justify-center h-screen px-4 py-2 overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 sm:px-6 lg:px-8">
+    <div class="relative flex items-center justify-center min-h-screen px-4 py-4 overflow-hidden sm:px-6 lg:px-8" style="background-color: var(--bg-primary);">
+
+        <!-- Background Spheres -->
+        <div class="fixed inset-0 z-0 pointer-events-none">
+            <div class="sphere sphere-1"></div>
+            <div class="sphere sphere-2"></div>
+            <div class="sphere sphere-3"></div>
+            <div class="sphere sphere-4"></div>
+        </div>
 
         <!-- Main Container -->
-        <div class="grid w-full h-full grid-cols-1 gap-0 overflow-hidden shadow-2xl max-w-7xl lg:grid-cols-2 rounded-2xl">
+        <div class="relative z-10 w-full max-w-5xl card-container rounded-2xl min-h-[580px] grid grid-cols-1 md:grid-cols-5 gap-0 overflow-hidden">
 
-            <!-- Left Panel - Branding & Decoration -->
-            <div class="hidden lg:flex flex-col justify-between p-8 bg-gradient-to-br from-slate-950 via-[#0b121f] to-slate-900 relative overflow-hidden">
+            <!-- Left Panel (40%) - Branding & Hero Message -->
+            <div class="relative flex-col justify-between hidden p-8 overflow-hidden md:flex md:col-span-2 lg:p-10 bg-gradient-to-br from-slate-950/40 via-slate-900/20 to-slate-950/30">
 
-                <!-- Floating Spheres -->
-                <div class="sphere sphere-1"></div>
-                <div class="sphere sphere-2"></div>
-                <div class="sphere sphere-3"></div>
-                <div class="sphere sphere-4"></div>
+                <!-- Floating Background Spheres (Decorative) -->
+                <div class="absolute inset-0 z-0">
+                    <div class="sphere sphere-1" style="opacity: 0.3; animation-duration: 12s;"></div>
+                    <div class="sphere sphere-2" style="opacity: 0.2; animation-duration: 10s;"></div>
+                </div>
+
+                <!-- Branding Header -->
+                <div class="relative z-10">
+                    <div class="flex items-center">
+                        <svg class="w-6 h-6" style="color: var(--accent-primary);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-hidden="true">
+                            <path fill="currentColor" d="M234.5 92.9c14.3 42.9-.3 86.2-32.6 96.8s-70.1-15.6-84.4-58.5 .3-86.2 32.6-96.8 70.1 15.6 84.4 58.5zM100.4 198.6c18.9 32.4 14.3 70.1-10.2 84.1s-59.7-.9-78.5-33.3-14.3-70.1 10.2-84.1 59.7 .9 78.5 33.3zM69.2 401.2C121.6 259.9 214.7 224 256 224s134.4 35.9 186.8 177.2c3.6 9.7 5.2 20.1 5.2 30.5l0 1.6c0 25.8-20.9 46.7-46.7 46.7-11.5 0-22.9-1.4-34-4.2l-88-22c-15.3-3.8-31.3-3.8-46.6 0l-88 22c-11.1 2.8-22.5 4.2-34 4.2-25.8 0-46.7-20.9-46.7-46.7l0-1.6c0-10.4 1.6-20.8 5.2-30.5zM421.8 282.7c-24.5-14-29.1-51.7-10.2-84.1s54-47.3 78.5-33.3 29.1 51.7 10.2 84.1-54 47.3-78.5 33.3zM310.1 189.7c-32.3-10.6-46.9-53.9-32.6-96.8s52.1-69.1 84.4-58.5 46.9 53.9 32.6 96.8-52.1 69.1-84.4 58.5z"/>
+                        </svg>
+                        <div class="ml-2">
+                            <h1 class="text-2xl font-bold text-white">City Vet</h1>
+                            <p class="text-xs uppercase tracking-widest text-slate-400">FindFurEver</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Centered Hero Message -->
+                <div class="relative z-10 text-center">
+                    <h2 class="mb-4 text-4xl font-bold leading-tight text-white">
+                        Find Your <span class="brand-accent">FurEver</span>
+                    </h2>
+
+                    <p class="text-base leading-relaxed text-slate-300">
+                        Open your heart and your home. Sign up today to find your fur-fect match.
+                    </p>
+                </div>
+
+                <!-- Footer Space (Clean) -->
+                <div class="relative z-10">
+                    <p class="text-xs text-slate-500">Securing pets, building bonds.</p>
+                </div>
             </div>
 
-            <!-- Right Panel - Form -->
-            <div class="bg-gradient-to-br from-[#162235] to-[#0f1823] p-6 lg:p-6 flex flex-col justify-center overflow-y-auto">
+            <!-- Right Panel (60%) - Interactive Form -->
+            <div class="md:col-span-3 bg-gradient-to-br from-slate-900/40 to-slate-950/40 p-6 lg:p-8 flex flex-col justify-center overflow-y-auto max-h-[calc(100vh-2rem)]">
 
                 <form method="POST" action="{{ route('register') }}" class="space-y-3" id="registration-form">
                     @csrf
                     <input type="hidden" name="role" value="{{ request('role') }}">
 
                     <!-- Name Fields Grid -->
-                    <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                         <!-- First Name -->
-                        <div>
-                            <label for="first_name" class="block mb-1 text-xs font-medium text-slate-200">First Name</label>
+                        <div class="fade-transition">
+                            <label for="first_name" class="block text-xs font-semibold text-slate-200 mb-1.5 uppercase tracking-wide">First Name</label>
                             <input id="first_name" name="first_name" type="text" required value="{{ old('first_name') }}"
                                    class="input-field w-full @error('first_name') error @enderror"
                                    placeholder="Juan">
@@ -132,8 +266,8 @@
                         </div>
 
                         <!-- Last Name -->
-                        <div>
-                            <label for="last_name" class="block mb-1 text-xs font-medium text-slate-200">Last Name</label>
+                        <div class="fade-transition">
+                            <label for="last_name" class="block text-xs font-semibold text-slate-200 mb-1.5 uppercase tracking-wide">Last Name</label>
                             <input id="last_name" name="last_name" type="text" required value="{{ old('last_name') }}"
                                    class="input-field w-full @error('last_name') error @enderror"
                                    placeholder="Dela Cruz">
@@ -144,8 +278,8 @@
                     </div>
 
                     <!-- Contact Number -->
-                    <div>
-                        <label for="contact_number" class="block mb-1 text-xs font-medium text-slate-200">Contact Number</label>
+                    <div class="fade-transition">
+                        <label for="contact_number" class="block text-xs font-semibold text-slate-200 mb-1.5 uppercase tracking-wide">Contact Number</label>
                         <input id="contact_number" name="contact_number" type="text" required value="{{ old('contact_number') }}"
                                class="input-field w-full @error('contact_number') error @enderror"
                                placeholder="09123456789">
@@ -156,8 +290,8 @@
                     </div>
 
                     <!-- Email -->
-                    <div>
-                        <label for="email" class="block mb-1 text-xs font-medium text-slate-200">Email Address</label>
+                    <div class="fade-transition">
+                        <label for="email" class="block text-xs font-semibold text-slate-200 mb-1.5 uppercase tracking-wide">Email Address</label>
                         <input id="email" name="email" type="email" required value="{{ old('email') }}"
                                class="input-field w-full @error('email') error @enderror"
                                placeholder="juandelacruz2@gmail.com">
@@ -167,10 +301,10 @@
                     </div>
 
                     <!-- Password Fields Grid -->
-                    <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                         <!-- Password -->
-                        <div>
-                            <label for="password" class="block mb-1 text-xs font-medium text-slate-200">Password</label>
+                        <div class="fade-transition">
+                            <label for="password" class="block text-xs font-semibold text-slate-200 mb-1.5 uppercase tracking-wide">Password</label>
                             <div class="relative">
                                 <input id="password" name="password" type="password" required
                                        class="input-field w-full @error('password') error @enderror"
@@ -188,8 +322,8 @@
                         </div>
 
                         <!-- Confirm Password -->
-                        <div>
-                            <label for="password_confirmation" class="block mb-1 text-xs font-medium text-slate-200">Confirm Password</label>
+                        <div class="fade-transition">
+                            <label for="password_confirmation" class="block text-xs font-semibold text-slate-200 mb-1.5 uppercase tracking-wide">Confirm Password</label>
                             <div class="relative">
                                 <input id="password_confirmation" name="password_confirmation" type="password" required
                                        class="w-full input-field"
@@ -206,16 +340,19 @@
                     </div>
 
                     <!-- Password Requirements -->
-                    <div id="password-requirements" class="grid grid-cols-3 gap-1 p-2 text-xs border rounded-lg text-slate-400 bg-slate-800/30 border-slate-700/30">
-                        <div id="req-length" class="flex items-center"><span class="w-2 h-2 mr-2 bg-red-500 rounded-full"></span>8+ characters</div>
-                        <div id="req-uppercase" class="flex items-center"><span class="w-2 h-2 mr-2 bg-red-500 rounded-full"></span>Uppercase</div>
-                        <div id="req-lowercase" class="flex items-center"><span class="w-2 h-2 mr-2 bg-red-500 rounded-full"></span>Lowercase</div>
-                        <div id="req-number" class="flex items-center"><span class="w-2 h-2 mr-2 bg-red-500 rounded-full"></span>Number</div>
-                        <div id="req-special" class="flex items-center"><span class="w-2 h-2 mr-2 bg-red-500 rounded-full"></span>Special char</div>
+                    <div class="p-3 space-y-2 border rounded-lg bg-slate-800/20 border-slate-700/30">
+                        <p class="mb-2 text-xs font-semibold tracking-wide uppercase text-slate-400">Password Requirements</p>
+                        <div id="password-requirements" class="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                            <div id="req-length" class="flex items-center text-xs text-slate-400"><span class="flex-shrink-0 w-2 h-2 mr-2 bg-red-500 rounded-full"></span>8+ chars</div>
+                            <div id="req-uppercase" class="flex items-center text-xs text-slate-400"><span class="flex-shrink-0 w-2 h-2 mr-2 bg-red-500 rounded-full"></span>Uppercase</div>
+                            <div id="req-lowercase" class="flex items-center text-xs text-slate-400"><span class="flex-shrink-0 w-2 h-2 mr-2 bg-red-500 rounded-full"></span>Lowercase</div>
+                            <div id="req-number" class="flex items-center text-xs text-slate-400"><span class="flex-shrink-0 w-2 h-2 mr-2 bg-red-500 rounded-full"></span>Number</div>
+                            <div id="req-special" class="flex items-center text-xs text-slate-400"><span class="flex-shrink-0 w-2 h-2 mr-2 bg-red-500 rounded-full"></span>Special char</div>
+                        </div>
                     </div>
 
                     <!-- Terms -->
-                    <div class="p-2 border rounded-lg bg-slate-800/50 border-slate-700/50">
+                    <div class="p-3 border rounded-lg bg-slate-800/20 border-slate-700/30">
                         <label for="terms" class="flex items-start text-xs cursor-pointer text-slate-300">
                             <input id="terms" name="terms" type="checkbox" class="w-4 h-4 mt-0.5 rounded bg-slate-700 border-slate-600 text-emerald-600 focus:ring-emerald-600">
                             <span class="ml-3">
@@ -232,17 +369,17 @@
                     </div>
 
                     <!-- Submit -->
-                    <button type="submit" id="submit-button" class="w-full mt-2 btn-submit">
+                    <button type="submit" id="submit-button" class="w-full mt-4 mb-3 btn-submit fade-transition">
                         Create Account
                     </button>
 
                 </form>
 
                 <!-- Sign In Link -->
-                <div class="pt-2 mt-2 text-center border-t border-slate-700/50">
-                    <p class="text-slate-400 text-xs\">
+                <div class="pt-3 border-t border-slate-700/30">
+                    <p class="text-xs text-center text-slate-400">
                         Already have an account?
-                        <a href="{{ route('login', ['role' => request('role')]) }}" class="font-semibold transition text-emerald-400 hover:text-emerald-300">Sign in</a>
+                        <a href="{{ route('login', ['role' => request('role')]) }}" class="font-semibold transition text-emerald-400 hover:text-emerald-300">Sign in here</a>
                     </p>
                 </div>
             </div>
@@ -251,8 +388,8 @@
 
     <!-- Terms Modal -->
     <div id="terms-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 overflow-y-auto bg-black/60 backdrop-blur-sm">
-        <div class="w-full max-w-md overflow-y-auto border shadow-2xl bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700/50 rounded-xl max-h-96">
-            <div class="sticky top-0 flex items-center justify-between p-6 border-b bg-slate-800/80 backdrop-blur border-slate-700/50">
+        <div class="w-full max-w-md overflow-y-auto border rounded-lg shadow-2xl bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700/50 max-h-96 fade-transition">
+            <div class="sticky top-0 flex items-center justify-between p-5 border-b bg-slate-800/80 backdrop-blur border-slate-700/50">
                 <h3 class="text-lg font-bold text-white">Terms and Conditions</h3>
                 <button type="button" id="close-terms-modal" class="transition text-slate-400 hover:text-slate-200">
                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -261,7 +398,7 @@
                 </button>
             </div>
 
-            <div class="p-6 space-y-4 text-sm text-slate-300">
+            <div class="p-5 space-y-4 text-sm text-slate-300">
                 <h4 class="text-base font-semibold text-white">City Vet - Pet Recovery & Adoption System</h4>
                 <p class="text-xs text-slate-400">This policy governs the use of City Vet system which facilitates pet registration, adoption, and community lost/found reports.</p>
 
@@ -286,7 +423,7 @@
                 </div>
             </div>
 
-            <div class="sticky bottom-0 p-6 border-t bg-slate-800/80 backdrop-blur border-slate-700/50">
+            <div class="sticky bottom-0 p-5 border-t bg-slate-800/80 backdrop-blur border-slate-700/50">
                 <button type="button" id="agree-and-close" class="w-full px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-semibold rounded-lg transition duration-300">
                     I Agree
                 </button>
@@ -326,7 +463,7 @@
 
         function validatePassword() {
             const pwd = passwordInput.value;
-            updateReq(reqs.length, pwd.length >= 8, '8+ characters');
+            updateReq(reqs.length, pwd.length >= 8, '8+ chars');
             updateReq(reqs.uppercase, /[A-Z]/.test(pwd), 'Uppercase');
             updateReq(reqs.lowercase, /[a-z]/.test(pwd), 'Lowercase');
             updateReq(reqs.number, /[0-9]/.test(pwd), 'Number');
