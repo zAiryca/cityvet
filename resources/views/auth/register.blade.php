@@ -1,49 +1,141 @@
 <x-guest-layout>
-    <div class="min-h-screen bg-slate-900 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
-        <div class="w-full max-w-md">
-            <!-- Header -->
+    <style>
+        /* 3D Sphere Styles */
+        .sphere {
+            border-radius: 50%;
+            position: absolute;
+            filter: blur(0.5px);
+        }
 
+        .sphere-1 {
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle at 35% 35%, rgba(34, 197, 94, 0.8), rgba(20, 83, 78, 0.4) 50%, rgba(15, 23, 42, 0.9));
+            top: 15%;
+            left: 10%;
+            animation: float 6s ease-in-out infinite;
+        }
 
+        .sphere-2 {
+            width: 90px;
+            height: 90px;
+            background: radial-gradient(circle at 30% 30%, rgba(45, 212, 191, 0.7), rgba(13, 110, 107, 0.3) 50%, rgba(15, 23, 42, 0.95));
+            bottom: 20%;
+            right: 15%;
+            animation: float 8s ease-in-out infinite reverse;
+        }
 
-            <div class="mb-8 text-center">
-                <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-emerald-600 rounded-lg">
-                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
-                    </svg>
-                </div>
-                <h1 class="text-3xl font-bold text-white mb-2">City Vet</h1>
-                <p class="text-slate-400 text-sm">
-                    {{ request('role') === 'admin' ? 'Employee Portal' : 'Pet Lover Community' }}
-                </p>
+        .sphere-3 {
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle at 40% 40%, rgba(34, 197, 94, 0.6), rgba(20, 83, 78, 0.25) 50%, rgba(15, 23, 42, 0.95));
+            bottom: -50px;
+            right: 5%;
+            z-index: 10;
+            animation: float 7s ease-in-out infinite;
+        }
+
+        .sphere-4 {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 35% 35%, rgba(45, 212, 191, 0.6), rgba(13, 110, 107, 0.2) 50%, rgba(15, 23, 42, 0.9));
+            top: 40%;
+            right: 8%;
+            animation: float 5s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-30px);
+            }
+        }
+
+        .input-field {
+            background-color: #243249;
+            border: 1.5px solid #2d3f52;
+            color: white;
+            padding: 0.6rem 0.75rem;
+            border-radius: 0.75rem;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-field::placeholder {
+            color: #94a3b8;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .input-field.error {
+            border-color: #ef4444;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+        }
+    </style>
+
+    <div class="relative flex items-center justify-center h-screen px-4 py-2 overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 sm:px-6 lg:px-8">
+
+        <!-- Main Container -->
+        <div class="grid w-full h-full grid-cols-1 gap-0 overflow-hidden shadow-2xl max-w-7xl lg:grid-cols-2 rounded-2xl">
+
+            <!-- Left Panel - Branding & Decoration -->
+            <div class="hidden lg:flex flex-col justify-between p-8 bg-gradient-to-br from-slate-950 via-[#0b121f] to-slate-900 relative overflow-hidden">
+
+                <!-- Floating Spheres -->
+                <div class="sphere sphere-1"></div>
+                <div class="sphere sphere-2"></div>
+                <div class="sphere sphere-3"></div>
+                <div class="sphere sphere-4"></div>
             </div>
 
-            <!-- Register Form -->
-            <div class="bg-slate-800 rounded-lg border border-slate-700 shadow-xl p-8">
-                <h2 class="text-2xl font-bold text-white mb-1">Create Account</h2>
-                <p class="text-slate-400 text-sm mb-6">
-                    {{ request('role') === 'admin' ? 'Join our team' : 'Join our community' }}
-                </p>
+            <!-- Right Panel - Form -->
+            <div class="bg-gradient-to-br from-[#162235] to-[#0f1823] p-6 lg:p-6 flex flex-col justify-center overflow-y-auto">
 
-                <form method="POST" action="{{ route('register') }}" class="space-y-4" id="registration-form">
+                <form method="POST" action="{{ route('register') }}" class="space-y-3" id="registration-form">
                     @csrf
                     <input type="hidden" name="role" value="{{ request('role') }}">
 
-                    <!-- First Name & Last Name -->
-                    <div class="grid grid-cols-2 gap-4">
+                    <!-- Name Fields Grid -->
+                    <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                        <!-- First Name -->
                         <div>
-                            <label for="first_name" class="block text-sm font-medium text-slate-300 mb-2">First Name</label>
+                            <label for="first_name" class="block mb-1 text-xs font-medium text-slate-200">First Name</label>
                             <input id="first_name" name="first_name" type="text" required value="{{ old('first_name') }}"
-                                   class="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent @error('first_name') border-red-500 @enderror"
+                                   class="input-field w-full @error('first_name') error @enderror"
                                    placeholder="Juan">
                             @error('first_name')
-                                <p class="mt-1 text-xs text-red-400">{{ $message }}</p>
+                                <p class="mt-1 text-xs text-red-400\">{{ $message }}</p>
                             @enderror
                         </div>
 
+                        <!-- Last Name -->
                         <div>
-                            <label for="last_name" class="block text-sm font-medium text-slate-300 mb-2">Last Name</label>
+                            <label for="last_name" class="block mb-1 text-xs font-medium text-slate-200">Last Name</label>
                             <input id="last_name" name="last_name" type="text" required value="{{ old('last_name') }}"
-                                   class="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent @error('last_name') border-red-500 @enderror"
+                                   class="input-field w-full @error('last_name') error @enderror"
                                    placeholder="Dela Cruz">
                             @error('last_name')
                                 <p class="mt-1 text-xs text-red-400">{{ $message }}</p>
@@ -53,11 +145,11 @@
 
                     <!-- Contact Number -->
                     <div>
-                        <label for="contact_number" class="block text-sm font-medium text-slate-300 mb-2">Contact Number</label>
+                        <label for="contact_number" class="block mb-1 text-xs font-medium text-slate-200">Contact Number</label>
                         <input id="contact_number" name="contact_number" type="text" required value="{{ old('contact_number') }}"
-                               class="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent @error('contact_number') border-red-500 @enderror"
+                               class="input-field w-full @error('contact_number') error @enderror"
                                placeholder="09123456789">
-                        <p class="mt-1 text-xs text-slate-500">Format: 09XXXXXXXXX (11 digits)</p>
+                        <p class="mt-0.5 text-xs text-slate-400">Format: 09XXXXXXXXX (11 digits)</p>
                         @error('contact_number')
                             <p class="mt-1 text-xs text-red-400">{{ $message }}</p>
                         @enderror
@@ -65,65 +157,70 @@
 
                     <!-- Email -->
                     <div>
-                        <label for="email" class="block text-sm font-medium text-slate-300 mb-2">Email Address</label>
+                        <label for="email" class="block mb-1 text-xs font-medium text-slate-200">Email Address</label>
                         <input id="email" name="email" type="email" required value="{{ old('email') }}"
-                               class="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent @error('email') border-red-500 @enderror"
-                               placeholder="you@example.com">
+                               class="input-field w-full @error('email') error @enderror"
+                               placeholder="juandelacruz2@gmail.com">
                         @error('email')
                             <p class="mt-1 text-xs text-red-400">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <!-- Password -->
-                    <div>
-                        <label for="password" class="block text-sm font-medium text-slate-300 mb-2">Password</label>
-                        <div class="relative">
-                            <input id="password" name="password" type="password" required
-                                   class="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent @error('password') border-red-500 @enderror"
-                                   placeholder="Create a strong password">
-                            <button type="button" id="toggle-password" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-300">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                </svg>
-                            </button>
+                    <!-- Password Fields Grid -->
+                    <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                        <!-- Password -->
+                        <div>
+                            <label for="password" class="block mb-1 text-xs font-medium text-slate-200">Password</label>
+                            <div class="relative">
+                                <input id="password" name="password" type="password" required
+                                       class="input-field w-full @error('password') error @enderror"
+                                       placeholder="Create a strong password">
+                                <button type="button" id="toggle-password" class="absolute transition right-3 top-3 text-slate-400 hover:text-slate-200">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            @error('password')
+                                <p class="mt-1 text-xs text-red-400">{{ $message }}</p>
+                            @enderror
                         </div>
-                        <div id="password-requirements" class="mt-2 grid grid-cols-2 gap-2 text-xs text-slate-400">
-                            <div id="req-length" class="flex items-center"><span class="w-2 h-2 mr-2 bg-red-500 rounded-full"></span>8+ characters</div>
-                            <div id="req-uppercase" class="flex items-center"><span class="w-2 h-2 mr-2 bg-red-500 rounded-full"></span>Uppercase</div>
-                            <div id="req-lowercase" class="flex items-center"><span class="w-2 h-2 mr-2 bg-red-500 rounded-full"></span>Lowercase</div>
-                            <div id="req-number" class="flex items-center"><span class="w-2 h-2 mr-2 bg-red-500 rounded-full"></span>Number</div>
-                            <div id="req-special" class="flex items-center"><span class="w-2 h-2 mr-2 bg-red-500 rounded-full"></span>Special char</div>
+
+                        <!-- Confirm Password -->
+                        <div>
+                            <label for="password_confirmation" class="block mb-1 text-xs font-medium text-slate-200">Confirm Password</label>
+                            <div class="relative">
+                                <input id="password_confirmation" name="password_confirmation" type="password" required
+                                       class="w-full input-field"
+                                       placeholder="Re-enter your password">
+                                <button type="button" id="toggle-password-confirmation" class="absolute transition right-3 top-3 text-slate-400 hover:text-slate-200">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <p id="confirm_password_warning" class="hidden mt-1 text-xs text-red-400">Passwords do not match</p>
                         </div>
-                        @error('password')
-                            <p class="mt-1 text-xs text-red-400">{{ $message }}</p>
-                        @enderror
                     </div>
 
-                    <!-- Confirm Password -->
-                    <div>
-                        <label for="password_confirmation" class="block text-sm font-medium text-slate-300 mb-2">Confirm Password</label>
-                        <div class="relative">
-                            <input id="password_confirmation" name="password_confirmation" type="password" required
-                                   class="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent"
-                                   placeholder="Re-enter your password">
-                            <button type="button" id="toggle-password-confirmation" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-300">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                </svg>
-                            </button>
-                        </div>
-                        <p id="confirm_password_warning" class="hidden mt-1 text-xs text-red-400">Passwords do not match</p>
+                    <!-- Password Requirements -->
+                    <div id="password-requirements" class="grid grid-cols-3 gap-1 p-2 text-xs border rounded-lg text-slate-400 bg-slate-800/30 border-slate-700/30">
+                        <div id="req-length" class="flex items-center"><span class="w-2 h-2 mr-2 bg-red-500 rounded-full"></span>8+ characters</div>
+                        <div id="req-uppercase" class="flex items-center"><span class="w-2 h-2 mr-2 bg-red-500 rounded-full"></span>Uppercase</div>
+                        <div id="req-lowercase" class="flex items-center"><span class="w-2 h-2 mr-2 bg-red-500 rounded-full"></span>Lowercase</div>
+                        <div id="req-number" class="flex items-center"><span class="w-2 h-2 mr-2 bg-red-500 rounded-full"></span>Number</div>
+                        <div id="req-special" class="flex items-center"><span class="w-2 h-2 mr-2 bg-red-500 rounded-full"></span>Special char</div>
                     </div>
 
                     <!-- Terms -->
-                    <div class="bg-slate-700/50 border border-slate-600 rounded-lg p-4">
-                        <label for="terms" class="flex items-start text-sm text-slate-300 cursor-pointer">
-                            <input id="terms" name="terms" type="checkbox" class="w-4 h-4 mt-0.5 rounded bg-slate-600 border-slate-500 text-emerald-600 focus:ring-emerald-600">
+                    <div class="p-2 border rounded-lg bg-slate-800/50 border-slate-700/50">
+                        <label for="terms" class="flex items-start text-xs cursor-pointer text-slate-300">
+                            <input id="terms" name="terms" type="checkbox" class="w-4 h-4 mt-0.5 rounded bg-slate-700 border-slate-600 text-emerald-600 focus:ring-emerald-600">
                             <span class="ml-3">
                                 I agree to the
-                                <button type="button" id="open-terms-modal" class="text-emerald-400 hover:text-emerald-300 underline">
+                                <button type="button" id="open-terms-modal" class="underline transition text-emerald-400 hover:text-emerald-300">
                                     Terms and Conditions
                                 </button>
                             </span>
@@ -135,16 +232,17 @@
                     </div>
 
                     <!-- Submit -->
-                    <button type="submit" id="submit-button" class="w-full px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:ring-offset-slate-900">
+                    <button type="submit" id="submit-button" class="w-full mt-2 btn-submit">
                         Create Account
                     </button>
+
                 </form>
 
                 <!-- Sign In Link -->
-                <div class="mt-6 pt-6 border-t border-slate-700">
-                    <p class="text-center text-slate-400 text-sm">
+                <div class="pt-2 mt-2 text-center border-t border-slate-700/50">
+                    <p class="text-slate-400 text-xs\">
                         Already have an account?
-                        <a href="{{ route('login', ['role' => request('role')]) }}" class="text-emerald-400 hover:text-emerald-300 font-medium">Sign in</a>
+                        <a href="{{ route('login', ['role' => request('role')]) }}" class="font-semibold transition text-emerald-400 hover:text-emerald-300">Sign in</a>
                     </p>
                 </div>
             </div>
@@ -152,40 +250,44 @@
     </div>
 
     <!-- Terms Modal -->
-    <div id="terms-modal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-black/50 flex items-center justify-center p-4">
-        <div class="bg-slate-800 border border-slate-700 rounded-lg max-w-md w-full max-h-96 overflow-y-auto">
-            <div class="sticky top-0 bg-slate-800 border-b border-slate-700 p-4 flex items-center justify-between">
+    <div id="terms-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4 overflow-y-auto bg-black/60 backdrop-blur-sm">
+        <div class="w-full max-w-md overflow-y-auto border shadow-2xl bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700/50 rounded-xl max-h-96">
+            <div class="sticky top-0 flex items-center justify-between p-6 border-b bg-slate-800/80 backdrop-blur border-slate-700/50">
                 <h3 class="text-lg font-bold text-white">Terms and Conditions</h3>
-                <button type="button" id="close-terms-modal" class="text-slate-400 hover:text-slate-300">
+                <button type="button" id="close-terms-modal" class="transition text-slate-400 hover:text-slate-200">
                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
 
-            <div class="p-4 text-sm text-slate-300 space-y-3">
-                <h4 class="font-semibold text-white">City Vet - Pet Recovery & Adoption System</h4>
+            <div class="p-6 space-y-4 text-sm text-slate-300">
+                <h4 class="text-base font-semibold text-white">City Vet - Pet Recovery & Adoption System</h4>
                 <p class="text-xs text-slate-400">This policy governs the use of City Vet system which facilitates pet registration, adoption, and community lost/found reports.</p>
 
-                <h5 class="font-semibold text-white text-sm">1. User Interactions</h5>
-                <ul class="text-xs space-y-1 text-slate-400 list-disc list-inside">
-                    <li>All accounts are linked to Alaminos City, Pangasinan</li>
-                    <li>Pet registration requires verified residency</li>
-                    <li>Impounded pets may be claimed within 3 days</li>
-                    <li>Adoptable pets are visible for maximum 4 days</li>
-                    <li>Submitting false information results in account termination</li>
-                </ul>
+                <div>
+                    <h5 class="mb-2 text-sm font-semibold text-white">1. User Interactions</h5>
+                    <ul class="space-y-1 text-xs list-disc list-inside text-slate-400">
+                        <li>All accounts are linked to Alaminos City, Pangasinan</li>
+                        <li>Pet registration requires verified residency</li>
+                        <li>Impounded pets may be claimed within 3 days</li>
+                        <li>Adoptable pets are visible for maximum 4 days</li>
+                        <li>Submitting false information results in account termination</li>
+                    </ul>
+                </div>
 
-                <h5 class="font-semibold text-white text-sm">2. Community Submissions</h5>
-                <ul class="text-xs space-y-1 text-slate-400 list-disc list-inside">
-                    <li>Posters must include accurate description and location</li>
-                    <li>Contact information will be visible to other users</li>
-                    <li>Mark pets as reunited immediately upon recovery</li>
-                </ul>
+                <div>
+                    <h5 class="mb-2 text-sm font-semibold text-white">2. Community Submissions</h5>
+                    <ul class="space-y-1 text-xs list-disc list-inside text-slate-400">
+                        <li>Posters must include accurate description and location</li>
+                        <li>Contact information will be visible to other users</li>
+                        <li>Mark pets as reunited immediately upon recovery</li>
+                    </ul>
+                </div>
             </div>
 
-            <div class="sticky bottom-0 bg-slate-800 border-t border-slate-700 p-4">
-                <button type="button" id="agree-and-close" class="w-full px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg">
+            <div class="sticky bottom-0 p-6 border-t bg-slate-800/80 backdrop-blur border-slate-700/50">
+                <button type="button" id="agree-and-close" class="w-full px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-semibold rounded-lg transition duration-300">
                     I Agree
                 </button>
             </div>

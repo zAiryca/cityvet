@@ -3,11 +3,6 @@
         <div class="w-full max-w-md">
             <!-- Header -->
          <div class="mb-8 text-center">
-
-    <div class="flex justify-center mx-auto mb-4">
-        <img src="{{ asset('storage/logo/Logos.png') }}" alt="Logo" class="w-2/5 max-w-25 h-auto">
-    </div>
-
     <h1 class="text-3xl font-bold text-white mb-2">City Vet</h1>
 
     <p class="text-slate-400 text-sm">Pet Recovery & Adoption System</p>
@@ -26,7 +21,7 @@
                             <label for="email" class="block text-sm font-medium text-slate-300 mb-2">Email Address</label>
                             <input id="email" name="email" type="email" autocomplete="email" required value="{{ old('email') }}"
                                    class="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent @error('email') border-red-500 @enderror"
-                                   placeholder="you@example.com">
+                                   placeholder="juandelacruz2@gmail.com">
                             @error('email')
                                 <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
                             @enderror
