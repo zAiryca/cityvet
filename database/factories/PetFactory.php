@@ -22,7 +22,8 @@ class PetFactory extends Factory
             'name' => $this->faker->firstName,
             'species' => $species,
             'breed' => $this->faker->randomElement($this->getBreedsForSpecies($species)),
-            'birth_date' => $this->faker->dateTimeBetween('-10 years', '-1 month')->format('Y-m-d'),
+            'estimated_age_years' => $this->faker->numberBetween(0, 10),
+            'estimated_age_months' => $this->faker->numberBetween(0, 11),
             'gender' => $this->faker->randomElement(['male', 'female', 'unknown']),
             'color_markings' => implode(',', $this->faker->randomElements(['Black', 'White', 'Brown', 'Gray', 'Orange'], $this->faker->numberBetween(1, 3))),
             'description' => $this->faker->paragraph,
@@ -33,7 +34,6 @@ class PetFactory extends Factory
             'impounded_date' => $this->faker->optional(0.3, null)->dateTimeBetween('-1 month', 'now')?->format('Y-m-d'), // 30% chance
             'caught_location' => $this->faker->optional(0.3, null)->address, // 30% chance
             'decision_date' => $this->faker->optional(0.2, null)->dateTimeBetween('-1 month', 'now')?->format('Y-m-d'), // 20% chance
-            'urgent_deadline' => $this->faker->optional(0.1, null)->dateTimeBetween('now', '+2 weeks')?->format('Y-m-d'), // 10% chance of being urgent
             'user_id' => User::inRandomOrder()->first()->id,
         ];
     }

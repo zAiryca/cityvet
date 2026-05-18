@@ -2,19 +2,36 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'first_name', 'middle_name', 'last_name', 'contact_number', 'emergency_contact', 'street', 'barangay', 'city_municipality', 'province', 'zip_code', 'email', 'password', 'role',
+        'first_name', 'middle_name', 'last_name', 'gender', 'birthday', 'contact_number', 'emergency_contact', 'street', 'barangay', 'city_municipality', 'province', 'zip_code', 'email', 'password', 'role', 'id_photo',
     ];
 
     protected $hidden = ['password', 'remember_token'];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'birthday' => 'date',
+    ];
+
+    /**
+     * Get the user's email in lowercase.
+     */
+    protected function email(): Attribute
+    {
+        return Attribute::make(
+            set: fn ($value) => strtolower($value),
+        );
+    }
 
     // Relationships
     public function pets()
@@ -32,22 +49,10 @@ class User extends Authenticatable
         return $this->hasMany(PetRequest::class, 'user_id');  // As requester
     }
 
-    public function adoptedPets()
+    public function petRegistrations()
     {
-        return $this->hasMany(Pet::class)->where('status', 'adopted');
+        return $this->hasMany(PetRegistration::class);
     }
-
-    public function claimedPets()
-    {
-        return $this->hasMany(Pet::class)->where('status', 'claimed');
-    }
-
-    public function createdEvents()
-    {
-        return $this->hasMany(Event::class);
-    }
-
-
 
     // Check if admin
     public function isAdmin()

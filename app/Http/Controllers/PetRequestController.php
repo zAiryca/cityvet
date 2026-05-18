@@ -13,53 +13,201 @@ class PetRequestController extends Controller
     {
         if (!Auth::user()->isAdmin()) abort(403);
 
-        $query = PetRequest::with(['requestable', 'user']);
+        $requestStatus = request('status', 'pending'); // Default to pending
+        $type = request('type');
 
-        // Apply filters
-        if (request('status')) {
-            $query->where('status', request('status'));
-        }
-        if (request('type')) {
-            $query->where('type', request('type'));
-        }
-        if (request('search')) {
-            $search = request('search');
-            $query->where(function ($q) use ($search) {
-                $q->whereHas('user', function ($userQuery) use ($search) {
-                    $userQuery->where('first_name', 'like', "%{$search}%")
-                              ->orWhere('last_name', 'like', "%{$search}%")
-                              ->orWhere('email', 'like', "%{$search}%");
-                })
-                ->orWhereHas('requestable', function ($requestableQuery) use ($search) {
-                    $requestableQuery->where('name', 'like', "%{$search}%") // For pets
-                                     ->orWhere('title', 'like', "%{$search}%"); // For events
-                });
-            });
+        // Fetch all pets that have requests with the specified status
+        $petsQuery = Pet::whereHas('requests', function ($q) use ($requestStatus, $type) {
+            $q->where('status', $requestStatus);
+            if ($type) {
+                $q->where('type', $type);
+            }
+            // For denied status, only show manual denials (not automatic)
+            if ($requestStatus === 'denied') {
+                $q->where('denial_type', 'manual');
+            }
+        });
+
+        // For approved requests, only show pets that are adoptable or impounded
+        if ($requestStatus === 'approved') {
+            $petsQuery->whereIn('status', ['adoptable', 'impounded']);
         }
 
-        $requests = $query->paginate(10)->appends(request()->query());
+        // For denied requests, only show pets with 'denied' status
+        if ($requestStatus === 'denied') {
+            $petsQuery->where('status', 'denied');
+        }
 
-        return view('admin.requests.index', compact('requests'));
+        $petsQuery = $petsQuery->with([
+
+            'requests' => function ($q) use ($requestStatus, $type) {
+                $q->where('status', $requestStatus);
+                if ($type) {
+                    $q->where('type', $type);
+                }
+                // For denied status, only show manual denials (not automatic)
+                if ($requestStatus === 'denied') {
+                    $q->where('denial_type', 'manual');
+                }
+                $q->orderBy('created_at', 'desc');
+            },
+            'requests.user',
+        ])
+        ->orderBy('updated_at', 'desc');
+
+        $pets = $petsQuery->paginate(10)->appends(request()->query());
+
+        // Count requests by status for tabs
+        $pendingCount = Pet::whereHas('requests', function ($q) {
+            $q->where('status', 'pending');
+        })->count();
+
+        $approvedCount = Pet::whereHas('requests', function ($q) {
+            $q->where('status', 'approved');
+        })->count();
+
+        $deniedCount = Pet::whereHas('requests', function ($q) {
+            $q->where('status', 'denied');
+        })->count();
+
+        return view('admin.requests.index', compact('pets', 'requestStatus', 'pendingCount', 'approvedCount', 'deniedCount'));
+    }
+
+    /**
+     * Display the specified resource.
+     * * FIX: Renamed parameter from $petRequest to $request to match the route parameter name
+     * (Route Model Binding expects the parameter name to match the route segment name).
+     */
+    public function show(PetRequest $request)
+    {
+        if (!Auth::user()->isAdmin()) abort(403);
+
+        // Load relationships (user and requestable/pet) directly on the bound model.
+        // No need for a second DB query using find($request->id).
+        $request->load(['user', 'requestable']);
+
+        return view('admin.requests.show', ['request' => $request]);
     }
 
     public function update(Request $request, PetRequest $petRequest)
     {
         if (!Auth::user()->isAdmin()) abort(403);
-        $status = $request->status;  // 'approved' or 'denied'
-        $petRequest->update(['status' => $status]);
+        $status = $request->status;  // 'approved', 'denied', or 'pending'
+        $adminNotes = $request->admin_notes ?? null;
 
-        if ($status === 'approved') {
-            $pet = $petRequest->requestable; // Use polymorphic relationship
-            if ($petRequest->type === 'claim') {
-                $pet->update(['status' => 'claimed', 'user_id' => $petRequest->user_id]);
-            } elseif ($petRequest->type === 'adopt') {
-                $pet->update(['status' => 'adopted', 'user_id' => $petRequest->user_id, 'urgent_deadline' => null]);
+        $petRequest->update([
+            'status' => $status,
+            'admin_notes' => $adminNotes
+        ]);
+
+        // Send notification to the user only if status changed to approved or denied
+        if ($status === 'approved' || $status === 'denied') {
+            if ($petRequest->user) {
+                $petRequest->user->notify(new \App\Notifications\RequestStatusNotification($petRequest, $status));
             }
         }
 
-        // Send notification to the user
-        $petRequest->user->notify(new \App\Notifications\RequestStatusNotification($petRequest, $status));
+        return redirect()->back()->with('success', 'Request ' . $status . '.');
+    }
 
-        return back()->with('success', 'Request ' . $status . '.');
+    public function approve(PetRequest $petRequest)
+    {
+        if (!Auth::user()->isAdmin()) abort(403);
+
+        $petRequest->update(['status' => 'approved']);
+
+        // Note: Pet status is NOT changed here. Only "Mark as Adopted" or "Mark as Claimed" buttons in admin pets section will change pet status
+        // This approval just means the request is approved, but the user still needs to complete the process at the vet
+
+        if ($petRequest->user) {
+            $petRequest->user->notify(new \App\Notifications\RequestStatusNotification($petRequest, 'approved'));
+        }
+
+        return redirect()->route('admin.requests.index', ['status' => 'approved'])->with('success', 'Request approved.');
+    }
+
+    public function deny(PetRequest $petRequest)
+    {
+        if (!Auth::user()->isAdmin()) abort(403);
+
+        $petRequest->update([
+            'status' => 'denied',
+            'denial_type' => 'manual'
+        ]);
+
+        if ($petRequest->user) {
+            $petRequest->user->notify(new \App\Notifications\RequestStatusNotification($petRequest, 'denied'));
+        }
+
+        return redirect()->route('admin.requests.index', ['status' => 'denied'])->with('success', 'Request denied.');
+    }
+
+
+    // Finalize adoption or claim (set request to completed and update pet ownership)
+    public function finalize(PetRequest $petRequest)
+    {
+        if (!Auth::user()->isAdmin()) abort(403);
+
+        // Only allow finalizing approved requests
+        if ($petRequest->status !== 'approved') {
+            return back()->with('error', 'Only approved requests can be finalized.');
+        }
+
+        $pet = $petRequest->requestable;
+        if (!$pet || !($pet instanceof Pet)) {
+            return back()->with('error', 'Invalid request or pet not found.');
+        }
+
+        // Determine final status based on request type
+        $finalStatus = $petRequest->type === 'claim' ? 'claimed' : 'adopted';
+
+        try {
+            // Update pet: transfer ownership and set status to adopted/claimed
+            // This ensures the pet appears in the user's adopted-claimed-pets page
+            $pet->update([
+                'user_id' => $petRequest->user_id,
+                'status' => $finalStatus,
+            ]);
+
+            // Update request status to completed (use `updated_at` for timestamp tracking)
+            $petRequest->update(['status' => 'completed']);
+
+            // Auto-deny all OTHER pending/approved requests for this pet with reason
+            $otherRequests = PetRequest::where('requestable_id', $pet->id)
+                ->where('id', '!=', $petRequest->id)
+                ->whereIn('status', ['pending', 'approved'])
+                ->get();
+
+            foreach ($otherRequests as $otherRequest) {
+                $otherRequest->update([
+                    'status' => 'denied',
+                    'denial_reason' => 'Other applicant was chosen',
+                    'denial_type' => 'automatic'
+                ]);
+
+                // Notify user that their request was denied
+                if ($otherRequest->user) {
+                    $otherRequest->user->notify(new \App\Notifications\RequestStatusNotification($otherRequest, 'denied'));
+                }
+            }
+
+            // Notify requester
+            if ($petRequest->user) {
+                $petRequest->user->notify(new \App\Notifications\RequestStatusNotification($petRequest, 'completed'));
+            }
+
+            return redirect()->route('admin.requests.index', ['status' => 'approved'])->with('success', 'Pet ' . ucfirst($finalStatus) . ' (ID: ' . $pet->display_code . ') and ownership transferred to ' . $petRequest->user->name . ' successfully!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to finalize request: ' . $e->getMessage());
+        }
+    }
+
+    public function destroy(PetRequest $petRequest)
+    {
+        if (!Auth::user()->isAdmin()) abort(403);
+
+        $petRequest->delete();
+
+        return redirect()->route('admin.requests.index')->with('success', 'Request deleted successfully.');
     }
 }

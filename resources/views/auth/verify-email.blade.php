@@ -1,31 +1,215 @@
+
 <x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
-    </div>
+    <style>
+        /* Premium Color Palette */
+        :root {
+            --bg-primary: #080c14;
+            --bg-card: #111c2a;
+            --bg-form: #1d2a3a;
+            --border-subtle: #2a3b50;
+            --accent-primary: #00b880;
+            --accent-hover: #02a170;
+            --glass-blur: 12px;
+        }
 
-    @if (session('status') == 'verification-link-sent')
-        <div class="mb-4 font-medium text-sm text-green-600">
-            {{ __('A new verification link has been sent to the email address you provided during registration.') }}
+        body {
+            background-color: var(--bg-primary);
+        }
+
+        /* Animated 3D Glass Spheres */
+        .sphere {
+            border-radius: 50%;
+            position: absolute;
+            filter: blur(0.4px);
+            box-shadow: 0 8px 32px rgba(0, 184, 128, 0.15), inset -2px -2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .sphere-1 {
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle at 30% 30%, rgba(0, 184, 128, 0.4), rgba(0, 100, 70, 0.15) 50%, transparent);
+            top: 10%;
+            left: 5%;
+            animation: float-slow 8s ease-in-out infinite;
+        }
+
+        .sphere-2 {
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle at 35% 35%, rgba(0, 200, 140, 0.35), rgba(0, 110, 80, 0.1) 50%, transparent);
+            bottom: 15%;
+            left: 12%;
+            animation: float-fast 6s ease-in-out infinite reverse;
+        }
+
+        .sphere-3 {
+            width: 280px;
+            height: 280px;
+            background: radial-gradient(circle at 40% 40%, rgba(0, 184, 128, 0.25), rgba(0, 90, 60, 0.08) 50%, transparent);
+            bottom: -80px;
+            right: 8%;
+            animation: float-medium 7s ease-in-out infinite;
+            box-shadow: 0 12px 48px rgba(0, 184, 128, 0.2), inset -3px -3px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .sphere-4 {
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle at 32% 32%, rgba(0, 200, 140, 0.3), rgba(0, 120, 85, 0.1) 50%, transparent);
+            top: 35%;
+            right: 5%;
+            animation: float-slow 9s ease-in-out infinite reverse;
+        }
+
+        @keyframes float-slow {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            50% { transform: translateY(-40px) translateX(10px); }
+        }
+
+        @keyframes float-fast {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-35px); }
+        }
+
+        @keyframes float-medium {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            50% { transform: translateY(-45px) translateX(-15px); }
+        }
+
+        /* Premium Button */
+        .btn-submit {
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-hover) 100%);
+            color: white;
+            padding: 0.8rem 1.8rem;
+            border-radius: 0.625rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 184, 128, 0.25);
+            width: 100%;
+        }
+
+        .btn-submit:hover {
+            background: linear-gradient(135deg, var(--accent-hover) 0%, #00905f 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 184, 128, 0.35);
+        }
+
+        .btn-submit:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: rgba(100, 116, 139, 0.5);
+            color: #cbd5e1;
+            padding: 0.8rem 1.8rem;
+            border-radius: 0.625rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(100, 116, 139, 0.7);
+            border-color: rgba(148, 163, 184, 0.5);
+        }
+
+        /* Premium Card Container */
+        .card-container {
+            background: linear-gradient(135deg, rgba(17, 28, 42, 0.9) 0%, rgba(17, 28, 42, 0.85) 100%);
+            backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid rgba(42, 59, 80, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 1px rgba(0, 184, 128, 0.1);
+        }
+
+        /* Alert Styling */
+        .alert-success {
+            background: rgba(0, 184, 128, 0.15);
+            border: 1px solid rgba(0, 184, 128, 0.4);
+            color: #86efac;
+            padding: 0.75rem 1rem;
+            border-radius: 0.625rem;
+            font-size: 0.9rem;
+        }
+
+        /* View Transition Animation */
+        .fade-transition {
+            animation: fade-in 0.3s ease-out;
+        }
+
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
+    <div class="min-h-screen flex items-center justify-center px-4 py-4 sm:px-6 lg:px-8 relative overflow-hidden" style="background-color: var(--bg-primary);">
+
+        <!-- Background Spheres -->
+        <div class="fixed inset-0 z-0 pointer-events-none">
+            <div class="sphere sphere-1"></div>
+            <div class="sphere sphere-2"></div>
+            <div class="sphere sphere-3"></div>
+            <div class="sphere sphere-4"></div>
         </div>
-    @endif
 
-    <div class="mt-4 flex items-center justify-between">
-        <form method="POST" action="{{ route('verification.send') }}">
-            @csrf
+        <!-- Main Container -->
+        <div class="relative z-10 w-full max-w-md card-container rounded-2xl overflow-hidden">
 
-            <div>
-                <x-primary-button>
-                    {{ __('Resend Verification Email') }}
-                </x-primary-button>
+            <!-- Content -->
+            <div class="p-8 lg:p-10 flex flex-col justify-center">
+
+                <!-- Header -->
+                <div class="mb-8 text-center fade-transition">
+                    <h1 class="text-4xl font-bold text-white mb-3">Verify Email</h1>
+                    <p class="text-slate-300 text-sm">Check your inbox to confirm your email address</p>
+                </div>
+
+                <!-- Message -->
+                <p class="text-slate-300 text-sm mb-6 fade-transition">
+                    A verification link has been sent to <span class="font-semibold text-emerald-400">{{ Auth::user()->email }}</span>. Click the link to verify your email address.
+                </p>
+
+                @if (session('status') == 'verification-link-sent')
+                    <div class="alert-success mb-6 fade-transition">
+                        A new verification link has been sent to your email.
+                    </div>
+                @endif
+
+                <!-- Resend Button -->
+                <form method="POST" action="{{ route('verification.send') }}" class="mb-4">
+                    @csrf
+                    <button type="submit" class="btn-submit fade-transition">
+                        Resend Verification Email
+                    </button>
+                </form>
+
+                <!-- Sign Out Button -->
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn-secondary fade-transition">
+                        Sign Out
+                    </button>
+                </form>
+
+                <!-- Footer -->
+                <div class="mt-6 pt-6 border-t border-slate-700/30">
+                    <p class="text-center text-slate-400 text-xs">
+                        Didn't receive the email? Check your spam folder.
+                    </p>
+                </div>
             </div>
-        </form>
-
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-
-            <button type="submit" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                {{ __('Log Out') }}
-            </button>
-        </form>
+        </div>
     </div>
 </x-guest-layout>

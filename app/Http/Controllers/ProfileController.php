@@ -18,14 +18,10 @@ class ProfileController extends Controller
     {
         $user = $request->user();
         $pets = $user->pets; // Get user's registered pets
-        $adoptedPets = $user->adoptedPets; // Get adopted pets
-        $claimedPets = $user->claimedPets; // Get claimed pets
 
         return view('user.profile', [
             'user' => $user,
             'pets' => $pets,
-            'adoptedPets' => $adoptedPets,
-            'claimedPets' => $claimedPets,
         ]);
     }
 
@@ -34,10 +30,18 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $validated = $request->validated();
+        unset($validated['id_photo']);
+
+        $request->user()->fill($validated);
 
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
+        }
+
+        if ($request->hasFile('id_photo')) {
+            $path = $request->file('id_photo')->store('id_photos', 'public');
+            $request->user()->id_photo = $path;
         }
 
         $request->user()->save();

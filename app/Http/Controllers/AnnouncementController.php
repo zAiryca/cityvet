@@ -10,32 +10,23 @@ class AnnouncementController extends Controller
 {
     public function index(Request $request)
     {
-        $announcements = Announcement::orderBy('event_date')->paginate(9);
-        return view('events.index', compact('announcements'));
+        $query = Announcement::query();
+
+        // Apply filters
+        if ($request->search) {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->category) {
+            $query->where('category', $request->category);
+        }
+
+        $announcements = $query->orderBy('created_at', 'desc')->paginate(9);
+        return view('announcements.index', compact('announcements'));
     }
 
     public function show(Announcement $announcement)
     {
-        return view('events.show', compact('announcement'));
-    }
-
-
-
-    // Admin create (basic)
-    public function adminStore(Request $request)
-    {
-        if (!Auth::user()->isAdmin()) abort(403);
-        $validated = $request->validate([
-            'title' => 'required|string|max:200',
-            'type' => 'required|string|max:50',
-            'description' => 'required|string',
-            'event_date' => 'required|date|after:now',
-            'location' => 'required|string|max:255',
-        ]);
-
-        $validated['user_id'] = Auth::id();
-        Announcement::create($validated);
-
-        return redirect()->route('admin.events.index')->with('success', 'Announcement created.');
+        return view('announcements.show', compact('announcement'));
     }
 }

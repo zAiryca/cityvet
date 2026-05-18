@@ -19,13 +19,19 @@ class ProfileUpdateRequest extends FormRequest
             'first_name' => ['required', 'string', 'max:255'],
             'middle_name' => ['nullable', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'contact_number' => ['required', 'string', 'max:20'],
-            'emergency_contact' => ['nullable', 'string', 'max:20'],
-            'street' => ['required', 'string', 'max:255'],
-            'barangay' => ['required', 'string', 'max:255'],
-            'city_municipality' => ['required', 'string', 'max:255'],
+            'gender' => ['nullable', 'in:male,female,other'],
+            'birthday' => ['required', 'date', 'before:today'],
+            // Expect Philippine mobile numbers: 11 digits starting with 09 (e.g. 09123025471)
+            'contact_number' => ['required', 'regex:/^09\\d{9}$/'],
+            'emergency_contact' => ['nullable', 'regex:/^09\\d{9}$/'],
+            'street' => ['nullable', 'string', 'max:255'],
+            'barangay' => ['nullable', 'string', 'max:255'],
+            'city_municipality' => ['nullable', 'string', 'max:255'],
+            'province' => ['nullable', 'string', 'max:255'],
             'zip_code' => ['nullable', 'string', 'max:10'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users')->ignore($this->user()->id)],
+            'id_photo' => ['nullable', 'file', 'mimes:jpeg,png,jpg,gif,pdf,doc,docx', 'max:51200'],
         ];
     }
+
 }

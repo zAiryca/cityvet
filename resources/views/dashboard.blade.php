@@ -2,14 +2,14 @@
     {{-- Admin Dashboard Layout --}}
     <x-admin-layout>
         <x-slot name="header">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            <h2 class="text-xl font-semibold leading-tight text-gray-800">
                 {{ __('Admin Dashboard') }}
             </h2>
         </x-slot>
 
         <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">
                         {{ __("Welcome, Admin! You're logged in.") }}
                     </div>
@@ -21,24 +21,24 @@
     {{-- User Dashboard Layout --}}
     <x-app-layout>
         <x-slot name="header">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Dashboard') }}
+            <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                {{ __('Home') }}
             </h2>
         </x-slot>
 
         <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <!-- Welcome Message -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+                <div class="mb-6 overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">
                         {{ __("Welcome back, " . Auth::user()->name . "!") }}
                     </div>
                 </div>
 
-                <!-- Announcements/Events Section -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <!-- Announcements Section -->
+                <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div class="p-6">
-                        <h3 class="text-2xl font-bold mb-4">{{ __('Latest Announcements') }}</h3>
+                        <h3 class="mb-4 text-2xl font-bold">{{ __('Latest Announcements') }}</h3>
 
                         @php
                             $recentAnnouncements = \App\Models\Announcement::latest()->take(5)->get();
@@ -47,14 +47,14 @@
                         @if($recentAnnouncements->count() > 0)
                             <div class="space-y-4">
                                 @foreach($recentAnnouncements as $announcement)
-                                <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
+                                <div class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
                                     <h4 class="text-lg font-semibold text-gray-800">{{ $announcement->title }}</h4>
-                                    <p class="text-gray-600 mt-2">{{ Str::limit($announcement->description, 150) }}</p>
-                                    <div class="mt-3 flex justify-between items-center">
+                                    <p class="mt-2 text-gray-600">{{ Str::limit($announcement->description, 150) }}</p>
+                                    <div class="flex items-center justify-between mt-3">
                                         <span class="text-sm text-gray-500">
-                                            {{ __('Date: ') . $announcement->event_date->format('M j, Y') }}
+                                            {{ __('Date: ') . $announcement->date_when }}
                                         </span>
-                                        <a href="{{ route('announcements.show', $announcement) }}" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">
+                                        <a href="{{ route('announcements.show', $announcement) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-900">
                                             {{ __('View Details') }}
                                         </a>
                                     </div>
@@ -63,7 +63,7 @@
                             </div>
 
                             <div class="mt-6 text-center">
-                                <a href="{{ route('announcements.index') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                <a href="{{ route('announcements.index') }}" class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700">
                                     {{ __('View All Announcements') }}
                                 </a>
                             </div>
