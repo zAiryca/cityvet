@@ -155,16 +155,13 @@
                     <div class="p-4 rounded-lg bg-gray-50 lg:col-span-4">
                         <p class="mb-2 text-sm font-medium tracking-wide text-gray-600 uppercase">Full Address</p>
                         <p class="text-lg font-semibold text-gray-900">
-                            {{ $user->street ?? 'N/A' }}<br>
-                            @if($user->barangay || $user->city_municipality)
-                                <span class="text-base">{{ $user->barangay ?? '' }} {{ $user->city_municipality ?? '' }}</span><br>
-                            @endif
-                            @if($user->province)
-                                <span class="text-base">{{ $user->province }}</span><br>
-                            @endif
-                            @if($user->zip_code)
-                                <span class="text-base">Zip: {{ $user->zip_code }}</span>
-                            @endif
+                            {{ collect([
+                                $user->street ?? null,
+                                $user->barangay ?? null,
+                                $user->city_municipality ?? null,
+                                $user->province ?? null,
+                                $user->zip_code ?? null
+                            ])->filter()->implode(', ') ?: 'N/A' }}
                         </p>
                     </div>
                 </div>

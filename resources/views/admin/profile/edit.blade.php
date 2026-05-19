@@ -103,7 +103,7 @@
 
         <!-- Edit Mode -->
         <div id="edit-mode" class="hidden p-6 border-t border-slate-200">
-            <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="space-y-6">
+            <form method="post" action="{{ route('admin.profile.update') }}" enctype="multipart/form-data" class="space-y-6">
                 @csrf
                 @method('patch')
 
