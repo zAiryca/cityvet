@@ -9,7 +9,7 @@
         <div class="flex items-center justify-between mb-8" style="margin-top: -5rem">
             <div class="flex items-center">
                 <div class="p-3 mr-4 bg-white rounded-full shadow-sm">
-                    <img src="{{ asset('https://i.ibb.co/8DPN5B7m/logo.png') }}" alt="FindFurEver Logo" class="object-contain w-12 h-12">
+                    <img src="{{ asset('image/logo1.png') }}" alt="FindFurEver Logo" class="object-contain w-12 h-12">
                 </div>
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900">My Pets</h1>
