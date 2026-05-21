@@ -183,6 +183,7 @@ Route::middleware('setlocale')->group(function () {
 
         // Admin Profile
         Route::get('/profile', [DashboardController::class, 'profile'])->name('profile');
+        Route::patch('/profile', [DashboardController::class, 'updateProfile'])->name('profile.update');
 
         // Pets CRUD
         Route::resource('pets', AdminPetController::class);

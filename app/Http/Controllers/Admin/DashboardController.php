@@ -11,6 +11,7 @@ use App\Models\Announcement;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class DashboardController extends Controller
 {
@@ -20,6 +21,39 @@ class DashboardController extends Controller
             'user' => Auth::user(),
         ]);
     }
+
+    public function updateProfile(Request $request)
+    {
+        $validated = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'gender' => 'required|in:male,female,other',
+            'birthday' => 'required|date',
+            'email' => 'required|email|max:255|unique:users,email,' . Auth::id(),
+            'contact_number' => 'required|string|max:20',
+            'emergency_contact' => 'required|string|max:20',
+            'street' => 'nullable|string|max:255',
+            'barangay' => 'nullable|string|max:255',
+            'city_municipality' => 'nullable|string|max:255',
+            'province' => 'nullable|string|max:255',
+            'zip_code' => 'nullable|string|max:10',
+            'id_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $user = Auth::user();
+        $user->fill($validated);
+
+        if ($request->hasFile('id_photo')) {
+            $path = $request->file('id_photo')->store('id_photos', 'public');
+            $user->id_photo = $path;
+        }
+
+        $user->save();
+
+        return Redirect::route('admin.profile')->with('status', 'profile-updated');
+    }
+
 
     public function index()
     {

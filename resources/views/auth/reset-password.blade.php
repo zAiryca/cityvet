@@ -1,32 +1,31 @@
 <x-guest-layout>
     <style>
-        /* Premium Color Palette */
+        /* Light Color Palette */
         :root {
-            --bg-primary: #080c14;
-            --bg-card: #111c2a;
-            --bg-form: #1d2a3a;
-            --border-subtle: #2a3b50;
-            --accent-primary: #00b880;
-            --accent-hover: #02a170;
-            --glass-blur: 12px;
+            --bg-primary: #f8f9fa;
+            --bg-card: #ffffff;
+            --bg-form: #f3f4f6;
+            --border-subtle: #e5e7eb;
+            --accent-primary: #111827;
+            --accent-hover: #059669;
         }
 
         body {
             background-color: var(--bg-primary);
         }
 
-        /* Animated 3D Glass Spheres */
+        /* Solid Color Decoration Spheres */
         .sphere {
             border-radius: 50%;
             position: absolute;
             filter: blur(0.4px);
-            box-shadow: 0 8px 32px rgba(0, 184, 128, 0.15), inset -2px -2px 8px rgba(0, 0, 0, 0.3);
+            opacity: 0.08;
         }
 
         .sphere-1 {
             width: 220px;
             height: 220px;
-            background: radial-gradient(circle at 30% 30%, rgba(0, 184, 128, 0.4), rgba(0, 100, 70, 0.15) 50%, transparent);
+            background: #111827;
             top: 10%;
             left: 5%;
             animation: float-slow 8s ease-in-out infinite;
@@ -35,7 +34,7 @@
         .sphere-2 {
             width: 150px;
             height: 150px;
-            background: radial-gradient(circle at 35% 35%, rgba(0, 200, 140, 0.35), rgba(0, 110, 80, 0.1) 50%, transparent);
+            background: #111827;
             bottom: 15%;
             left: 12%;
             animation: float-fast 6s ease-in-out infinite reverse;
@@ -44,17 +43,16 @@
         .sphere-3 {
             width: 280px;
             height: 280px;
-            background: radial-gradient(circle at 40% 40%, rgba(0, 184, 128, 0.25), rgba(0, 90, 60, 0.08) 50%, transparent);
+            background: #111827;
             bottom: -80px;
             right: 8%;
             animation: float-medium 7s ease-in-out infinite;
-            box-shadow: 0 12px 48px rgba(0, 184, 128, 0.2), inset -3px -3px 12px rgba(0, 0, 0, 0.4);
         }
 
         .sphere-4 {
             width: 120px;
             height: 120px;
-            background: radial-gradient(circle at 32% 32%, rgba(0, 200, 140, 0.3), rgba(0, 120, 85, 0.1) 50%, transparent);
+            background: #111827;
             top: 35%;
             right: 5%;
             animation: float-slow 9s ease-in-out infinite reverse;
@@ -75,11 +73,11 @@
             50% { transform: translateY(-45px) translateX(-15px); }
         }
 
-        /* Premium Input Fields */
+        /* Light Input Fields */
         .input-field {
             background-color: var(--bg-form);
             border: 1px solid var(--border-subtle);
-            color: white;
+            color: #1f2937;
             padding: 0.7rem 0.9rem;
             border-radius: 0.625rem;
             font-size: 0.9rem;
@@ -87,50 +85,48 @@
         }
 
         .input-field::placeholder {
-            color: #6b7280;
+            color: #9ca3af;
         }
 
         .input-field:focus {
             outline: none;
             border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(0, 184, 128, 0.15), inset 0 1px 2px rgba(0, 184, 128, 0.1);
-            background-color: rgba(29, 42, 58, 0.8);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+            background-color: #ffffff;
         }
 
         .input-field.error {
             border-color: #ef4444;
         }
 
-        /* Premium Button */
+        /* Light Button */
         .btn-submit {
-            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-hover) 100%);
+            background: var(--accent-primary);
             color: white;
             padding: 0.8rem 1.8rem;
             border-radius: 0.625rem;
             font-weight: 600;
             font-size: 0.95rem;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 0.3s ease;
             border: none;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 184, 128, 0.25);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .btn-submit:hover {
-            background: linear-gradient(135deg, var(--accent-hover) 0%, #00905f 100%);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 24px rgba(0, 184, 128, 0.35);
+            background: var(--accent-hover);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .btn-submit:active {
-            transform: translateY(-1px);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
-        /* Premium Card Container */
+        /* Light Card Container */
         .card-container {
-            background: linear-gradient(135deg, rgba(17, 28, 42, 0.9) 0%, rgba(17, 28, 42, 0.85) 100%);
-            backdrop-filter: blur(var(--glass-blur));
-            border: 1px solid rgba(42, 59, 80, 0.3);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 1px rgba(0, 184, 128, 0.1);
+            background: #ffffff;
+            border: 1px solid var(--border-subtle);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         /* View Transition Animation */
@@ -168,8 +164,8 @@
 
                 <!-- Header -->
                 <div class="mb-8 text-center fade-transition">
-                    <h1 class="text-4xl font-bold text-white mb-3">Reset Password</h1>
-                    <p class="text-slate-300 text-sm">Create a new password for your account</p>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-3">Reset Password</h1>
+                    <p class="text-gray-600 text-sm">Create a new password for your account</p>
                 </div>
 
                 <!-- Form -->
@@ -179,7 +175,7 @@
 
                     <!-- Email -->
                     <div class="fade-transition">
-                        <label for="email" class="block text-xs font-semibold text-slate-200 mb-1.5 uppercase tracking-wide">Email Address</label>
+                        <label for="email" class="block text-xs font-semibold text-gray-700 mb-1.5 uppercase tracking-wide">Email Address</label>
                         <input id="email" name="email" type="email" required value="{{ old('email', $request->email) }}"
                                class="input-field w-full @error('email') error @enderror"
                                placeholder="you@example.com">
@@ -190,7 +186,7 @@
 
                     <!-- New Password -->
                     <div class="fade-transition">
-                        <label for="password" class="block text-xs font-semibold text-slate-200 mb-1.5 uppercase tracking-wide">New Password</label>
+                        <label for="password" class="block text-xs font-semibold text-gray-700 mb-1.5 uppercase tracking-wide">New Password</label>
                         <input id="password" name="password" type="password" required
                                class="input-field w-full @error('password') error @enderror"
                                placeholder="Create a strong password">
@@ -201,7 +197,7 @@
 
                     <!-- Confirm Password -->
                     <div class="fade-transition">
-                        <label for="password_confirmation" class="block text-xs font-semibold text-slate-200 mb-1.5 uppercase tracking-wide">Confirm Password</label>
+                        <label for="password_confirmation" class="block text-xs font-semibold text-gray-700 mb-1.5 uppercase tracking-wide">Confirm Password</label>
                         <input id="password_confirmation" name="password_confirmation" type="password" required
                                class="input-field w-full @error('password_confirmation') error @enderror"
                                placeholder="Re-enter your password">
@@ -217,10 +213,10 @@
                 </form>
 
                 <!-- Sign In Link -->
-                <div class="pt-4 mt-4 border-t border-slate-700/30">
-                    <p class="text-slate-400 text-xs text-center">
+                <div class="pt-4 mt-4 border-t border-gray-200">
+                    <p class="text-gray-600 text-xs text-center">
                         Remember your password?
-                        <a href="{{ route('login') }}" class="font-semibold transition text-emerald-400 hover:text-emerald-300">Sign in here</a>
+                        <a href="{{ route('login') }}" class="font-semibold transition text-green-600 hover:text-green-700">Sign in here</a>
                     </p>
                 </div>
             </div>
