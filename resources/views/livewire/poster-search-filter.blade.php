@@ -64,11 +64,11 @@
             <!-- Color (4 columns) -->
             <div class="lg:col-span-4">
                 <label class="block mb-1 text-xs font-semibold text-gray-700">{{ __('Color') }}</label>
-                <div class="grid grid-cols-4 gap-1">
+                <div class="flex flex-wrap gap-x-4 gap-y-2 mt-1">
                     @foreach($colors as $colorOption)
-                        <label class="flex items-center text-xs cursor-pointer">
-                            <input type="checkbox" wire:model.live="selectedColors" value="{{ $colorOption }}" class="w-3 h-3 mr-1 border-gray-300 rounded focus:ring-purple-500">
-                            <span class="text-xs text-gray-700">{{ $colorOption }}</span>
+                        <label class="flex items-center text-xs cursor-pointer select-none">
+                            <input type="checkbox" wire:model.live="selectedColors" value="{{ $colorOption }}" class="w-3.5 h-3.5 mr-1.5 border-gray-300 rounded focus:ring-purple-500 text-purple-600 transition">
+                            <span class="text-xs font-medium text-gray-700">{{ $colorOption }}</span>
                         </label>
                     @endforeach
                 </div>

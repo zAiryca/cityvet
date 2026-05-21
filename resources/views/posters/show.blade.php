@@ -13,19 +13,6 @@
                 </div>
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900">Poster Details</h1>
-                    <p class="flex items-center mt-1 text-gray-600">
-                        @if($poster->type === 'lost')
-                            <svg class="w-5 h-5 mr-2 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                            </svg>
-                            Lost Pet - {{ $poster->pet_name ?: 'Unknown Pet' }}
-                        @else
-                            <svg class="w-5 h-5 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10.707 2.293a1 1 0 00-1.414 0l-9 9a1 1 0 001.414 1.414L2 12.414V19a1 1 0 001 1h3a1 1 0 001-1v-3a1 1 0 011-1h2a1 1 0 011 1v3a1 1 0 001 1h3a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-9-9z" />
-                            </svg>
-                            Found Pet - FND{{ str_pad($poster->id, 4, '0', STR_PAD_LEFT) }}
-                        @endif
-                    </p>
                 </div>
             </div>
             <div class="flex space-x-3">

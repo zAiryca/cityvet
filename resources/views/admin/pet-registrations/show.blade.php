@@ -13,7 +13,6 @@
                 </div>
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900">Registration Review</h1>
-                    <p class="mt-1 text-gray-600">Manage {{ $pet_registration->pet_name }}'s application</p>
                 </div>
             </div>
             <div class="flex space-x-3">
