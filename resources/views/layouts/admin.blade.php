@@ -20,11 +20,11 @@
             <div class="px-6 py-6 border-b border-slate-700">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 transition-opacity duration-200 group hover:opacity-90">
                     <!-- Logo Circle -->
-                   <div class="flex items-center justify-center w-10 h-10 transition-shadow duration-200 bg-white rounded-full shadow-md group-hover:shadow-lg">
+                   <div class="flex items-center justify-center w-10 h-10 transition-shadow duration-200 bg-white rounded-full shadow-md group-hover:shadow-lg overflow-hidden">
     <img
-        src="https://i.ibb.co/hRbSNnGD/CV-AC-LOGO.png"
+        src="{{ asset('image/CV AC LOGO.png') }}"
         alt="CV-AC Logo"
-        class="object-contain w-6 h-6"
+        class="w-full h-full object-cover"
     />
 </div>
                     <span class="text-xl font-bold tracking-tight">Admin Panel</span>
