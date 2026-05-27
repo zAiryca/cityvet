@@ -20,11 +20,11 @@
             <div class="px-6 py-6 border-b border-slate-700">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 transition-opacity duration-200 group hover:opacity-90">
                     <!-- Logo Circle -->
-                   <div class="flex items-center justify-center w-10 h-10 transition-shadow duration-200 bg-white rounded-full shadow-md group-hover:shadow-lg">
+                   <div class="flex items-center justify-center w-10 h-10 transition-shadow duration-200 bg-white rounded-full shadow-md group-hover:shadow-lg overflow-hidden">
     <img
-        src="https://i.ibb.co/hRbSNnGD/CV-AC-LOGO.png"
+        src="{{ asset('image/CV AC LOGO.png') }}"
         alt="CV-AC Logo"
-        class="object-contain w-6 h-6"
+        class="w-full h-full object-cover"
     />
 </div>
                     <span class="text-xl font-bold tracking-tight">Admin Panel</span>
@@ -43,16 +43,16 @@
                 {!! nav_link('admin.pets.index', 'Impounded / Adoptable Pet', '<svg class="flex-shrink-0 w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>') !!}
                 {!! nav_link('admin.pet-registrations.index', 'Pet Registrations', '<svg class="flex-shrink-0 w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>') !!}
                 {!! nav_link('admin.announcements.index', 'Announcements', '<svg class="flex-shrink-0 w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>') !!}
-                {!! nav_link('admin.posters.index', 'Posters', '<svg class="flex-shrink-0 w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" /></svg>') !!}
-                {!! nav_link('admin.requests.index', 'Requests', '<svg class="flex-shrink-0 w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>') !!}
+                {!! nav_link('admin.posters.index', 'Lost & Found Posters', '<svg class="flex-shrink-0 w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" /></svg>') !!}
+                {!! nav_link('admin.requests.index', 'Claim &/or Adoption Request', '<svg class="flex-shrink-0 w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>') !!}
                 {{-- <a href="{{ route('admin.adoption-claim-history') }}" class="@if(request()->routeIs('admin.adoption-claim-history')) bg-slate-700 text-white shadow-md @else text-slate-400 hover:bg-slate-700/50 hover:text-white @endif flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200">
                     <svg class="flex-shrink-0 w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     <span>Adoption & Claim History</span>
                 </a> --}}
 
-                {!! nav_link('admin.adoption-claim-history', 'Adoption & Claim History', '<svg class="flex-shrink-0 w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>') !!}
+                {!! nav_link('admin.adoption-claim-history', 'Claim &/or Adoption History', '<svg class="flex-shrink-0 w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>') !!}
+                {!! nav_link('admin.reports.generate', 'Generate Report', '<svg class="flex-shrink-0 w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V7a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>') !!}
                 {!! nav_link('admin.users.index', 'Users', '<svg class="flex-shrink-0 w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>') !!}
-                {!! nav_link('admin.reports.generate', 'Reports', '<svg class="flex-shrink-0 w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V7a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>') !!}
             </nav>
 
             <!-- Logout Button -->
