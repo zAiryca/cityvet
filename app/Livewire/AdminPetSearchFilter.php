@@ -25,7 +25,14 @@ class AdminPetSearchFilter extends Component
 
     public function render()
     {
-        $query = Pet::query();
+        $query = Pet::query()->with([
+            'user',
+            'ownershipHistory' => function ($q) {
+                $q->orderBy('assigned_date', 'asc');
+            },
+            'ownershipHistory.user',
+            'mostRecentReturn.user',
+        ]);
 
         // Show only active pets (impounded & adoptable)
         $query->whereIn('status', ['impounded', 'adoptable']);

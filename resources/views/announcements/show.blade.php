@@ -200,9 +200,10 @@
                 <p class="text-sm text-gray-500">Last updated: {{ $announcement->updated_at->format('M d, Y \a\t h:i A') }}</p>
             </div>
             <a href="{{ route('announcements.index') }}"
+               onclick="event.preventDefault(); if (window.history.length > 1) { window.history.back(); } else { window.location='{{ route('announcements.index') }}'; }"
                class="px-6 py-2 text-white rounded-lg transition duration-300 hover:opacity-90"
                style="background-color: #f39c12;">
-                ← Back to All Announcements
+                ← Back
             </a>
         </div>
     </div>

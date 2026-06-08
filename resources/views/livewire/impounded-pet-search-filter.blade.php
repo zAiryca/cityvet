@@ -1,7 +1,7 @@
 <div>
     <!-- Search and Filter Form -->
     <form id="impoundedFilterForm" class="px-7 py-6 mb-6 bg-white border border-gray-200 rounded-lg shadow-sm">
-        <!-- Single Row: Search, Species, Breed, Gender, Color (4 columns) -->
+        <!-- Single Row: Search, Species, Breed, Gender, Color Markings (4 columns) -->
         <div class="grid grid-cols-1 gap-3 md:grid-cols-5 lg:grid-cols-5">
             <!-- Search -->
             <div>
@@ -44,9 +44,9 @@
                 </select>
             </div>
 
-            <!-- Color (4 columns) -->
+            <!-- Color Markings (4 columns) -->
             <div>
-                <label class="block mb-1 text-xs font-semibold text-gray-700">{{ __('Color') }}</label>
+                <label class="block mb-1 text-xs font-semibold text-gray-700">{{ __('Color Markings') }}</label>
                 <div class="grid grid-cols-4 gap-2">
                     @foreach($colors as $colorOption)
                         <label class="flex items-center text-xs cursor-pointer">
@@ -96,7 +96,14 @@
                 <div class="p-4">
                     <!-- ID and Species -->
                     <div class="mb-3">
-                        <h3 class="text-lg font-bold text-gray-900">{{ $pet->display_code }}</h3>
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-bold text-gray-900">{{ $pet->display_code }}</h3>
+                            @if($pet->remaining_days !== null && $pet->remaining_days > 0)
+                                <span class="text-xs font-semibold text-red-700 bg-red-100 px-2 py-1 rounded">
+                                    ⏰ {{ (int)$pet->remaining_days }} day{{ (int)$pet->remaining_days !== 1 ? 's' : '' }} left
+                                </span>
+                            @endif
+                        </div>
                         <p class="mt-1 text-sm text-gray-600">{{ ucfirst($pet->species) }} • {{ ucfirst($pet->breed) }}</p>
                     </div>
 
@@ -110,18 +117,25 @@
                             <p class="font-semibold text-gray-500 uppercase">Estimated Age</p>
                             <p class="font-semibold text-gray-900">{{ $pet->estimated_age ?? 'N/A' }}</p>
                         </div>
+                        <div class="text-xs">
+                            <p class="font-semibold text-gray-500 uppercase">Color Markings</p>
+                            <p class="font-semibold text-gray-900">{{ str_replace(',', ', ', $pet->color_markings) ?: 'N/A' }}</p>
+                        </div>
+                        @if($pet->caught_location)
+                            <div class="text-xs">
+                                <p class="font-semibold text-gray-500 uppercase">Caught Location</p>
+                                <p class="font-semibold text-gray-900">{{ $pet->caught_location }}</p>
+                            </div>
+                        @endif
+                        @if($pet->description)
+                            <div class="text-xs">
+                                <p class="font-semibold text-gray-500 uppercase">Description</p>
+                                <p class="font-semibold text-gray-900 line-clamp-2">{{ $pet->description }}</p>
+                            </div>
+                        @endif
                     </div>
 
                     <!-- Days Remaining Alert -->
-                    <div class="mb-4 p-2 rounded-lg {{ $pet->remaining_days <= 3 ? 'bg-red-50 border border-red-200' : 'bg-yellow-50 border border-yellow-200' }}">
-                        <p class="text-xs {{ $pet->remaining_days <= 3 ? 'text-red-700 font-bold' : 'text-yellow-700 font-semibold' }}">
-                            @if($pet->remaining_days > 0)
-                                ⏰ {{ (int)$pet->remaining_days }} day{{ (int)$pet->remaining_days !== 1 ? 's' : '' }} left
-                            @else
-                                ⏳ Expired
-                            @endif
-                        </p>
-                    </div>
 
                     <!-- Action Button -->
                     <a href="{{ route('pets.show', $pet) }}" class="block w-full px-4 py-2 font-bold text-center text-white transition-colors bg-red-600 rounded-lg shadow-sm hover:bg-red-700">

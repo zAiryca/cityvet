@@ -80,7 +80,7 @@
                                     </div>
                                     <div>
                                         <p class="text-sm font-medium text-gray-600">Color Markings</p>
-                                        <p class="text-lg font-semibold text-gray-900">{{ $pet->color_markings ?: 'Not specified' }}</p>
+                                        <p class="text-lg font-semibold text-gray-900">{{ str_replace(',', ', ', $pet->color_markings) ?: 'Not specified' }}</p>
                                     </div>
                                     <div>
                                         <p class="text-sm font-medium text-gray-600">Current Owner</p>
@@ -92,15 +92,21 @@
                                             @endif
                                         </p>
                                     </div>
+                                    @if($pet->caught_location)
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-600">Caught Location</p>
+                                            <p class="text-lg font-semibold text-gray-900">{{ $pet->caught_location }}</p>
+                                        </div>
+                                    @endif
+                                    @if($pet->description)
+                                        <div class="col-span-2">
+                                            <p class="text-sm font-medium text-gray-600" style="font-weight: bold;">Description</p>
+                                            <p class="mt-1 text-gray-900" style="background-color: #f3f4f6; color: #000000; padding: 8px 12px; border-radius: 6px;">{{ $pet->description }}</p>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
-                        @if($pet->description)
-                            <div class="p-4 mt-6 rounded-lg bg-gray-50">
-                                <p class="text-sm font-medium text-gray-600">Description</p>
-                                <p class="mt-2 text-gray-900">{{ $pet->description }}</p>
-                            </div>
-                        @endif
 
                         {{-- Adoption meta visible for all adoptable pets (including those converted from impounded) --}}
                         @if($pet->status === 'adoptable')
@@ -110,20 +116,40 @@
                                         'remained_unclaimed' => 'Remained Unclaimed',
                                         'found_by_citizen' => 'Found by Citizen',
                                     ];
-                                    if (!empty($pet->adoption_reason_other)) {
-                                        $adoptionLabel = $pet->adoption_reason_other;
+                                    $returnReasonLabels = [
+                                        'owner_relocation' => 'Owner Relocation/Moving',
+                                        'owner_illness_death' => 'Owner Illness/Death',
+                                        'financial_hardship' => 'Financial Hardship',
+                                        'housing_restriction' => 'Housing Restriction',
+                                        'lifestyle_change' => 'Lifestyle Change',
+                                        'incompatibility_pets' => 'Incompatibility with Pets',
+                                        'incompatibility_children' => 'Incompatibility with Children',
+                                        'allergies' => 'Allergies',
+                                        'space_exercise' => 'Lack of Space/Exercise',
+                                        'behavioral_issues' => 'Behavioral Issues',
+                                        'other' => 'Other',
+                                    ];
+
+                                    if ($pet->mostRecentReturn && $pet->mostRecentReturn->return_date) {
+                                        $reason = $returnReasonLabels[$pet->mostRecentReturn->return_reason] ?? ucfirst(str_replace('_', ' ', $pet->mostRecentReturn->return_reason));
+                                        $notes = $pet->mostRecentReturn->return_notes;
+                                        $isReturned = true;
                                     } else {
-                                        $adoptionLabel = $adoptionReasonLabels[$pet->adoption_reason] ?? $pet->adoption_reason;
+                                        if (!empty($pet->adoption_reason_other)) {
+                                            $reason = $pet->adoption_reason_other;
+                                        } else {
+                                            $reason = $pet->adoption_reason ? ($adoptionReasonLabels[$pet->adoption_reason] ?? ucfirst(str_replace('_', ' ', $pet->adoption_reason))) : 'Remained Unclaimed';
+                                        }
+                                        $notes = $pet->adoption_notes;
+                                        $isReturned = false;
                                     }
                             @endphp
 
-                            <div class="p-4 mt-6 rounded-lg bg-green-50">
-                                <p class="text-sm font-medium text-gray-600">Adoption Information</p>
-                                @if($pet->adoption_reason)
-                                    <p class="mt-2"><strong>Adoption Reason:</strong> {{ $adoptionLabel }}</p>
-                                @endif
-                                @if($pet->adoption_notes)
-                                    <p class="mt-2"><strong>Adoption Notes:</strong> {{ $pet->adoption_notes }}</p>
+                            <div class="p-4 mt-6 rounded-lg {{ $isReturned ? 'bg-orange-50' : 'bg-green-50' }}">
+                                <p class="text-sm font-medium {{ $isReturned ? 'text-orange-700' : 'text-green-700' }}">{{ $isReturned ? 'Return Information' : 'Adoption Information' }}</p>
+                                <p class="mt-2"><strong>{{ $isReturned ? 'Return' : 'Adoption' }} Reason:</strong> {{ $reason }}</p>
+                                @if($notes)
+                                    <p class="mt-2"><strong>{{ $isReturned ? 'Return' : 'Adoption' }} Notes:</strong> {{ $notes }}</p>
                                 @endif
                             </div>
                         @endif
@@ -133,7 +159,16 @@
                 <!-- Completed Request Details (for adopted/claimed pets) -->
                 @if(in_array($pet->status, ['claimed','adopted']))
                     @php
-                        $completedRequest = $pet->requests->where('status', 'completed')->sortByDesc('updated_at')->first();
+                        $completedRequests = $pet->requests->where('status', 'completed');
+
+                        // If pet was returned, filter to only show requests after the return date
+                        if ($pet->mostRecentReturn && $pet->mostRecentReturn->return_date) {
+                            $completedRequests = $completedRequests->filter(function($request) use ($pet) {
+                                return $request->created_at >= $pet->mostRecentReturn->return_date;
+                            });
+                        }
+
+                        $completedRequest = $completedRequests->sortByDesc('updated_at')->first();
                     @endphp
                     @if($completedRequest)
                         <div class="overflow-hidden bg-white rounded-lg shadow-md">
@@ -379,6 +414,14 @@
                     <div class="px-6 py-6">
                         @php
                             $allRequests = $pet->requests()->get();
+
+                            // If pet was returned, filter to only show requests after the return date
+                            if ($pet->mostRecentReturn && $pet->mostRecentReturn->return_date) {
+                                $allRequests = $allRequests->filter(function($request) use ($pet) {
+                                    return $request->created_at >= $pet->mostRecentReturn->return_date;
+                                });
+                            }
+
                             $pendingRequests = $allRequests->where('status', 'pending');
                             $approvedRequests = $allRequests->where('status', 'approved');
                             $deniedRequests = $allRequests->where('status', 'denied');
@@ -596,7 +639,16 @@
                     </div>
                     <div class="px-6 py-6 space-y-3">
                         @php
-                            $completedRequest = $pet->requests->where('status', 'completed')->sortByDesc(function($r){
+                            $completedRequests = $pet->requests->where('status', 'completed');
+
+                            // If pet was returned, filter to only show requests after the return date
+                            if ($pet->mostRecentReturn && $pet->mostRecentReturn->return_date) {
+                                $completedRequests = $completedRequests->filter(function($request) use ($pet) {
+                                    return $request->created_at >= $pet->mostRecentReturn->return_date;
+                                });
+                            }
+
+                            $completedRequest = $completedRequests->sortByDesc(function($r){
                                 return $r->updated_at ? $r->updated_at->timestamp : 0;
                             })->first();
                         @endphp
@@ -745,9 +797,18 @@
 
                 <!-- Pet Timeline -->
                 @php
-                    $latestCompleted = $pet->requests->where('status', 'completed')->sortByDesc('updated_at')->first();
-                    $latestClaim = $pet->requests->where('status', 'completed')->where('type', 'claim')->sortByDesc('updated_at')->first();
-                    $latestAdopt = $pet->requests->where('status', 'completed')->where('type', 'adopt')->sortByDesc('updated_at')->first();
+                    $completedRequests = $pet->requests->where('status', 'completed');
+
+                    // If pet was returned, filter to only show requests after the return date
+                    if ($pet->mostRecentReturn && $pet->mostRecentReturn->return_date) {
+                        $completedRequests = $completedRequests->filter(function($request) use ($pet) {
+                            return $request->created_at >= $pet->mostRecentReturn->return_date;
+                        });
+                    }
+
+                    $latestCompleted = $completedRequests->sortByDesc('updated_at')->first();
+                    $latestClaim = $completedRequests->where('type', 'claim')->sortByDesc('updated_at')->first();
+                    $latestAdopt = $completedRequests->where('type', 'adopt')->sortByDesc('updated_at')->first();
                 @endphp
                 <div class="overflow-hidden bg-white rounded-lg shadow-md">
                     <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
@@ -800,6 +861,97 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Ownership History Section -->
+                @if($pet->ownershipHistory->count() > 0)
+                    <div class="overflow-hidden bg-white rounded-lg shadow-md">
+                        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                            <h2 class="text-lg font-bold text-gray-900">
+                                <svg class="inline w-5 h-5 mr-2 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Ownership History
+                            </h2>
+                        </div>
+                        <div class="px-6 py-6 space-y-4">
+                            @foreach($pet->ownershipHistory as $record)
+                                <div class="border-l-4 {{ $record->return_date ? 'border-orange-400 bg-orange-50' : 'border-green-400 bg-green-50' }} p-4 rounded-r-lg">
+                                    <div class="flex items-start justify-between mb-3">
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-600">Owner {{ $loop->iteration }}</p>
+                                            <p class="text-lg font-bold text-gray-900">{{ $record->user->name }}</p>
+                                            <p class="text-xs text-gray-500 mt-1">{{ $record->user->email }} • {{ $record->user->contact_number ?? 'No phone' }}</p>
+                                        </div>
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold {{ $record->return_date ? 'bg-orange-200 text-orange-900' : 'bg-green-200 text-green-900' }}">
+                                            {{ $record->return_date ? '↩ Returned' : '✓ Current Owner' }}
+                                        </span>
+                                    </div>
+
+                                    <div class="grid grid-cols-2 gap-3 text-sm">
+                                        <div>
+                                            <p class="text-xs font-medium text-gray-600">Type</p>
+                                            <p class="font-semibold text-gray-900">{{ ucfirst($record->type) }}</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs font-medium text-gray-600">Date Assigned</p>
+                                            <p class="font-semibold text-gray-900">{{ $record->assigned_date->format('M d, Y') }}</p>
+                                        </div>
+
+                                        @if($record->adoption_reason_other)
+                                            <div class="col-span-2">
+                                                <p class="text-xs font-medium text-gray-600">Adoption Reason</p>
+                                                <p class="font-semibold text-gray-900">{{ $record->adoption_reason_other }}</p>
+                                            </div>
+                                        @endif
+
+                                        @if($record->adoption_notes)
+                                            <div class="col-span-2">
+                                                <p class="text-xs font-medium text-gray-600">Adoption Notes</p>
+                                                <p class="text-gray-900">{{ $record->adoption_notes }}</p>
+                                            </div>
+                                        @endif
+
+                                        @if($record->return_date)
+                                            <div>
+                                                <p class="text-xs font-medium text-gray-600">Return Date</p>
+                                                <p class="font-semibold text-gray-900">{{ $record->return_date->format('M d, Y') }}</p>
+                                            </div>
+
+                                            @if($record->return_reason_other)
+                                                <div class="col-span-2">
+                                                    <p class="text-xs font-medium text-gray-600">Return Reason</p>
+                                                    <p class="font-semibold text-gray-900">{{ $record->return_reason_other }}</p>
+                                                </div>
+                                            @endif
+
+                                            @if($record->return_notes)
+                                                <div class="col-span-2">
+                                                    <p class="text-xs font-medium text-gray-600">Return Notes</p>
+                                                    <p class="text-gray-900">{{ $record->return_notes }}</p>
+                                                </div>
+                                            @endif
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
+                <!-- Return Pet Button (only for current claimed/adopted pets) -->
+                @if(in_array($pet->status, ['claimed', 'adopted']) && $pet->user)
+                    <div class="p-4 rounded-lg bg-orange-50 border border-orange-200">
+                        <p class="text-sm font-medium text-orange-900">
+                            Pet Status: This pet is currently owned by {{ $pet->user->name }}. Use the button below if they are bringing it back to the shelter.
+                        </p>
+                        <button onclick="openReturnModal()" class="mt-4 px-4 py-2 font-semibold text-white transition bg-orange-600 rounded-lg hover:bg-orange-700 whitespace-nowrap">
+                            <svg class="inline w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m7 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Mark as Returned
+                        </button>
+                    </div>
+                @endif
             </div>
         </div>
 
@@ -812,6 +964,9 @@
         </div>
     </div>
 </div>
+
+<!-- Include Mark Returned Modal -->
+@include('admin.pets.modals.mark-returned-modal')
 
 <!-- Admin Pet Photo Modal -->
 @if($pet->photo)
@@ -856,7 +1011,16 @@
 <!-- Admin Request ID Photo Modal -->
 @if(in_array($pet->status, ['claimed','adopted']))
     @php
-        $completedRequest = $pet->requests->where('status', 'completed')->sortByDesc('updated_at')->first();
+        $completedRequests = $pet->requests->where('status', 'completed');
+
+        // If pet was returned, filter to only show requests after the return date
+        if ($pet->mostRecentReturn && $pet->mostRecentReturn->return_date) {
+            $completedRequests = $completedRequests->filter(function($request) use ($pet) {
+                return $request->created_at >= $pet->mostRecentReturn->return_date;
+            });
+        }
+
+        $completedRequest = $completedRequests->sortByDesc('updated_at')->first();
         $additionalData = $completedRequest ? (is_array($completedRequest->additional_data) ? $completedRequest->additional_data : json_decode($completedRequest->additional_data, true)) : null;
     @endphp
     @if($completedRequest && isset($additionalData['id_photo_path']) && $additionalData['id_photo_path'])

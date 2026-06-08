@@ -47,7 +47,8 @@ class AdoptablePetSearchFilter extends Component
 
     public function render()
     {
-        $query = Pet::where('status', 'adoptable')->visibleToUsers();
+        $query = Pet::where('status', 'adoptable')->visibleToUsers()
+            ->with('mostRecentReturn');
 
         // Apply search first
         if ($this->search) {

@@ -3,16 +3,16 @@
 @section('title', '| Create Poster')
 
 @section('content')
-<div class="min-h-screen pt-24 bg-gray-50">
+<div class="min-h-screen pt-16 bg-gray-50">
     <div class="max-w-3xl px-4 py-8 mx-auto">
         <!-- Header -->
-        <div class="flex items-center mb-8">
-            <div class="p-3 mr-4 bg-white rounded-full shadow-sm">
-                <img src="{{ asset('image/logo1.png') }}" alt="FindFurEver Logo" class="object-contain w-12 h-12">
+        <div class="flex items-center mb-2">
+            <div class="p-0 mr-2 bg-white rounded-full shadow-sm -mt-2 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="w-10 h-10 text-indigo-600" fill="currentColor" aria-hidden="true"><!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M535.6 85.7C513.7 63.8 478.3 63.8 456.4 85.7L432 110.1L529.9 208L554.3 183.6C576.2 161.7 576.2 126.3 554.3 104.4L535.6 85.7zM236.4 305.7C230.3 311.8 225.6 319.3 222.9 327.6L193.3 416.4C190.4 425 192.7 434.5 199.1 441C205.5 447.5 215 449.7 223.7 446.8L312.5 417.2C320.7 414.5 328.2 409.8 334.4 403.7L496 241.9L398.1 144L236.4 305.7zM160 128C107 128 64 171 64 224L64 480C64 533 107 576 160 576L416 576C469 576 512 533 512 480L512 384C512 366.3 497.7 352 480 352C462.3 352 448 366.3 448 384L448 480C448 497.7 433.7 512 416 512L160 512C142.3 512 128 497.7 128 480L128 224C128 206.3 142.3 192 160 192L256 192C273.7 192 288 177.7 288 160C288 142.3 273.7 128 256 128L160 128z"/></svg>
             </div>
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">Create Lost & Found Poster</h1>
-                <p class="mt-1 text-gray-600">Help reunite pets with their families</p>
+                <p class="mt-0 text-gray-600">Help reunite pets with their families</p>
             </div>
         </div>
 
@@ -58,22 +58,57 @@
 
             <!-- Photo Upload -->
             <div class="mb-6">
-                <label class="block mb-2 text-sm font-semibold text-gray-900">Pet Photo</label>
+                <label class="block mb-2 text-sm font-semibold text-gray-900">Pet Photos</label>
                 <div id="photo-dropzone" class="p-6 text-center transition-colors duration-200 border-2 border-gray-300 border-dashed rounded-xl hover:border-indigo-400 hover:bg-indigo-50 cursor-pointer">
-                    <input type="file" name="photo" accept="image/*"
+                    <input type="file" name="photos[]" accept="image/*" multiple
                         class="hidden" id="photo-upload">
                     <label for="photo-upload" class="cursor-pointer block">
                         <svg class="w-10 h-10 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
                         <p class="text-indigo-600 font-medium">Drag and drop or click to upload</p>
-                        <p class="mt-1 text-sm text-gray-500">PNG, JPG up to 50MB</p>
+                        <p class="mt-1 text-sm text-gray-500">PNG, JPG up to 50MB. You can upload multiple photos.</p>
                     </label>
                 </div>
-                @error('photo') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
-                <div id="poster-photo-preview" class="mt-4" style="display: none;">
-                    <p class="text-sm font-medium text-gray-900 mb-2">Preview:</p>
-                    <img id="poster-preview-img" src="" alt="Photo preview" class="max-w-sm max-h-64 rounded-xl shadow-md border border-gray-300 cursor-pointer hover:opacity-90 transition-opacity" onclick="openPosterPreviewPhotoModal()">
+                @error('photos') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
+                @error('photos.*') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
+
+                <div id="poster-photo-preview" class="hidden mt-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-sm font-semibold text-gray-900">Selected Photos</h3>
+                        <span id="poster-preview-count" class="text-sm text-gray-500"></span>
+                    </div>
+                    <div id="poster-preview-grid" class="grid grid-cols-2 gap-3"></div>
+                </div>
+            </div>
+
+            <!-- Video Upload -->
+            <div class="mb-6">
+                <label class="block mb-2 text-sm font-semibold text-gray-900">Pet Video (Optional)</label>
+                <div id="video-dropzone" class="p-6 text-center transition-colors duration-200 border-2 border-gray-300 border-dashed rounded-xl hover:border-indigo-400 hover:bg-indigo-50 cursor-pointer">
+                    <input type="file" name="video" accept="video/*,.mkv" class="hidden" id="video-upload">
+                    <label for="video-upload" class="cursor-pointer block">
+                        <svg class="w-10 h-10 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14v2.382a1 1 0 01-1.447.894L7 14.236V9.764l6.553-3.04A1 1 0 0115 6.618V10z" />
+                        </svg>
+                        <p class="text-indigo-600 font-medium">Drag and drop or click to upload</p>
+                        <p class="mt-1 text-sm text-gray-500">MP4, MOV, AVI, WEBM up to 100MB. Video uploads may take longer to submit, please wait for the form to finish.</p>
+                    </label>
+                </div>
+                @error('video') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
+
+                <div id="poster-video-preview" class="hidden mt-4 relative">
+                    <label class="block mb-2 text-sm font-semibold text-gray-900">Video Preview</label>
+                    <video id="poster-preview-video" controls preload="metadata" class="w-full rounded-xl border shadow-sm bg-black">
+                        <source id="poster-video-source" src="" type="video/mp4">
+                        Your browser does not support video playback.
+                    </video>
+                    <button type="button" id="poster-video-remove" class="absolute top-3 right-3 z-20 p-2 text-white bg-black/60 rounded-full hidden" aria-label="Remove selected video">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                    <div class="mt-3">
+                        <span id="poster-video-preview-note" class="text-sm text-gray-500">Use the player controls to preview the selected video.</span>
+                    </div>
                 </div>
             </div>
 
@@ -165,6 +200,24 @@
                 </div>
             </div>
 
+            <!-- Social Media Links -->
+            <div class="mb-6">
+                <label class="block mb-3 text-sm font-semibold text-gray-900">Social Media Links <span class="text-xs font-normal text-gray-500">(Optional)</span></label>
+                <p class="mb-4 text-sm text-gray-600">Add your social media profiles so people can reach you directly</p>
+                <div class="space-y-3">
+                    @php $socialMediaLinks = old('social_media_links', []); @endphp
+                    @foreach(['facebook' => 'Facebook', 'instagram' => 'Instagram', 'x' => 'X (Twitter)', 'tiktok' => 'TikTok', 'whatsapp' => 'WhatsApp'] as $key => $label)
+                    <div>
+                        <label class="block mb-1 text-xs font-medium text-gray-700">{{ $label }}</label>
+                        <input type="url" name="social_media_links[{{ $key }}]" value="{{ $socialMediaLinks[$key] ?? '' }}"
+                            placeholder="https://{{ $key === 'x' ? 'x.com' : $key }}.com/yourprofile"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 @error('social_media_links.' . $key) border-red-500 @enderror">
+                        @error('social_media_links.' . $key) <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+
             <!-- Descriptions -->
             <div class="grid grid-cols-1 gap-6 mb-6 md:grid-cols-2">
                 <div>
@@ -212,11 +265,16 @@
                     class="bg-gray-600 text-white hover:bg-gray-800 px-4 py-2 rounded flex items-center justify-center">
                     Cancel
                 </a>
-                <button type="submit"
+                <button type="submit" id="create-poster-button"
                     class="px-8 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-xl hover:from-purple-700 hover:to-purple-800 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                     Create Poster
                 </button>
             </div>
+            <p id="poster-submit-status" class="mt-3 text-sm text-gray-500 hidden">Uploading files, please wait… this may take longer when a video is attached.</p>
+            <div id="poster-upload-progress" class="mt-3 h-2 overflow-hidden rounded-full bg-gray-200 hidden">
+                <div id="poster-upload-progress-bar" class="h-full w-0 rounded-full bg-purple-600"></div>
+            </div>
+            <p id="poster-upload-progress-label" class="mt-2 text-sm text-gray-500 hidden">0%</p>
         </form>
     </div>
 </div>
@@ -277,6 +335,109 @@
             radio.addEventListener('change', handleTypeChange);
         });
 
+        const createButton = document.getElementById('create-poster-button');
+        const submitStatus = document.getElementById('poster-submit-status');
+        const progressContainer = document.getElementById('poster-upload-progress');
+        const progressBar = document.getElementById('poster-upload-progress-bar');
+        const progressLabel = document.getElementById('poster-upload-progress-label');
+        const posterForm = document.querySelector('form[action="{{ route('posters.store') }}"]') || document.querySelector('form');
+
+        function setUploadError(message) {
+            if (submitStatus) {
+                submitStatus.classList.remove('hidden');
+                submitStatus.textContent = message;
+            }
+            if (progressLabel) {
+                progressLabel.textContent = 'Failed';
+            }
+            if (progressBar) {
+                progressBar.style.width = '100%';
+            }
+            if (createButton) {
+                createButton.disabled = false;
+                createButton.textContent = 'Create Poster';
+            }
+        }
+
+        function handleUploadProgress(event, button, actionText, successText) {
+            if (!posterForm) {
+                return;
+            }
+
+            event.preventDefault();
+            button.disabled = true;
+            button.textContent = actionText;
+
+            if (submitStatus) {
+                submitStatus.classList.remove('hidden');
+                submitStatus.textContent = 'Uploading files, please wait… 0%';
+            }
+            if (progressContainer && progressLabel && progressBar) {
+                progressContainer.classList.remove('hidden');
+                progressBar.style.width = '0%';
+                progressLabel.classList.remove('hidden');
+                progressLabel.textContent = '0%';
+            }
+
+            const xhr = new XMLHttpRequest();
+            const formData = new FormData(posterForm);
+
+            xhr.upload.addEventListener('progress', function(e) {
+                if (!e.lengthComputable) {
+                    return;
+                }
+                const percent = Math.round((e.loaded / e.total) * 100);
+                if (submitStatus) {
+                    submitStatus.textContent = 'Uploading files, please wait… ' + percent + '%';
+                }
+                if (progressBar) {
+                    progressBar.style.width = percent + '%';
+                }
+                if (progressLabel) {
+                    progressLabel.textContent = percent + '%';
+                }
+            });
+
+            xhr.onerror = function() {
+                setUploadError('Upload failed. Please try again.');
+            };
+
+            xhr.onabort = function() {
+                setUploadError('Upload was aborted. Please try again.');
+            };
+
+            xhr.ontimeout = function() {
+                setUploadError('Upload timed out. Please try again.');
+            };
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState !== XMLHttpRequest.DONE) {
+                    return;
+                }
+                if (xhr.status >= 200 && xhr.status < 400) {
+                    const redirectUrl = xhr.responseURL || posterForm.action;
+                    if (redirectUrl && redirectUrl !== window.location.href) {
+                        window.location.href = redirectUrl;
+                    } else {
+                        button.textContent = successText;
+                    }
+                } else {
+                    setUploadError('Upload failed. Please try again.');
+                }
+            };
+
+            xhr.timeout = 600000;
+            xhr.open('POST', posterForm.action, true);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhr.send(formData);
+        }
+
+        if (posterForm && createButton) {
+            posterForm.addEventListener('submit', function(event) {
+                handleUploadProgress(event, createButton, 'Posting...', 'Create Poster');
+            });
+        }
+
         // Prevent default drag behavior on entire document
         document.addEventListener('dragover', function(e) {
             e.preventDefault();
@@ -295,31 +456,118 @@
         // Handle photo upload and drag-drop
         const photoUpload = document.getElementById('photo-upload');
         const photoDropzone = document.getElementById('photo-dropzone');
+        const videoUpload = document.getElementById('video-upload');
+        const videoDropzone = document.getElementById('video-dropzone');
+        const videoPreviewBlock = document.getElementById('poster-video-preview');
+        const videoSource = document.getElementById('poster-video-source');
+        const videoPlayer = document.getElementById('poster-preview-video');
 
-        // Function to handle file selection
         function handleFileSelect(files) {
-            if (files && files[0]) {
-                // Set the file to the input
-                const dataTransfer = new DataTransfer();
-                dataTransfer.items.add(files[0]);
-                photoUpload.files = dataTransfer.files;
+            if (!files || files.length === 0) {
+                document.getElementById('poster-photo-preview').style.display = 'none';
+                return;
+            }
 
-                // Show preview
+            const dataTransfer = new DataTransfer();
+            Array.from(files).forEach(file => dataTransfer.items.add(file));
+            photoUpload.files = dataTransfer.files;
+
+            const previewGrid = document.getElementById('poster-preview-grid');
+            previewGrid.innerHTML = '';
+
+            Array.from(files).forEach((file, index) => {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    document.getElementById('poster-preview-img').src = e.target.result;
-                    document.getElementById('poster-photo-preview').style.display = 'block';
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'relative rounded-xl overflow-hidden border shadow-sm';
+
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.alt = file.name;
+                    img.className = 'object-cover w-full h-32 cursor-pointer';
+                    img.onclick = function() {
+                        openPosterPreviewPhotoModal(e.target.result);
+                    };
+
+                    const removeButton = document.createElement('button');
+                    removeButton.type = 'button';
+                    removeButton.className = 'absolute top-2 right-2 z-10 p-1 text-white bg-black/60 rounded-full hover:bg-black';
+                    removeButton.setAttribute('aria-label', 'Remove selected photo');
+                    removeButton.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>';
+                    removeButton.addEventListener('click', function(event) {
+                        event.stopPropagation();
+                        removeSelectedPreview(index);
+                    });
+
+                    wrapper.appendChild(img);
+                    wrapper.appendChild(removeButton);
+                    previewGrid.appendChild(wrapper);
                 };
-                reader.readAsDataURL(files[0]);
-            }
+                reader.readAsDataURL(file);
+            });
+
+            document.getElementById('poster-preview-count').textContent = files.length + ' photo' + (files.length > 1 ? 's selected' : ' selected');
+            document.getElementById('poster-photo-preview').style.display = 'block';
         }
 
-        // Click to upload
+        function removeSelectedPreview(index) {
+            const files = Array.from(photoUpload.files);
+            if (index < 0 || index >= files.length) {
+                return;
+            }
+            files.splice(index, 1);
+
+            const dataTransfer = new DataTransfer();
+            files.forEach(file => dataTransfer.items.add(file));
+            photoUpload.files = dataTransfer.files;
+            handleFileSelect(photoUpload.files);
+        }
+
+        function handleVideoSelect(file) {
+            if (!file) {
+                return;
+            }
+
+            const MAX_VIDEO_BYTES = 100 * 1024 * 1024;
+            if (file.size > MAX_VIDEO_BYTES) {
+                alert('Selected video is too large. Please choose a file smaller than 100MB.');
+                if (videoUpload) {
+                    videoUpload.value = null;
+                }
+                return;
+            }
+
+            const url = URL.createObjectURL(file);
+            videoSource.src = url;
+            videoPlayer.load();
+            videoPreviewBlock.style.display = 'block';
+            const removeBtn = document.getElementById('poster-video-remove');
+            if (removeBtn) removeBtn.classList.remove('hidden');
+        }
+
+        // Remove selected preview video (create page)
+        const posterVideoRemoveBtn = document.getElementById('poster-video-remove');
+        if (posterVideoRemoveBtn) {
+            posterVideoRemoveBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (videoUpload) videoUpload.value = null;
+                if (videoSource) videoSource.src = '';
+                if (videoPlayer) try { videoPlayer.pause(); } catch(_) {}
+                if (videoPreviewBlock) videoPreviewBlock.style.display = 'none';
+                posterVideoRemoveBtn.classList.add('hidden');
+            });
+        }
+
         photoUpload.addEventListener('change', function() {
             handleFileSelect(this.files);
         });
 
-        // Drag and drop events
+        videoUpload.addEventListener('change', function() {
+            handleVideoSelect(this.files[0]);
+        });
+
+        // Drag and drop events for photos
         photoDropzone.addEventListener('dragover', function(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -343,6 +591,34 @@
             const files = e.dataTransfer.files;
             if (files && files.length > 0) {
                 handleFileSelect(files);
+            }
+        });
+
+        // Drag and drop events for video
+        videoDropzone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            videoDropzone.style.backgroundColor = '#f3e8ff';
+            videoDropzone.style.borderColor = '#a855f7';
+        });
+
+        videoDropzone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            videoDropzone.style.backgroundColor = '';
+            videoDropzone.style.borderColor = '#d1d5db';
+        });
+
+        videoDropzone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            videoDropzone.style.backgroundColor = '';
+            videoDropzone.style.borderColor = '#d1d5db';
+
+            const files = e.dataTransfer.files;
+            if (files && files.length > 0) {
+                videoUpload.files = files;
+                handleVideoSelect(files[0]);
             }
         });
 
@@ -379,12 +655,18 @@
 </div>
 
 <script>
-function openPosterPreviewPhotoModal() {
-    const sourceImg = document.getElementById('poster-preview-img') || document.getElementById('current-poster-photo');
-    if (sourceImg) {
-        document.getElementById('posterPreviewPhotoImg').src = sourceImg.src;
-        document.getElementById('posterPreviewPhotoModal').classList.remove('hidden');
+function openPosterPreviewPhotoModal(src = null) {
+    const modalImage = document.getElementById('posterPreviewPhotoImg');
+    if (src) {
+        modalImage.src = src;
+    } else {
+        const sourceImg = document.getElementById('poster-preview-img') || document.getElementById('current-poster-photo');
+        if (!sourceImg) {
+            return;
+        }
+        modalImage.src = sourceImg.src;
     }
+    document.getElementById('posterPreviewPhotoModal').classList.remove('hidden');
 }
 
 function closePosterPreviewPhotoModal() {

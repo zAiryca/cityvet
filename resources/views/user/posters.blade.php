@@ -50,8 +50,8 @@
                 <div class="overflow-hidden transition-all duration-300 bg-white border border-gray-100 shadow-md rounded-xl hover:shadow-xl hover:scale-105">
                     <!-- Photo Section with Status Badge -->
                     <div class="relative h-48 overflow-hidden bg-gray-100">
-                        @if($poster->photo)
-                            <img src="{{ asset('storage/' . $poster->photo) }}" alt="{{ $poster->pet_name ?: 'Pet' }}" class="object-cover w-full h-full cursor-pointer hover:opacity-90 transition-opacity" onclick="openPhotoModal('{{ asset('storage/' . $poster->photo) }}')" style="cursor: pointer;">
+                        @if(count($poster->photo_sources) > 0)
+                            <img src="{{ asset('storage/' . $poster->primary_photo) }}" alt="{{ $poster->pet_name ?: 'Pet' }}" class="object-cover w-full h-full cursor-pointer hover:opacity-90 transition-opacity" onclick="openPhotoModal('{{ asset('storage/' . $poster->primary_photo) }}')" style="cursor: pointer;">
                         @else
                             <div class="flex items-center justify-center w-full h-full">
                                 <svg class="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -188,8 +188,8 @@
                 <div class="overflow-hidden transition-all duration-300 bg-white border border-gray-100 shadow-md rounded-xl hover:shadow-xl hover:scale-105">
                     <!-- Photo Section with Status Badge -->
                     <div class="relative h-48 overflow-hidden bg-gray-100">
-                        @if($poster->photo)
-                            <img src="{{ asset('storage/' . $poster->photo) }}" alt="{{ $poster->pet_name ?: 'Pet' }}" class="object-cover w-full h-full cursor-pointer hover:opacity-90 transition-opacity" onclick="openPhotoModal('{{ asset('storage/' . $poster->photo) }}')" style="cursor: pointer;">
+                        @if(count($poster->photo_sources) > 0)
+                            <img src="{{ asset('storage/' . $poster->primary_photo) }}" alt="{{ $poster->pet_name ?: 'Pet' }}" class="object-cover w-full h-full cursor-pointer hover:opacity-90 transition-opacity" onclick="openPhotoModal('{{ asset('storage/' . $poster->primary_photo) }}')" style="cursor: pointer;">
                         @else
                             <div class="flex items-center justify-center w-full h-full">
                                 <svg class="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">

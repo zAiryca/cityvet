@@ -26,6 +26,36 @@ class Pet extends Model
         return $this->belongsTo(User::class);
     }
 
+    // Ownership history - track all owners and returns (chronological order)
+    public function ownershipHistory()
+    {
+        return $this->hasMany(PetOwnershipHistory::class)->orderBy('assigned_date', 'asc');
+    }
+
+    // Get current owner from ownership history
+    public function currentOwnershipRecord()
+    {
+        return $this->hasOne(PetOwnershipHistory::class)
+            ->whereNull('return_date')
+            ->latest('assigned_date');
+    }
+
+    // Get most recent returned owner (for badges)
+    public function mostRecentReturn()
+    {
+        return $this->hasOne(PetOwnershipHistory::class)
+            ->whereNotNull('return_date')
+            ->latest('return_date');
+    }
+
+    // Get all previous owners (returned pets)
+    public function previousOwners()
+    {
+        return $this->hasMany(PetOwnershipHistory::class)
+            ->whereNotNull('return_date')
+            ->orderBy('return_date', 'desc');
+    }
+
     // public function requests()
     // {
     //     return $this->hasMany(PetRequest::class);
@@ -128,6 +158,24 @@ class Pet extends Model
         }
 
         return $ageString ?: 'Unknown';
+    }
+
+    // Helper: Determine when caught location should be shown on user-facing pages
+    public function shouldShowCaughtLocation(): bool
+    {
+        if (!$this->caught_location) {
+            return false;
+        }
+
+        if ($this->status === 'impounded') {
+            return true;
+        }
+
+        if ($this->status === 'adoptable') {
+            return empty($this->adoption_reason) || in_array($this->adoption_reason, ['remained_unclaimed', 'found_by_citizen']);
+        }
+
+        return false;
     }
 
     // Helper: Is urgent?
