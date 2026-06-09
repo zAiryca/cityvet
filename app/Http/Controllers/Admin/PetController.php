@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Pet;
 use App\Models\PetRequest;
+use App\Models\PetOwnershipHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,9 +16,14 @@ class PetController extends Controller
         if (!Auth::user()->isAdmin()) abort(403);
 
         $status = $request->get('status');
-        // Eager-load the owner and any approved requests (with their users) to show requester info in the index
+        // Eager-load the owner, approved requests, and ownership history
         $petsQuery = Pet::query()->with([
             'user',
+            'ownershipHistory' => function ($q) {
+                $q->orderBy('assigned_date', 'asc');
+            },
+            'ownershipHistory.user',
+            'mostRecentReturn.user',
             'requests' => function ($q) {
                 $q->where('status', 'approved')->orderBy('updated_at', 'desc');
             },
@@ -116,7 +122,14 @@ class PetController extends Controller
     public function show(Pet $pet)
     {
         if (!Auth::user()->isAdmin()) abort(403);
-        $pet->load('user', 'requests');
+        $pet->load([
+            'user',
+            'requests',
+            'ownershipHistory' => function ($q) {
+                $q->orderBy('assigned_date', 'asc');
+            },
+            'ownershipHistory.user',
+        ]);
         return view('admin.pets.show', compact('pet'));
     }
 
@@ -239,18 +252,44 @@ class PetController extends Controller
             'user_id' => $approvedRequest->user_id,
         ]);
 
+        // Record ownership history
+        PetOwnershipHistory::create([
+            'pet_id' => $pet->id,
+            'user_id' => $approvedRequest->user_id,
+            'type' => 'adopted',
+            'assigned_date' => now()->toDateString(),
+            'adoption_reason' => $pet->adoption_reason,
+            'adoption_reason_other' => $pet->adoption_reason_other,
+            'adoption_notes' => $pet->adoption_notes,
+        ]);
+
         $approvedRequest->update(['status' => 'completed']);
 
-        // Auto-deny all other requests for this pet
-        PetRequest::where('requestable_id', $pet->id)
+        // Get all other requests before updating them (to send notifications)
+        $otherRequests = PetRequest::where('requestable_id', $pet->id)
             ->where('requestable_type', Pet::class)
             ->where('id', '!=', $approvedRequest->id)
             ->where('status', '!=', 'completed')
-            ->update([
+            ->get();
+
+        // Auto-deny all other requests for this pet
+        foreach ($otherRequests as $otherRequest) {
+            $otherRequest->update([
                 'status' => 'denied',
                 'denial_reason' => 'Other applicant was chosen',
                 'denial_type' => 'automatic'
             ]);
+
+            // Notify user that their request was denied
+            if ($otherRequest->user) {
+                $otherRequest->user->notify(new \App\Notifications\RequestStatusNotification($otherRequest, 'denied'));
+            }
+        }
+
+        // Notify successful applicant
+        if ($approvedRequest->user) {
+            $approvedRequest->user->notify(new \App\Notifications\RequestStatusNotification($approvedRequest, 'completed'));
+        }
 
         return back()->with('success', 'Pet marked as adopted and ownership transferred. Other requests have been automatically denied.');
     }
@@ -284,20 +323,127 @@ class PetController extends Controller
             'user_id' => $approvedRequest->user_id
         ]);
 
+        // Record ownership history
+        PetOwnershipHistory::create([
+            'pet_id' => $pet->id,
+            'user_id' => $approvedRequest->user_id,
+            'type' => 'claimed',
+            'assigned_date' => now()->toDateString(),
+            'adoption_reason' => $pet->adoption_reason,
+            'adoption_reason_other' => $pet->adoption_reason_other,
+            'adoption_notes' => $pet->adoption_notes,
+        ]);
+
         $approvedRequest->update(['status' => 'completed']);
 
-        // Auto-deny all other requests for this pet
-        PetRequest::where('requestable_id', $pet->id)
+        // Get all other requests before updating them (to send notifications)
+        $otherRequests = PetRequest::where('requestable_id', $pet->id)
             ->where('requestable_type', Pet::class)
             ->where('id', '!=', $approvedRequest->id)
             ->where('status', '!=', 'completed')
-            ->update([
+            ->get();
+
+        // Auto-deny all other requests for this pet
+        foreach ($otherRequests as $otherRequest) {
+            $otherRequest->update([
                 'status' => 'denied',
                 'denial_reason' => 'Other applicant was chosen',
                 'denial_type' => 'automatic'
             ]);
 
+            // Notify user that their request was denied
+            if ($otherRequest->user) {
+                $otherRequest->user->notify(new \App\Notifications\RequestStatusNotification($otherRequest, 'denied'));
+            }
+        }
+
+        // Notify successful claimant
+        if ($approvedRequest->user) {
+            $approvedRequest->user->notify(new \App\Notifications\RequestStatusNotification($approvedRequest, 'completed'));
+        }
+
         return back()->with('success', 'Pet claimed and ownership transferred to claimant. Other requests have been automatically denied.');
+    }
+
+    // Mark pet as returned (brought back by current owner)
+    public function markAsReturned(Request $request, Pet $pet)
+    {
+        if (!Auth::user()->isAdmin()) abort(403);
+
+        $validated = $request->validate([
+            'return_reason' => 'required|string|max:255',
+            'return_notes' => 'nullable|string|max:500',
+        ]);
+
+        // Pet must be in claimed or adopted status to be returned
+        if (!in_array($pet->status, ['claimed', 'adopted'])) {
+            return back()->with('error', 'Only claimed or adopted pets can be marked as returned.');
+        }
+
+        // Pet must have a current owner
+        if (!$pet->user_id) {
+            return back()->with('error', 'Pet has no current owner to process return.');
+        }
+
+        try {
+            // Map return reason to enum key
+            $returnReasonMap = [
+                'Owner Relocation/Moving' => 'owner_relocation',
+                'Owner Illness/Death' => 'owner_illness_death',
+                'Financial Hardship' => 'financial_hardship',
+                'Landlord/Housing Restriction' => 'housing_restriction',
+                'Lifestyle/Schedule Change' => 'lifestyle_change',
+                'Incompatibility with Existing Pets' => 'incompatibility_pets',
+                'Incompatibility with Children' => 'incompatibility_children',
+                'Household Allergies' => 'allergies',
+                'Needs More Space/Exercise' => 'space_exercise',
+                'Behavioral Issues' => 'behavioral_issues',
+            ];
+
+            $returnReasonEnum = $returnReasonMap[$validated['return_reason']] ?? 'other';
+
+            // Get the current ownership record
+            $currentOwnership = $pet->currentOwnershipRecord()->first();
+
+            if ($currentOwnership) {
+                // Update existing ownership record to mark as returned
+                $currentOwnership->update([
+                    'return_date' => now()->toDateString(),
+                    'return_reason' => $returnReasonEnum,
+                    'return_reason_other' => $validated['return_reason'],
+                    'return_notes' => $validated['return_notes'] ?? null,
+                ]);
+            } else {
+                // For pets adopted/claimed before this feature was added, create a new record
+                // Determine type based on current status
+                $type = $pet->status === 'claimed' ? 'claimed' : 'adopted';
+
+                PetOwnershipHistory::create([
+                    'pet_id' => $pet->id,
+                    'user_id' => $pet->user_id,
+                    'type' => $type,
+                    'assigned_date' => $pet->updated_at->toDateString(), // Use when it was last updated
+                    'return_date' => now()->toDateString(),
+                    'return_reason' => $returnReasonEnum,
+                    'return_reason_other' => $validated['return_reason'],
+                    'return_notes' => $validated['return_notes'] ?? null,
+                    'adoption_reason' => $pet->adoption_reason,
+                    'adoption_reason_other' => $pet->adoption_reason_other,
+                    'adoption_notes' => $pet->adoption_notes,
+                ]);
+            }
+
+            // Mark pet as adoptable again
+            $pet->update([
+                'status' => 'adoptable',
+                'decision_date' => now(),
+                'user_id' => null, // Clear current owner
+            ]);
+
+            return back()->with('success', 'Pet marked as returned and set to adoptable. Ownership history recorded.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error marking pet as returned: ' . $e->getMessage());
+        }
     }
 
     // Display adoption & claim history (pets with completed requests or expired without)
@@ -309,6 +455,11 @@ class PetController extends Controller
 
         $petsQuery = Pet::with([
             'user',
+            'ownershipHistory' => function ($q) {
+                $q->orderBy('assigned_date', 'asc');
+            },
+            'ownershipHistory.user',
+            'mostRecentReturn.user',
             'requests' => function ($q) use ($status) {
                 $q->where('status', 'completed')->orderBy('updated_at', 'desc');
                 // Filter requests by type to match the tab

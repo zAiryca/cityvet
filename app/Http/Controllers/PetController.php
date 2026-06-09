@@ -30,6 +30,11 @@ class PetController extends Controller
 
     public function show(Pet $pet)
     {
+        $pet->load([
+            'ownershipHistory' => function ($q) {
+                $q->whereNotNull('return_date')->orderBy('return_date', 'desc');
+            },
+        ]);
         return view('pets.show', compact('pet'));
     }
 

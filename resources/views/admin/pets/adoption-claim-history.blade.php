@@ -77,6 +77,16 @@
                                         <div>
                                             <h3 class="text-lg font-bold text-gray-900">{{ $pet->display_code }}</h3>
                                             <p class="text-sm text-gray-600">{{ ucfirst($pet->species) }} • {{ $pet->breed ?: 'Unknown' }} • {{ $pet->estimated_age_years ? $pet->estimated_age_years . 'y' : '' }} {{ $pet->estimated_age_months ? $pet->estimated_age_months . 'm' : '' }}</p>
+
+                                            {{-- Show most recent return if pet was returned --}}
+                                            @if($pet->mostRecentReturn)
+                                                @php $lastOwner = $pet->mostRecentReturn; @endphp
+                                                @if($lastOwner->user)
+                                                    <div class="mt-2 text-xs bg-orange-50 border border-orange-200 text-orange-700 px-2 py-1 rounded inline-block">
+                                                        <strong>↩ Returned by:</strong> {{ $lastOwner->user->name }}
+                                                    </div>
+                                                @endif
+                                            @endif
                                         </div>
                                         <div class="flex items-center justify-end space-x-3">
                                             @php $latestRequest = $pet->requests->sortByDesc('updated_at')->first(); @endphp

@@ -286,20 +286,24 @@
                                     <p class="pet-info-value">{{ $pet->estimated_age }}</p>
                                 </div>
                                 <div class="pet-info-item">
-                                    <p class="pet-info-label">Color</p>
-                                    <p class="pet-info-value">{{ $pet->color_markings ?: 'N/A' }}</p>
+                                    <p class="pet-info-label">Color Markings</p>
+                                    <p class="pet-info-value">{{ str_replace(',', ', ', $pet->color_markings) ?: 'N/A' }}</p>
                                 </div>
+                                @if($pet->shouldShowCaughtLocation())
+                                    <div class="pet-info-item">
+                                        <p class="pet-info-label">Caught Location</p>
+                                        <p class="pet-info-value">{{ $pet->caught_location }}</p>
+                                    </div>
+                                @endif
+                                @if($pet->description)
+                                    <div class="pet-info-item">
+                                        <p class="pet-info-label" style="font-weight: bold;">Description</p>
+                                        <p class="pet-info-value" style="font-size: 14px; font-weight: 400; background-color: #f3f4f6; color: #000000; padding: 8px 12px; border-radius: 6px;">{{ $pet->description }}</p>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
-
-                    <!-- Description -->
-                    @if($pet->description)
-                        <div class="p-4 mt-4 border-l-4 border-blue-500 bg-blue-50 rounded-8px">
-                            <p class="pet-info-label">Description</p>
-                            <p class="mt-2 text-sm text-gray-700">{{ $pet->description }}</p>
-                        </div>
-                    @endif
 
                     <!-- Adoption Info -->
                     @if($pet->status === 'adoptable')
@@ -309,19 +313,39 @@
                                 'remained_unclaimed' => 'Remained Unclaimed',
                                 'found_by_citizen' => 'Found by Citizen',
                             ];
-                            if (!empty($pet->adoption_reason_other)) {
-                                $adoptionLabel = $pet->adoption_reason_other;
+                            $returnReasonLabels = [
+                                'owner_relocation' => 'Owner Relocation/Moving',
+                                'owner_illness_death' => 'Owner Illness/Death',
+                                'financial_hardship' => 'Financial Hardship',
+                                'housing_restriction' => 'Housing Restriction',
+                                'lifestyle_change' => 'Lifestyle Change',
+                                'incompatibility_pets' => 'Incompatibility with Pets',
+                                'incompatibility_children' => 'Incompatibility with Children',
+                                'allergies' => 'Allergies',
+                                'space_exercise' => 'Lack of Space/Exercise',
+                                'behavioral_issues' => 'Behavioral Issues',
+                                'other' => 'Other',
+                            ];
+
+                            if ($pet->mostRecentReturn && $pet->mostRecentReturn->return_date) {
+                                $reason = $returnReasonLabels[$pet->mostRecentReturn->return_reason] ?? ucfirst(str_replace('_', ' ', $pet->mostRecentReturn->return_reason));
+                                $notes = $pet->mostRecentReturn->return_notes;
                             } else {
-                                $adoptionLabel = $adoptionReasonLabels[$pet->adoption_reason] ?? $pet->adoption_reason;
+                                if (!empty($pet->adoption_reason_other)) {
+                                    $reason = $pet->adoption_reason_other;
+                                } else {
+                                    $reason = $pet->adoption_reason ? ($adoptionReasonLabels[$pet->adoption_reason] ?? ucfirst(str_replace('_', ' ', $pet->adoption_reason))) : 'Remained Unclaimed';
+                                }
+                                $notes = $pet->adoption_notes;
                             }
                         @endphp
-                        <div class="p-4 mt-4 border-l-4 border-green-500 bg-green-50 rounded-8px">
-                            <p class="text-green-700 pet-info-label">Adoption Information</p>
-                            @if($pet->adoption_reason)
-                                <p class="mt-2 text-sm text-gray-700"><strong>Reason:</strong> {{ $adoptionLabel }}</p>
-                            @endif
-                            @if($pet->adoption_notes)
-                                <p class="mt-1 text-sm text-gray-700"><strong>Notes:</strong> {{ $pet->adoption_notes }}</p>
+                        <div class="p-4 mt-4 border-l-4 {{ $pet->mostRecentReturn && $pet->mostRecentReturn->return_date ? 'border-orange-500 bg-orange-50' : 'border-green-500 bg-green-50' }} rounded-8px">
+                            <p class="pet-info-label {{ $pet->mostRecentReturn && $pet->mostRecentReturn->return_date ? 'text-orange-700' : 'text-green-700' }}">
+                                {{ $pet->mostRecentReturn && $pet->mostRecentReturn->return_date ? 'Return Information' : 'Adoption Information' }}
+                            </p>
+                            <p class="mt-2 text-sm text-gray-700"><strong>Reason:</strong> {{ $reason }}</p>
+                            @if($notes)
+                                <p class="mt-1 text-sm text-gray-700"><strong>{{ $pet->mostRecentReturn && $pet->mostRecentReturn->return_date ? 'Return' : 'Adoption' }} Notes:</strong> {{ $notes }}</p>
                             @endif
                         </div>
                     @endif

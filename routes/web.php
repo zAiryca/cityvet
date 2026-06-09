@@ -34,6 +34,7 @@ Route::middleware('setlocale')->group(function () {
     Route::get('/lost-found', [PosterController::class, 'index'])->name('posters.index');
     Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
     Route::get('/announcements/{announcement}', [AnnouncementController::class, 'show'])->name('announcements.show');
+    Route::get('/posters/{poster}/video', [App\Http\Controllers\PosterController::class, 'video'])->name('posters.video');
     Route::get('/posters/{poster}', [PosterController::class, 'show'])->name('posters.show');
     Route::get('/about', [PageController::class, 'about'])->name('about');
     Route::get('/contact', [PageController::class, 'contact'])->name('contact');
@@ -193,6 +194,7 @@ Route::middleware('setlocale')->group(function () {
             return back()->with('info', 'Please use the form to mark this pet as claimed.');
         });
         Route::post('/pets/{pet}/mark-claimed', [AdminPetController::class, 'markAsClaimed'])->name('pets.mark-claimed');
+        Route::post('/pets/{pet}/mark-returned', [AdminPetController::class, 'markAsReturned'])->name('pets.mark-returned');
 
         // Adoption & Claim History
         Route::get('/adoption-claim-history', [AdminPetController::class, 'adoptionClaimHistory'])->name('adoption-claim-history');

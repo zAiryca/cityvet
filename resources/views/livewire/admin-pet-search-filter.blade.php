@@ -136,6 +136,18 @@
                                     @else bg-gray-100 text-gray-800 @endif">
                                     {{ ucfirst($pet->status) }}
                                 </span>
+
+                                {{-- Show most recent return if pet was returned --}}
+                                @if($pet->mostRecentReturn && $pet->status === 'adoptable')
+                                    @php $lastOwner = $pet->mostRecentReturn; @endphp
+                                    @if($lastOwner->user)
+                                        <div class="mt-2 text-xs text-orange-700 bg-orange-50 px-2 py-1 rounded">
+                                            <strong>↩ Returned by:</strong> {{ $lastOwner->user->name }}
+                                            <br>
+                                            <strong>Reason:</strong> {{ str_replace('_', ' ', ucfirst($lastOwner->return_reason)) }}
+                                        </div>
+                                    @endif
+                                @endif
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                                 @php

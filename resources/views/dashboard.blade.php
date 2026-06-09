@@ -32,6 +32,9 @@
                 <div class="mb-6 overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">
                         {{ __("Welcome back, " . Auth::user()->name . "!") }}
+                        <div class="mt-4">
+                            <a href="{{ route('pet-registrations.create') }}" class="inline-block px-4 py-2 mt-2 font-sans font-semibold text-white transition duration-300 rounded-lg hover:scale-105" style="background-color: #2563eb;">Register Your Pet</a>
+                        </div>
                     </div>
                 </div>
 
