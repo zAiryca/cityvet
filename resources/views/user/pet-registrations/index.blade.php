@@ -3,10 +3,10 @@
 @section('title', '| My Pets')
 
 @section('content')
-<div class="min-h-screen pt-24 bg-gray-50">
+<div class="min-h-screen bg-gray-50">
     <div class="px-4 py-8 mx-auto max-w-7xl">
         <!-- Header -->
-        <div class="flex items-center justify-between mb-8" style="margin-top: -5rem">
+        <div class="flex items-center justify-between mb-8">
             <div class="flex items-center">
                 <div class="p-0 mr-4 bg-white rounded-full shadow-sm overflow-hidden w-12 h-12">
                     <img src="{{ asset('image/logo.png') }}" alt="FindFurEver Logo" class="w-full h-full object-cover">

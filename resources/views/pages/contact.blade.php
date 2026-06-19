@@ -5,7 +5,7 @@
 @section('content')
 <div class="min-h-screen bg-gray-50" style="font-family: 'Poppins', sans-serif;">
     <!-- Hero Section -->
-    <div class="px-4 py-20 text-white shadow-lg bg-gradient-to-r from-blue-600 to-purple-600" style="font-family: 'Poppins', sans-serif; margin-top: 70px;">
+    <div class="px-4 py-20 text-white shadow-lg bg-gradient-to-r from-blue-600 to-purple-600" style="font-family: 'Poppins', sans-serif;">
         <div class="mx-auto text-center max-w-7xl">
             <h1 class="mb-6 text-5xl md:text-6xl font-extrabold tracking-tight" style="font-family: 'Poppins', sans-serif;">
                 Contact Us

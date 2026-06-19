@@ -23,7 +23,7 @@
             background-color: #ffffff;
             margin: 0;
             /* Padding for fixed navigation bar */
-            padding-top: 70px;
+            padding-top: 80px;
         }
 
         * {

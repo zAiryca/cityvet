@@ -4,15 +4,13 @@
 @section('title', '| New Pet Registration')
 
 @section('content')
-<div class="min-h-screen px-4 py-12 pt-24 bg-gray-50 sm:px-6 lg:px-8">
+<div class="min-h-screen px-4 py-8 bg-gray-50 sm:px-6 lg:px-8">
     <div class="max-w-4xl mx-auto">
 
-       <div class="pt-24">
-    <div class="mb-10 text-center" style="margin-top: -7rem">
+    <div class="mb-10 text-center">
         <h1 class="text-4xl font-extrabold text-indigo-700 sm:text-5xl">Register Your Pet</h1>
         <p class="mt-3 text-xl text-gray-600">Secure your pet's official record in just a few steps.</p>
     </div>
-</div>
 
         <form action="{{ route('pet-registrations.store') }}" method="POST" enctype="multipart/form-data" class="bg-white divide-y divide-gray-200 shadow-2xl rounded-xl">
             @csrf
@@ -61,14 +59,14 @@
                         >
                     </div>
 
-                    <div>
+                    <div class="md:col-span-2">
                         <label for="owner_email" class="block text-sm font-medium text-gray-700">Email Address</label>
                         <input
                             type="email"
                             id="owner_email"
                             value="{{ auth()->user()->email ?? 'N/A' }}"
                             readonly
-                            class="block w-full p-3 mt-1 text-gray-600 bg-gray-100 border border-gray-200 rounded-lg shadow-sm cursor-not-allowed"
+                            class="block w-full p-3 mt-1 text-sm text-gray-600 bg-gray-100 border border-gray-200 rounded-lg shadow-sm cursor-not-allowed overflow-hidden"
                         >
                     </div>
 
@@ -236,18 +234,16 @@
 
                 <div class="mt-6">
                     <label for="photo" class="block text-sm font-medium text-gray-700">Pet Photo <span class="text-red-500">*</span></label>
-                    <div id="petRegistration-photo-dropzone" class="flex justify-center px-6 pt-5 pb-6 mt-1 transition duration-150 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:border-indigo-400 hover:bg-indigo-50">
-                        <div class="space-y-1 text-center">
-                            <svg class="w-12 h-12 mx-auto text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                    <div id="petRegistration-photo-dropzone" class="relative flex flex-col items-center justify-center w-full px-4 py-8 mt-1 transition duration-150 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:border-indigo-500 hover:bg-indigo-50/50 group">
+                        <input id="file-upload" name="photo" type="file" accept="image/*" required class="hidden">
+                        <div class="space-y-2 text-center pointer-events-none">
+                            <svg class="w-12 h-12 mx-auto text-gray-400 transition-colors duration-200 group-hover:text-indigo-500" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
                                 <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m-4-4h2m-2 4h4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
-                            <div class="flex text-sm text-gray-600">
-                                <label for="file-upload" class="relative font-medium text-indigo-600 bg-white rounded-md cursor-pointer hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
-                                    <span>Drag and drop or click to upload</span>
-                                    <input id="file-upload" name="photo" type="file" accept="image/*" required class="sr-only">
-                                </label>
+                            <div class="text-sm font-semibold text-indigo-600 transition-colors duration-200 group-hover:text-indigo-700">
+                                Drag and drop or click to upload
                             </div>
-                            <p id="file-name" class="text-xs text-gray-500">PNG, JPG, GIF up to 50MB</p>
+                            <p id="file-name" class="text-xs text-gray-500 break-all max-w-[240px] mx-auto">PNG, JPG, GIF up to 50MB</p>
                         </div>
                     </div>
                     @error('photo') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
@@ -373,6 +369,15 @@
 
         const photoDropzone = document.getElementById('petRegistration-photo-dropzone');
 
+        // Click to upload on dropzone
+        if (photoDropzone) {
+            photoDropzone.addEventListener('click', function(e) {
+                if (e.target !== fileUpload) {
+                    fileUpload.click();
+                }
+            });
+        }
+
         // Function to handle file selection
         function handleFileSelect(files) {
             if (files && files[0]) {
@@ -395,31 +400,33 @@
         }
 
         // Drag and drop events
-        photoDropzone.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            photoDropzone.style.backgroundColor = '#f0f9ff';
-            photoDropzone.style.borderColor = '#818cf8';
-        });
+        if (photoDropzone) {
+            photoDropzone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                photoDropzone.classList.add('border-indigo-500', 'bg-indigo-50');
+                photoDropzone.classList.remove('border-gray-300');
+            });
 
-        photoDropzone.addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            photoDropzone.style.backgroundColor = '';
-            photoDropzone.style.borderColor = '#d1d5db';
-        });
+            photoDropzone.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                photoDropzone.classList.remove('border-indigo-500', 'bg-indigo-50');
+                photoDropzone.classList.add('border-gray-300');
+            });
 
-        photoDropzone.addEventListener('drop', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            photoDropzone.style.backgroundColor = '';
-            photoDropzone.style.borderColor = '#d1d5db';
+            photoDropzone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                photoDropzone.classList.remove('border-indigo-500', 'bg-indigo-50');
+                photoDropzone.classList.add('border-gray-300');
 
-            const files = e.dataTransfer.files;
-            if (files && files.length > 0) {
-                handleFileSelect(files);
-            }
-        });
+                const files = e.dataTransfer.files;
+                if (files && files.length > 0) {
+                    handleFileSelect(files);
+                }
+            });
+        }
     });
 </script>
 @endsection

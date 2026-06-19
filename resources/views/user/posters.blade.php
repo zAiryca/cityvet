@@ -6,10 +6,10 @@
 
 
 
-<div class="min-h-screen pt-24 bg-gradient-to-br from-blue-50 to-green-50">
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
     <div class="px-4 py-8 mx-auto max-w-7xl">
         <!-- Header -->
-        <div class="flex items-center justify-between mb-8" style="margin-top: -5rem">
+        <div class="flex items-center justify-between mb-8">
             <div class="flex items-center">
                 <div class="p-3 mr-4 bg-white border-2 border-pink-100 rounded-full shadow-sm">
                     <img src="{{ asset('image/logo1.png') }}" alt="FindFurEver Logo" class="object-contain w-12 h-12">

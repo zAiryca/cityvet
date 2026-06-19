@@ -3,10 +3,10 @@
 @section('title', '| Claimed or Adopted Pets')
 
 @section('content')
-<div class="min-h-screen pt-24 bg-gray-50">
+<div class="min-h-screen bg-gray-50">
     <div class="px-4 py-8 mx-auto max-w-7xl">
         <!-- Header -->
-        <div class="flex items-center justify-between mb-8"style="margin-top: -5rem" >
+        <div class="flex items-center justify-between mb-8">
             <div class="flex items-center">
                 <div class="p-3 mr-4 bg-white rounded-full shadow-sm">
                     <svg class="w-12 h-12 text-green-600" fill="currentColor" viewBox="0 0 20 20">

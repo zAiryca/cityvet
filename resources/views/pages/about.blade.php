@@ -3,12 +3,12 @@
 @section('title', '| About')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-b from-blue-50 to-white pt-28">
+<div class="min-h-screen bg-gradient-to-b from-blue-50 to-white">
     <!-- Header Section -->
-    <div class="px-4 py-16 text-white bg-gradient-to-r from-blue-600 to-green-600" style="margin-top: -7rem;font-family: Georgia, serif;">
+    <div class="px-4 py-16 text-white bg-gradient-to-r from-blue-600 to-green-600" style="font-family: Georgia, serif;">
         <div class="mx-auto text-center max-w-7xl">
             <h1 class="mb-4 text-5xl font-bold">City Veterinary Office</h1>
-            <p class="text-xl text-blue-100" style="margin-top: -1.5rem">Serving Alaminos City with Dedication to Animal Health & Welfare</p>
+            <p class="text-xl text-blue-100">Serving Alaminos City with Dedication to Animal Health & Welfare</p>
         </div>
     </div>
 
