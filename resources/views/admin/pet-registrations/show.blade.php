@@ -6,9 +6,9 @@
 <div>
     <div class="max-w-6xl px-4 py-4 mx-auto">
         <!-- Header -->
-        <div class="flex items-center justify-between mb-4">
+        <div class="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center">
-                <div class="p-0 mr-4 bg-white rounded-full shadow-sm overflow-hidden w-12 h-12">
+                <div class="p-0 mr-4 bg-white rounded-full shadow-sm overflow-hidden w-12 h-12 flex-shrink-0">
                     <img src="{{ asset('image/logo.png') }}" alt="Logo" class="w-full h-full object-cover">
                 </div>
                 <div>
@@ -17,7 +17,7 @@
             </div>
             <div class="flex space-x-3">
                 <a href="{{ route('admin.pet-registrations.index') }}"
-                   class="px-5 py-2.5 bg-gray-600 text-white rounded-xl hover:bg-gray-700 transition-all duration-200 font-medium shadow-sm hover:shadow-md">
+                   class="inline-flex items-center px-5 py-2.5 bg-gray-600 text-white rounded-xl hover:bg-gray-700 transition-all duration-200 font-medium shadow-sm hover:shadow-md whitespace-nowrap">
                     ← Back to Registrations
                 </a>
             </div>
@@ -25,8 +25,8 @@
 
         <!-- Status Banner -->
         <div class="p-6 mb-6 bg-white shadow-lg rounded-2xl">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-4">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div class="flex flex-wrap items-center gap-3">
                     <div class="text-sm">
                         <span class="text-gray-600">Application Status:</span>
                         @if($pet_registration->status === 'pending')
@@ -88,7 +88,7 @@
                         <div class="mb-6 flex justify-center">
                             <img src="{{ asset('storage/' . $pet_registration->photo) }}"
                                  alt="{{ $pet_registration->pet_name }}"
-                                 class="object-cover w-64 h-64 transition-all duration-300 shadow-lg cursor-pointer rounded-xl hover:shadow-xl hover:opacity-90"
+                                 class="object-cover w-full max-w-xs sm:w-48 sm:h-48 md:w-64 md:h-64 transition-all duration-300 shadow-lg cursor-pointer rounded-xl hover:shadow-xl hover:opacity-90 aspect-square"
                                  onclick="openAdminPetRegPhotoModal()"
                                  style="cursor: pointer;">
                         </div>

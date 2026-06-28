@@ -1,7 +1,14 @@
 <nav x-data="{ open: false }" class="fixed top-0 z-50 w-full bg-gray-900 border-b border-gray-800 shadow-xl">
     <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <!-- Single Row Navigation -->
-        <div class="flex items-center justify-end h-20">
+        <div class="flex items-center justify-between h-20">
+
+            <!-- Logo: Mobile & Tablet only (hidden on lg+) -->
+            <div class="flex items-center lg:hidden">
+                <a href="{{ route('home') }}">
+                    <img src="{{ asset('image/overall.png') }}" alt="City Veterinary Office" class="h-12 w-auto object-contain">
+                </a>
+            </div>
 
             <!-- Desktop Navigation Links (Centered, visible on lg and up) -->
             <div class="hidden lg:flex lg:items-center lg:justify-center lg:flex-1 lg:space-x-1 xl:space-x-2 px-6">

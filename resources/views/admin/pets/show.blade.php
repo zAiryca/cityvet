@@ -45,13 +45,17 @@
                         </h2>
                     </div>
                     <div class="px-6 py-6">
-                        <div class="flex gap-8 mb-6">
+                        {{-- Mobile: Image full-width on top; Desktop: image left, details right --}}
+                        <div class="flex flex-col gap-6 mb-6 lg:flex-row lg:gap-8">
                             {{-- Photo Section --}}
                             <div class="flex-shrink-0">
                                 @if($pet->photo)
-                                    <img src="{{ asset('storage/' . $pet->photo) }}" alt="{{ $pet->display_code }}" class="object-cover w-64 h-64 transition-opacity border-4 border-gray-200 rounded-lg shadow-md cursor-pointer hover:opacity-90" onclick="openAdminPetPhotoModal()">
+                                    <img src="{{ asset('storage/' . $pet->photo) }}"
+                                         alt="{{ $pet->display_code }}"
+                                         class="object-cover w-full rounded-lg shadow-md cursor-pointer hover:opacity-90 border-4 border-gray-200 transition-opacity lg:w-64 lg:h-64 max-h-64"
+                                         onclick="openAdminPetPhotoModal()">
                                 @else
-                                    <div class="flex items-center justify-center w-64 h-64 bg-gray-100 border-4 border-gray-200 rounded-lg">
+                                    <div class="flex items-center justify-center w-full h-48 bg-gray-100 border-4 border-gray-200 rounded-lg lg:w-64 lg:h-64">
                                         <div class="text-center">
                                             <span class="text-7xl font-bold text-gray-300">{{ substr($pet->display_code, 0, 1) }}</span>
                                             <p class="text-xs text-gray-400 mt-2">No Photo</p>
@@ -109,6 +113,7 @@
                         </div>
 
                         {{-- Adoption meta visible for all adoptable pets (including those converted from impounded) --}}
+
                         @if($pet->status === 'adoptable')
                             @php
                                     $adoptionReasonLabels = [

@@ -6,9 +6,9 @@
 <div class="min-h-screen pt-16 bg-gray-50">
     <div class="max-w-6xl px-4 py-6 mx-auto">
         <!-- Header -->
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex flex-col gap-3 mb-6 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center">
-                <div class="p-0 mr-4 bg-white rounded-full shadow-sm overflow-hidden w-12 h-12">
+                <div class="p-0 mr-4 bg-white rounded-full shadow-sm overflow-hidden w-12 h-12 flex-shrink-0">
                     <img src="{{ asset('image/logo.png') }}" alt="FindFurEver Logo" class="w-full h-full object-cover">
                 </div>
                 <div>
@@ -16,11 +16,11 @@
                     <p class="mt-1 text-gray-600">Meet {{ $petRegistration->pet_name }}</p>
                 </div>
             </div>
-            <div class="flex space-x-3">
+            <div class="flex flex-wrap gap-2">
                 @if(in_array($petRegistration->status, ['pending', 'registered', 'denied']))
                     @if(in_array($petRegistration->status, ['pending', 'denied']))
                         <a href="{{ route('pet-registrations.edit', $petRegistration) }}"
-                           class="px-5 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-200 font-medium shadow-sm hover:shadow-md">
+                           class="inline-flex items-center px-5 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-200 font-medium shadow-sm hover:shadow-md whitespace-nowrap">
                             Edit
                         </a>
                     @endif
@@ -28,15 +28,15 @@
                         @csrf
                         @method('DELETE')
                         <button type="submit"
-                                class="px-5 py-2.5 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-all duration-200 font-medium shadow-sm hover:shadow-md"
+                                class="inline-flex items-center px-5 py-2.5 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-all duration-200 font-medium shadow-sm hover:shadow-md whitespace-nowrap"
                                 onclick="return confirm('Are you sure you want to delete this registration?')">
                             Delete
                         </button>
                     </form>
                 @endif
                 <a href="javascript:void(0)" onclick="history.back()"
-                   class="bg-gray-600 text-white hover:bg-gray-800 px-4 py-2 rounded">
-                    Back
+                   class="inline-flex items-center px-5 py-2.5 bg-gray-600 text-white rounded-xl hover:bg-gray-700 transition-all duration-200 font-medium shadow-sm hover:shadow-md whitespace-nowrap">
+                    ← Back
                 </a>
             </div>
         </div>

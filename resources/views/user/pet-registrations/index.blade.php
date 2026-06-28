@@ -6,9 +6,9 @@
 <div class="min-h-screen bg-gray-50">
     <div class="px-4 py-8 mx-auto max-w-7xl">
         <!-- Header -->
-        <div class="flex items-center justify-between mb-8">
+        <div class="flex flex-col gap-4 mb-8 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center">
-                <div class="p-0 mr-4 bg-white rounded-full shadow-sm overflow-hidden w-12 h-12">
+                <div class="p-0 mr-4 bg-white rounded-full shadow-sm overflow-hidden w-12 h-12 flex-shrink-0">
                     <img src="{{ asset('image/logo.png') }}" alt="FindFurEver Logo" class="w-full h-full object-cover">
                 </div>
                 <div>
@@ -17,7 +17,7 @@
                 </div>
             </div>
             <a href="{{ route('pet-registrations.create') }}"
-               class="px-6 py-3 bg-teal-600 text-white rounded-xl hover:bg-teal-700 transition-all duration-200 font-medium shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+               class="inline-flex items-center justify-center px-6 py-3 bg-teal-600 text-white rounded-xl hover:bg-teal-700 transition-all duration-200 font-medium shadow-sm hover:shadow-md transform hover:-translate-y-0.5 self-start sm:self-auto whitespace-nowrap">
                 + Pre-Register New Pet
             </a>
         </div>
@@ -30,30 +30,30 @@
         @endphp
 
         <!-- Tabs -->
-        <div class="p-2 mb-6 bg-white shadow-sm rounded-2xl">
-            <div class="flex space-x-1">
+        <div class="mb-6 bg-white shadow-sm rounded-2xl overflow-x-auto">
+            <div class="flex p-2 space-x-1 min-w-max">
                 <a href="{{ route('pet-registrations.index') }}"
-                   class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ empty($tab) ? 'bg-gray-100 text-gray-800 shadow-sm' : 'text-gray-600 hover:bg-gray-50' }}">
+                   class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap {{ empty($tab) ? 'bg-gray-100 text-gray-800 shadow-sm' : 'text-gray-600 hover:bg-gray-50' }}">
                     All Pets
                 </a>
                 <a href="{{ route('pet-registrations.index', ['tab' => 'pending']) }}"
-                   class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ ($tab === 'pending') ? 'bg-yellow-100 text-yellow-800 shadow-sm' : 'text-gray-600 hover:bg-gray-50' }}">
-                    <svg class="inline w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap {{ ($tab === 'pending') ? 'bg-yellow-100 text-yellow-800 shadow-sm' : 'text-gray-600 hover:bg-gray-50' }}">
+                    <svg class="w-4 h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10"></circle>
                         <polyline points="12,6 12,12 16,14"></polyline>
                     </svg>
                     Pre-registered
                 </a>
                 <a href="{{ route('pet-registrations.index', ['tab' => 'registered']) }}"
-                   class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ ($tab === 'registered') ? 'bg-green-100 text-green-800 shadow-sm' : 'text-gray-600 hover:bg-gray-50' }}">
-                    <svg class="inline w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap {{ ($tab === 'registered') ? 'bg-green-100 text-green-800 shadow-sm' : 'text-gray-600 hover:bg-gray-50' }}">
+                    <svg class="w-4 h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <polyline points="20,6 9,17 4,12"></polyline>
                     </svg>
                     Registered
                 </a>
                 <a href="{{ route('pet-registrations.index', ['tab' => 'denied']) }}"
-                   class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ ($tab === 'denied') ? 'bg-red-100 text-red-800 shadow-sm' : 'text-gray-600 hover:bg-gray-50' }}">
-                    <svg class="inline w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap {{ ($tab === 'denied') ? 'bg-red-100 text-red-800 shadow-sm' : 'text-gray-600 hover:bg-gray-50' }}">
+                    <svg class="w-4 h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>

@@ -7,8 +7,8 @@
     <div class="max-w-4xl mx-auto">
 
     <div class="mb-10 text-center">
-        <h1 class="text-4xl font-extrabold text-indigo-700 sm:text-5xl">Edit Pet Registration</h1>
-        <p class="mt-3 text-xl text-gray-600">Update your pet's registration details.</p>
+        <h1 class="text-3xl font-extrabold text-indigo-700 sm:text-4xl lg:text-5xl">Edit Pet Registration</h1>
+        <p class="mt-3 text-lg text-gray-600 sm:text-xl">Update your pet's registration details.</p>
     </div>
 
         <form action="{{ route('pet-registrations.update', $petRegistration) }}" method="POST" enctype="multipart/form-data" class="bg-white divide-y divide-gray-200 shadow-2xl rounded-xl">
@@ -201,7 +201,7 @@
 
                 <div class="mt-6">
                     <label class="block mb-3 text-sm font-medium text-gray-700">Color/Markings (Select all that apply)</label>
-                    <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
                         @php
                             $colors = ['Black', 'White', 'Brown', 'Gray', 'Orange', 'Cream', 'Tabby'];
                             $old_colors = old('color_markings', is_array($petRegistration->color_markings) ? $petRegistration->color_markings : []);
@@ -273,7 +273,7 @@
                             <div class="text-sm font-semibold text-indigo-600 transition-colors duration-200 group-hover:text-indigo-700">
                                 Drag and drop or click to upload
                             </div>
-                            <p id="file-name" class="text-xs text-gray-500 break-all max-w-[240px] mx-auto">PNG, JPG, GIF up to 50MB</p>
+                            <p id="file-name" class="text-xs text-gray-500 break-words max-w-[200px] mx-auto text-center line-clamp-2">PNG, JPG, GIF up to 50MB</p>
                         </div>
                     </div>
                     @error('photo') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
@@ -282,7 +282,7 @@
                 <!-- Preview shown only after upload (Comparison view) -->
                 <div id="petRegistration-photos-section" class="mt-6" style="display: none;">
                     <p class="mb-4 text-sm font-medium text-gray-700">Compare: Current & New Preview</p>
-                    <div class="grid grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                         @if($petRegistration->photo)
                         <div>
                             <p class="mb-2 text-xs text-gray-600">Current:</p>
@@ -322,11 +322,11 @@
                 </div>
             </div>
 
-            <div class="flex items-center justify-between px-6 py-4 sm:px-10 bg-gray-50 rounded-b-xl">
-                <a href="javascript:void(0)" onclick="history.back()" class="px-4 py-2 text-white bg-gray-600 rounded hover:bg-gray-800">
+            <div class="flex items-center justify-between gap-4 px-6 py-4 sm:px-10 bg-gray-50 rounded-b-xl">
+                <a href="javascript:void(0)" onclick="history.back()" class="flex-1 sm:flex-none inline-flex items-center justify-center px-8 py-3 text-base font-medium text-white transition duration-150 bg-gray-600 rounded-lg shadow-md hover:bg-gray-700 hover:text-white">
                     Cancel
                 </a>
-                <button type="submit" class="inline-flex justify-center px-8 py-3 text-base font-medium text-white transition duration-150 bg-teal-600 border border-transparent rounded-lg shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
+                <button type="submit" class="flex-1 sm:flex-none inline-flex items-center justify-center px-8 py-3 text-base font-medium text-white transition duration-150 bg-teal-600 border border-transparent rounded-lg shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
                     Update Registration
                 </button>
             </div>

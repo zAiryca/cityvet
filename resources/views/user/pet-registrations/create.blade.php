@@ -274,12 +274,12 @@
                 </div>
             </div>
 
-            <div class="flex items-center justify-between px-6 py-4 sm:px-10 bg-gray-50 rounded-b-xl">
-                <a href="javascript:void(0)" onclick="history.back()" class="px-4 py-2 text-white bg-gray-600 rounded hover:bg-gray-800">
+            <div class="flex items-center justify-between gap-4 px-6 py-4 sm:px-10 bg-gray-50 rounded-b-xl">
+                <a href="javascript:void(0)" onclick="history.back()" class="flex-1 sm:flex-none inline-flex items-center justify-center px-8 py-3 text-base font-medium text-white transition duration-150 bg-gray-600 rounded-lg shadow-md hover:bg-gray-700 hover:text-white">
                     Cancel
                 </a>
-                <button type="submit" class="inline-flex justify-center px-8 py-3 text-base font-medium text-white transition duration-150 bg-teal-600 border border-transparent rounded-lg shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
-                    Submit Registration
+                <button type="submit" class="flex-1 sm:flex-none inline-flex items-center justify-center px-8 py-3 text-base font-medium text-white transition duration-150 bg-teal-600 border border-transparent rounded-lg shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
+                    Submit
                 </button>
             </div>
         </form>

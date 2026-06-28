@@ -213,14 +213,26 @@
         margin: 20px 0;
     }
 
-    @media (max-width: 768px) {
-        .pet-info-grid {
-            grid-template-columns: repeat(2, 1fr);
+    /* Mobile & Tablet only — stack photo on top, centered */
+    @media (max-width: 1023px) {
+        .pet-main-card > div.flex {
+            flex-direction: column !important;
+            align-items: center !important;
         }
 
         .photo-container {
-            width: 140px;
-            height: 140px;
+            width: 100% !important;
+            height: auto !important;
+            max-height: 260px;
+            margin: 0 auto 20px auto !important;
+        }
+
+        .photo-container img {
+            max-height: 260px;
+        }
+
+        .pet-main-card > div.flex > .flex-1 {
+            width: 100% !important;
         }
 
         .btn-action {
@@ -234,12 +246,12 @@
     <div class="max-w-5xl px-4 mx-auto">
         <!-- Header -->
         <div class="mb-6 pet-header-card">
-            <div class="flex items-center justify-between">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 class="text-4xl font-bold text-white">{{ $pet->display_code }}</h1>
+                    <h1 class="text-2xl font-bold text-white sm:text-4xl">{{ $pet->display_code }}</h1>
                     <p class="mt-1 text-blue-100">Pet Details & Information</p>
                 </div>
-                <span class="status-badge {{ $pet->status === 'adoptable' ? 'status-adoptable' : 'status-impounded' }}">
+                <span class="status-badge self-start sm:self-auto {{ $pet->status === 'adoptable' ? 'status-adoptable' : 'status-impounded' }}">
                     {{ ucfirst(str_replace('_', ' ', $pet->status)) }}
                 </span>
             </div>
