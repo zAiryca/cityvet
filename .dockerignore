@@ -1,0 +1,14 @@
+node_modules
+vendor
+/public/build
+/public/hot
+/storage/*.key
+/storage/pail
+.env
+.env.*
+.phpunit.result.cache
+/.git
+/.github
+/tests
+**/.gitignore
+**/.DS_Store

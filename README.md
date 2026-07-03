@@ -29,7 +29,39 @@ You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you
 
 If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
+## Windows Task Scheduler: Automatic pet status updates
+
+This project includes a helper script at `run-pet-transitions.bat` to run the automatic pet status transition commands on Windows.
+
+1. Open Task Scheduler.
+2. Select `Action` → `Create Basic Task...`.
+3. Name it `CityVet Pet Status Transition` and click `Next`.
+4. Choose `Daily` and click `Next`.
+5. Set the start time to `12:00:00 AM` and click `Next`.
+6. Choose `Start a program` and click `Next`.
+7. Set `Program/script` to:
+
+```text
+C:\xampp\htdocs\cityvet\run-pet-transitions.bat
+```
+
+8. Click `Next`, then `Finish`.
+
+Optional task properties:
+- On the `General` tab, choose `Run whether user is logged on or not`.
+- On the `Settings` tab, check `Run task as soon as possible after a scheduled start is missed`.
+- On the `Conditions` tab, uncheck `Start the task only if the computer is on AC power` if you want it to run on battery.
+
+This runs the two artisan commands:
+
+```powershell
+php artisan pets:transition-impounded-to-adoptable
+php artisan pets:transition-adoptable-to-unadopted
+```
+
 ## Laravel Sponsors
+
+See the full installation and deployment instructions in `docs/INSTALLATION.md`.
 
 We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
 
