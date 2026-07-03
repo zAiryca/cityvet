@@ -12,7 +12,7 @@ RUN npm run build
 FROM composer:2 AS composer-builder
 WORKDIR /app
 COPY composer.json composer.lock ./
-RUN composer install --prefer-dist --no-dev --no-scripts --no-progress --no-interaction
+RUN composer install --prefer-dist --no-dev --no-scripts --no-progress --no-interaction --ignore-platform-req=php
 
 FROM php:8.2-apache-bullseye
 WORKDIR /var/www/html
@@ -29,8 +29,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxml2-dev \
     libicu-dev \
     libcurl4-openssl-dev \
+    libpq-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo_mysql zip bcmath gd intl opcache \
+    && docker-php-ext-install pdo_mysql pdo_pgsql zip bcmath gd intl opcache \
     && a2enmod rewrite headers \
     && rm -rf /var/lib/apt/lists/*
 
