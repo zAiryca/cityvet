@@ -106,27 +106,23 @@ class AnnouncementController extends Controller
         $photos = $request->file('photos') ?? [];
         $deletedPhotosJson = $validated['deleted_photos'] ?? '[]';
 
-        // Decode the JSON string to get the array
-        $deletedPhotos = json_decode($deletedPhotosJson, true) ?? [];
+        // Decode the JSON string to get the array of specific photo IDs to remove.
+        $deletedPhotos = array_filter(array_map('intval', json_decode($deletedPhotosJson, true) ?? []));
 
         unset($validated['photos'], $validated['deleted_photos']);
 
-        // Delete specified photos
+        // Delete only the explicitly selected photos.
         if (!empty($deletedPhotos)) {
-            foreach ($deletedPhotos as $photoId) {
-                $photo = AnnouncementPhoto::find($photoId);
-                if ($photo) {
-                    Storage::disk('public')->delete($photo->photo_path);
-                    $photo->delete();
-                }
-            }
+            $announcement->photos()->whereIn('id', $deletedPhotos)->get()->each(function ($photo) {
+                Storage::disk('public')->delete($photo->photo_path);
+                $photo->delete();
+            });
         }
 
         $announcement->update($validated);
 
-        // Handle new photo uploads
+        // Handle new photo uploads without re-adding any stale photos.
         if (!empty($photos)) {
-            // Get the max order number
             $maxOrder = $announcement->photos()->max('order') ?? -1;
             $order = $maxOrder + 1;
 

@@ -54,11 +54,11 @@
                 @if($announcement->photos->count() > 0)
                     <div class="mb-4">
                         <p class="text-sm text-gray-600 mb-2">Current Photos:</p>
-                        <div class="grid grid-cols-2 gap-4">
+                        <div class="grid grid-cols-2 gap-4" id="existing-photo-grid">
                             @foreach($announcement->photos as $photo)
-                                <div class="relative">
+                                <div class="relative photo-card" data-photo-id="{{ $photo->id }}">
                                     <img src="{{ asset('storage/' . $photo->photo_path) }}" alt="photo" class="w-full h-auto rounded-md shadow">
-                                    <button type="button" onclick="deletePhoto({{ $photo->id }})" class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600">
+                                    <button type="button" data-photo-id="{{ $photo->id }}" class="remove-existing-photo absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600" aria-label="Remove photo">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                         </svg>
@@ -81,15 +81,30 @@
 
             <script>
                 const deletedPhotos = [];
-                function deletePhoto(photoId) {
-                    event.preventDefault();
-                    // Find and remove the photo element
-                    const photoElement = event.target.closest('button').closest('div').parentElement;
-                    photoElement.remove();
-                    deletedPhotos.push(photoId);
-                    // Update the hidden input with JSON array
-                    document.getElementById('deletedPhotos').value = JSON.stringify(deletedPhotos);
+
+                function updateDeletedPhotosInput() {
+                    document.getElementById('deletedPhotos').value = JSON.stringify([...new Set(deletedPhotos)]);
                 }
+
+                document.addEventListener('click', function (event) {
+                    const removeButton = event.target.closest('.remove-existing-photo');
+                    if (!removeButton) return;
+
+                    event.preventDefault();
+
+                    const photoId = Number(removeButton.dataset.photoId);
+                    const photoCard = removeButton.closest('.photo-card');
+
+                    if (!photoCard) return;
+
+                    photoCard.remove();
+
+                    if (!deletedPhotos.includes(photoId)) {
+                        deletedPhotos.push(photoId);
+                    }
+
+                    updateDeletedPhotosInput();
+                });
             </script>
 
             <div class="flex justify-end space-x-4">
