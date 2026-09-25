@@ -217,7 +217,7 @@ class PosterController extends Controller
         if (Auth::user()->isAdmin()) {
             return redirect()->route('admin.posters.index')->with('success', 'Poster deleted.');
         } else {
-            return back()->with('success', 'Poster deleted.');
+            return redirect()->route('posters.index')->with('success', 'Poster deleted.');
         }
     }
 
